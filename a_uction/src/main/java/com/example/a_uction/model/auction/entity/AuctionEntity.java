@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class AuctionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int auctionId;
+    private Long auctionId;
     //@ManyToOne(targetEntity = .class, fetch = FetchType.LAZY)
     private int userId;
     private String itemName;
