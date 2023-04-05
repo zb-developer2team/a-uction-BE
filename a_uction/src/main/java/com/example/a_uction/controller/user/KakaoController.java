@@ -1,6 +1,6 @@
-package com.example.a_uction.user.controller;
+package com.example.a_uction.controller.user;
 
-import com.example.a_uction.user.oauth.service.KakaoService;
+import com.example.a_uction.service.user.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

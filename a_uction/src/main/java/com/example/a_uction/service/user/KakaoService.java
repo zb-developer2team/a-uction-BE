@@ -1,4 +1,4 @@
-package com.example.a_uction.user.oauth.service;
+package com.example.a_uction.service.user;
 
 import java.util.HashMap;
 import org.json.simple.JSONObject;
