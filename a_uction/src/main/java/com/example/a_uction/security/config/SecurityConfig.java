@@ -22,8 +22,8 @@ public class SecurityConfig {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.authorizeRequests()
-					.antMatchers("/login/**", "/register/**").permitAll()
-			.antMatchers("/**").authenticated()
+					.antMatchers("/**").permitAll()
+			//.antMatchers("/**").authenticated()
 			.and()
 			//TODO jwt 필터 추가
 			.build();
