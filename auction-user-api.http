@@ -1,0 +1,9 @@
+POST http://localhost:8081/register
+Content-Type: application/json
+
+{
+  "userEmail": "zerobase@gmail.com",
+  "password": "1234",
+  "username": "zerobase",
+  "phoneNumber": "01012345678"
+}
