@@ -1,4 +1,4 @@
-package com.example.a_uction.model.user.service;
+package com.example.a_uction.service;
 
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.entity.UserEntity;

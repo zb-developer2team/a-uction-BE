@@ -1,7 +1,7 @@
-package com.example.a_uction.model.user.controller;
+package com.example.a_uction.controller;
 
 import com.example.a_uction.model.user.dto.RegisterUser;
-import com.example.a_uction.model.user.service.UserRegisterService;
+import com.example.a_uction.service.UserRegisterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
