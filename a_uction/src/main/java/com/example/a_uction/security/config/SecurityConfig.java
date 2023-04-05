@@ -23,7 +23,7 @@ public class SecurityConfig {
 			.and()
 				.authorizeRequests()
 					.antMatchers("/login/**", "/register/**").permitAll()
-			.antMatchers("/**").authenticated()
+			.antMatchers("/**").permitAll()
 			.and()
 			//TODO jwt 필터 추가
 			.build();

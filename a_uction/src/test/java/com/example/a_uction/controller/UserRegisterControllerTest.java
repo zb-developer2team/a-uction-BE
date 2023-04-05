@@ -1,4 +1,4 @@
-package com.example.a_uction.model.user.controller;
+package com.example.a_uction.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
