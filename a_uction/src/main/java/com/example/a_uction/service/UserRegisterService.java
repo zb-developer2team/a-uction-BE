@@ -1,5 +1,8 @@
 package com.example.a_uction.service;
 
+import static com.example.a_uction.exception.constants.ErrorCode.THIS_EMAIL_ALREADY_EXIST;
+
+import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
@@ -17,10 +20,10 @@ public class UserRegisterService {
 	private final BCryptPasswordEncoder passwordEncoder;
 
 	public RegisterUser register(RegisterUser.Request request) {
+
 		if (userRepository.findByUserEmail(request.getUserEmail()).isPresent()) {
-			//TODO CustomException 발생
-			log.info("중복된 이메일 가입 시도");
-			throw new RuntimeException("이미 가입 된 이메일");
+			log.error("중복된 이메일 가입 시도");
+			throw new AuctionException(THIS_EMAIL_ALREADY_EXIST);
 		}
 		return RegisterUser.fromEntity(
 			userRepository.save(UserEntity.builder()
