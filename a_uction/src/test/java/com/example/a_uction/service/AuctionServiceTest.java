@@ -45,8 +45,8 @@ class AuctionServiceTest {
                         .auctionStatus(AuctionStatus.SCHEDULED)
                         .build());
         //when
-        AuctionDto auctionDto = auctionService.addAuction(
-                AuctionEntity.builder()
+        AuctionDto.Response response = auctionService.addAuction(
+                AuctionDto.Request.builder()
                 .itemName("test item2")
                 .itemStatus(ItemStatus.GOOD)
                 .startingPrice(1000)
@@ -58,16 +58,16 @@ class AuctionServiceTest {
         ArgumentCaptor<AuctionEntity> captor = ArgumentCaptor.forClass(AuctionEntity.class);
         verify(auctionRepository, times(1)).save(captor.capture());
         assertEquals("test item2", captor.getValue().getItemName());
-        assertEquals("test item", auctionDto.getItemName());
+        assertEquals("test item", response.getItemName());
         assertEquals(ItemStatus.GOOD, captor.getValue().getItemStatus());
-        assertEquals(ItemStatus.BAD, auctionDto.getItemStatus());
+        assertEquals(ItemStatus.BAD, response.getItemStatus());
         assertEquals(1000, captor.getValue().getStartingPrice());
-        assertEquals(2000, auctionDto.getStartingPrice());
+        assertEquals(2000, response.getStartingPrice());
         assertEquals(100, captor.getValue().getMinimumBid());
-        assertEquals(200, auctionDto.getMinimumBid());
-        assertEquals(AuctionStatus.SCHEDULED, auctionDto.getAuctionStatus());
-        assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), auctionDto.getStartDateTime());
-        assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), auctionDto.getEndDateTime());
+        assertEquals(200, response.getMinimumBid());
+        assertEquals(AuctionStatus.SCHEDULED, response.getAuctionStatus());
+        assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
+        assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
     }
 
     @Test
@@ -77,7 +77,7 @@ class AuctionServiceTest {
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> auctionService.addAuction(
-                        AuctionEntity.builder()
+                        AuctionDto.Request.builder()
                         .itemName("test item2")
                         .itemStatus(ItemStatus.GOOD)
                         .startingPrice(1000)
@@ -96,7 +96,7 @@ class AuctionServiceTest {
         //when
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> auctionService.addAuction(
-                        AuctionEntity.builder()
+                        AuctionDto.Request.builder()
                                 .itemName("test item2")
                                 .itemStatus(ItemStatus.GOOD)
                                 .startingPrice(1000)

@@ -5,6 +5,7 @@ import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -47,6 +48,7 @@ public class AuctionEntity {
     private LocalDateTime startDateTime;
     @NotNull(message = "경매 종료 시간을 입력하세요")
     private LocalDateTime endDateTime;
+
     private LocalDateTime createDateTime;
     private LocalDateTime updateDateTime;
 

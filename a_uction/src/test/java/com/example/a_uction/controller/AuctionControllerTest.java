@@ -40,7 +40,7 @@ class AuctionControllerTest {
     @Test
     @WithMockUser
     void addAuctionSuccess() throws Exception {
-        AuctionDto auctionDto = AuctionDto.builder()
+        AuctionDto.Response auctionDto = AuctionDto.Response.builder()
                 .itemName("test item2")
                 .itemStatus(ItemStatus.GOOD)
                 .startingPrice(2000)

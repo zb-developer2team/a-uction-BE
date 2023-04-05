@@ -5,40 +5,73 @@ import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder //test 용
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class AuctionDto {
 
-    private String itemName;
-    private ItemStatus itemStatus;
-    private TransactionStatus transactionStatus;
-    private AuctionStatus auctionStatus;
-    private int startingPrice;
-    private int minimumBid;
-    private Category category;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    @Getter
+    @Setter
+    @Builder //테스트
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request {
+        private String itemName;
+        private ItemStatus itemStatus;
+        private int startingPrice;
+        private int minimumBid;
+//        private Category category;
+        private AuctionStatus auctionStatus;
+        private LocalDateTime startDateTime;
+        private LocalDateTime endDateTime;
 
-    public AuctionDto toDto(AuctionEntity auctionEntity){
-        AuctionDto auctionDto = new AuctionDto();
-        auctionDto.setItemName(auctionEntity.getItemName());
-        auctionDto.setItemStatus(auctionEntity.getItemStatus());
-        auctionDto.setAuctionStatus(auctionEntity.getAuctionStatus());
-        auctionDto.setTransactionStatus(auctionEntity.getTransactionStatus());
-        auctionDto.setStartingPrice(auctionEntity.getStartingPrice());
-        auctionDto.setMinimumBid(auctionEntity.getMinimumBid());
-        auctionDto.setCategory(auctionEntity.getCategory());
-        auctionDto.setStartDateTime(auctionEntity.getStartDateTime());
-        auctionDto.setEndDateTime(auctionEntity.getEndDateTime());
-        return auctionDto;
+        public AuctionEntity toEntity(){
+            return AuctionEntity.builder()
+                    .itemName(this.itemName)
+                    .itemStatus(this.itemStatus)
+                    .startingPrice(this.startingPrice)
+                    .minimumBid(this.minimumBid)
+                    .auctionStatus(this.auctionStatus)
+                    .startDateTime(this.startDateTime)
+                    .endDateTime(this.endDateTime)
+                    .build();
+        }
+
     }
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response{
+        private String itemName;
+        private ItemStatus itemStatus;
+        private TransactionStatus transactionStatus;
+        private AuctionStatus auctionStatus;
+        private int startingPrice;
+        private int minimumBid;
+        private Category category;
+        private LocalDateTime startDateTime;
+        private LocalDateTime endDateTime;
+
+
+        public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
+            return AuctionDto.Response.builder()
+                    .itemName(auctionEntity.getItemName())
+                    .itemStatus(auctionEntity.getItemStatus())
+                    .auctionStatus(auctionEntity.getAuctionStatus())
+                    .transactionStatus(auctionEntity.getTransactionStatus())
+                    .startingPrice(auctionEntity.getStartingPrice())
+                    .minimumBid(auctionEntity.getMinimumBid())
+                    .category(auctionEntity.getCategory())
+                    .startDateTime(auctionEntity.getStartDateTime())
+                    .endDateTime(auctionEntity.getEndDateTime())
+                    .build();
+        }
+    }
+
+
 }

@@ -2,7 +2,6 @@ package com.example.a_uction.service;
 
 import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
-import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +13,10 @@ import java.time.LocalDateTime;
 public class AuctionService {
     private final AuctionRepository auctionRepository;
 
-    public AuctionDto addAuction(AuctionEntity auction){
+    public AuctionDto.Response addAuction(AuctionDto.Request auction){
         if (auction.getEndDateTime().isBefore(auction.getStartDateTime())){
             //TODO 익셉션처리
-            // 경매 종료 시간이 경매 시작 시간보다 이름
+            // 경매 종료 시간이 경매 시작 시간보다 이트름
             throw new RuntimeException();
         }
 
@@ -26,6 +25,6 @@ public class AuctionService {
             throw new RuntimeException();
         }
         auction.setAuctionStatus(AuctionStatus.SCHEDULED);
-        return new AuctionDto().toDto(auctionRepository.save(auction));
+        return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity()));
     }
 }

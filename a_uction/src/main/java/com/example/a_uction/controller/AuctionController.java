@@ -1,6 +1,7 @@
 package com.example.a_uction.controller;
 
 
+import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AuctionController {
     private final AuctionService auctionService;
 
     @PostMapping
-    public ResponseEntity<?> addAuction(@RequestBody @Valid AuctionEntity auction, BindingResult bindingResult) {
+    public ResponseEntity<AuctionDto.Response> addAuction(@RequestBody @Valid AuctionDto.Request auction, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
             throw new RuntimeException("잘못된 인풋입니다.");
         }
