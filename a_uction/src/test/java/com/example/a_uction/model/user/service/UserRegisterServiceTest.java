@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.example.a_uction.service.UserRegisterService;
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.dto.RegisterUser.Request;
 import com.example.a_uction.model.user.entity.UserEntity;

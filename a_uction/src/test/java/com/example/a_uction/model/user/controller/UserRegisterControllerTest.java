@@ -9,8 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.a_uction.model.user.dto.RegisterUser;
-import com.example.a_uction.model.user.repository.UserRepository;
-import com.example.a_uction.model.user.service.UserRegisterService;
+import com.example.a_uction.service.UserRegisterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
