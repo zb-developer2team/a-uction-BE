@@ -4,6 +4,7 @@ import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
+import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.service.AuctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class AuctionControllerTest {
 
     @MockBean
     private AuctionService auctionService;
+
+    @MockBean
+    private JwtProvider jwtProvider;
 
     @Autowired
     private MockMvc mockMvc;
