@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
+import static com.example.a_uction.exception.constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class AuctionService {
 
     public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, int userId, Long auctionId){
         var auction =  auctionRepository.findByUserIdAndAuctionId(userId, auctionId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new AuctionException(INTERNAL_SERVER_ERROR));
 
         if (updateAuction.getEndDateTime().isBefore(updateAuction.getStartDateTime())){
             throw new AuctionException(END_TIME_EARLIER_THAN_START_TIME);

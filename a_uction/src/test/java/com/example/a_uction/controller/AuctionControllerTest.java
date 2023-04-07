@@ -1,5 +1,7 @@
 package com.example.a_uction.controller;
 
+import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
@@ -21,7 +23,8 @@ import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,6 +78,137 @@ class AuctionControllerTest {
                 .andExpect(jsonPath("$.itemName").value("test item2"))
                 .andDo(print());
     }
+
+
+    @Test
+    @WithMockUser
+    @DisplayName("경매 수정 - 성공")
+    void updateAuctionSuccess() throws Exception {
+        //given
+        LocalDateTime startTime = LocalDateTime.now().plusDays(3);
+        LocalDateTime endTime = LocalDateTime.now().plusDays(10);
+
+        AuctionDto.Request updateAuction = AuctionDto.Request.builder()
+                .itemName("item2")
+                .startDateTime(startTime)
+                .endDateTime(endTime)
+                .itemStatus(ItemStatus.GOOD)
+                .minimumBid(2000)
+                .startingPrice(1000)
+                .build();
+
+        AuctionEntity auctionEntity = AuctionEntity.builder()
+                .auctionId(1L)
+                .userId(1)
+                .itemName("item2")
+                .startingPrice(1000)
+                .minimumBid(2000)
+                .itemStatus(ItemStatus.GOOD)
+                .startDateTime(startTime)
+                .endDateTime(endTime)
+                .build();
+
+        given(auctionService.updateAuction(any(AuctionDto.Request.class), anyInt(), anyLong()))
+                .willReturn(new AuctionDto.Response().fromEntity(auctionEntity));
+        //when
+        //then
+        mockMvc.perform(put("/auction").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .param("auctionId", "1")
+                        .content(objectMapper.writeValueAsString(updateAuction)))
+                .andExpect(jsonPath("$.itemName").value("item2"))
+                .andExpect(jsonPath("$.itemStatus").value("GOOD"))
+                .andExpect(jsonPath("$.minimumBid").value("2000"))
+                .andExpect(jsonPath("$.startingPrice").value("1000"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("경매 수정 - 실패 - 해당 경매 없음")
+    void updateAuctionFail() throws Exception {
+        //given
+        LocalDateTime startTime = LocalDateTime.now().plusDays(3);
+        LocalDateTime endTime = LocalDateTime.now().plusDays(10);
+
+        AuctionDto.Request updateAuction = AuctionDto.Request.builder()
+                .itemName("item2")
+                .startDateTime(startTime)
+                .endDateTime(endTime)
+                .itemStatus(ItemStatus.GOOD)
+                .minimumBid(2000)
+                .startingPrice(1000)
+                .build();
+
+        given(auctionService.updateAuction(any(AuctionDto.Request.class), anyInt(), anyLong()))
+                .willThrow(new AuctionException(ErrorCode.INTERNAL_SERVER_ERROR));
+        //when
+        //then
+        mockMvc.perform(put("/auction").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .param("auctionId", "1")
+                        .content(objectMapper.writeValueAsString(updateAuction)))
+                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("경매 수정 - 실패 - 시작시간이 등록시간 이전")
+    void updateAuctionFailStartTime() throws Exception {
+        //given
+        LocalDateTime startTime = LocalDateTime.now().minusDays(3);
+        LocalDateTime endTime = LocalDateTime.now().plusDays(10);
+
+        AuctionDto.Request updateAuction = AuctionDto.Request.builder()
+                .itemName("item2")
+                .startDateTime(startTime)
+                .endDateTime(endTime)
+                .itemStatus(ItemStatus.GOOD)
+                .minimumBid(2000)
+                .startingPrice(1000)
+                .build();
+
+        given(auctionService.updateAuction(any(AuctionDto.Request.class), anyInt(), anyLong()))
+                .willThrow(new AuctionException(ErrorCode.BEFORE_START_TIME));
+        //when
+        //then
+        mockMvc.perform(put("/auction").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .param("auctionId", "1")
+                        .content(objectMapper.writeValueAsString(updateAuction)))
+                .andExpect(jsonPath("$.errorCode").value("BEFORE_START_TIME"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("경매 수정 - 실패 - 시작시간이 등록시간 이전")
+    void updateAuctionFailEndTime() throws Exception {
+        //given
+        LocalDateTime startTime = LocalDateTime.now().plusDays(3);
+        LocalDateTime endTime = LocalDateTime.now().minusDays(10);
+
+        AuctionDto.Request updateAuction = AuctionDto.Request.builder()
+                .itemName("item2")
+                .startDateTime(startTime)
+                .endDateTime(endTime)
+                .itemStatus(ItemStatus.GOOD)
+                .minimumBid(2000)
+                .startingPrice(1000)
+                .build();
+
+        given(auctionService.updateAuction(any(AuctionDto.Request.class), anyInt(), anyLong()))
+                .willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
+        //when
+        //then
+        mockMvc.perform(put("/auction").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .param("auctionId", "1")
+                        .content(objectMapper.writeValueAsString(updateAuction)))
+                .andExpect(jsonPath("$.errorCode").value("END_TIME_EARLIER_THAN_START_TIME"))
+                .andExpect(status().isOk());
+
     @Test
     @DisplayName("경매 읽기 성공")
     @WithMockUser
@@ -103,5 +237,6 @@ class AuctionControllerTest {
                 .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
                 .andExpect(jsonPath("$.startDateTime").value("2023-04-15T17:09:42.411"))
                 .andExpect(jsonPath("$.endDateTime").value("2023-04-15T17:10:42.411"));
+
     }
 }
