@@ -1,7 +1,11 @@
 package com.example.a_uction.service.user;
 
+import static com.example.a_uction.exception.constants.ErrorCode.INVALID_PARSE_ERROR;
+
+import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.security.jwt.JwtProvider;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +33,14 @@ public class KakaoService {
 
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
-	public String getAccessToken (String authorize_code) {
+	private final JwtProvider jwtProvider;
+
+	public String kakaoLogIn(String code) {
+		String kakaoToken = this.getAccessToken(code);
+		return this.getTokenByKakao(this.getUserInfoByKakao(kakaoToken));
+	}
+
+	public String getAccessToken(String code) {
 
 		String reqURL = "https://kauth.kakao.com/oauth/token";
 
@@ -38,11 +49,12 @@ public class KakaoService {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", REST_API_KEY );
+		params.add("client_id", REST_API_KEY);
 		params.add("redirect_url", REDIRECT_URL);
-		params.add("code", authorize_code);
+		params.add("code", code);
 
-		HttpEntity<MultiValueMap<String,String>> kakaoTokenRequest= new HttpEntity<>(params, headers);
+		HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params,
+			headers);
 
 		ResponseEntity<String> response = restTemplate.exchange(
 			reqURL,
@@ -59,20 +71,19 @@ public class KakaoService {
 		try {
 			jsonObject = (JSONObject) jsonParser.parse(tokenJson);
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new AuctionException(INVALID_PARSE_ERROR);
 		}
 
 		return jsonObject.get("access_token").toString();
 	}
 
-	public HashMap<String, String> getUserInfoByKakao (String accessToken) {
+	public HashMap<String, String> getUserInfoByKakao(String accessToken) {
 		String reqURL = "https://kapi.kakao.com/v2/user/me";
-
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken);
 
-		HttpEntity<MultiValueMap<String,String>> kakaoUserRequest= new HttpEntity<>(headers);
+		HttpEntity<MultiValueMap<String, String>> kakaoUserRequest = new HttpEntity<>(headers);
 
 		ResponseEntity<String> response = restTemplate.exchange(
 			reqURL,
@@ -89,34 +100,31 @@ public class KakaoService {
 		try {
 			jsonObject = (JSONObject) jsonParser.parse(userInfoJson);
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new AuctionException(INVALID_PARSE_ERROR);
 		}
 
 		HashMap<String, String> userInfo = new HashMap<>();
 		JSONObject properties = (JSONObject) jsonObject.get("properties");
 		JSONObject kakao_account = (JSONObject) jsonObject.get("kakao_account");
 
-		userInfo.put("nickname",properties.get("nickname").toString());
+		userInfo.put("nickname", properties.get("nickname").toString());
 		userInfo.put("email", kakao_account.get("email").toString());
 
 		return userInfo;
 	}
 
-	public String kakaoLogin(Map<String, String>userInfo) {
+	private String getTokenByKakao(Map<String, String> userInfo) {
 
 		String email = userInfo.get("email");
 
 		if (!isExist(email)) {
-			// [의논] 없는 정보는 null, 소셜 타입 추가 ???
 			userRepository.save(UserEntity.builder()
 				.username(userInfo.get("nickname"))
 				.userEmail(email)
 				.build());
 		}
 
-		// ToDo jwt 토큰 발급
-
-		return null;
+		return jwtProvider.createToken(email);
 	}
 
 	public boolean isExist(String email) {
