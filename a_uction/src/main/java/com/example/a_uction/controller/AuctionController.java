@@ -2,16 +2,11 @@ package com.example.a_uction.controller;
 
 
 import com.example.a_uction.model.auction.dto.AuctionDto;
-import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -28,5 +23,13 @@ public class AuctionController {
             throw new RuntimeException("잘못된 인풋입니다.");
         }
         return ResponseEntity.ok(auctionService.addAuction(auction));
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateAction(@RequestBody AuctionDto.Request updateAuction,
+                                          @RequestParam Long auctionId){
+        //TODO userId 토큰을 통해 받을 예정
+        int userId = 0;
+        return ResponseEntity.ok(auctionService.updateAuction(updateAuction, userId, auctionId));
     }
 }
