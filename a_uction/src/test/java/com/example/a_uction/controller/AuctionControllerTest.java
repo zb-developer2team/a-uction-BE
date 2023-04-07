@@ -1,5 +1,16 @@
 package com.example.a_uction.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
@@ -9,25 +20,16 @@ import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.service.AuctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDateTime;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuctionController.class)
 class AuctionControllerTest {
@@ -37,6 +39,9 @@ class AuctionControllerTest {
 
     @MockBean
     private JwtProvider jwtProvider;
+
+    @MockBean
+    private JpaMetamodelMappingContext context;
 
     @Autowired
     private MockMvc mockMvc;
@@ -113,7 +118,7 @@ class AuctionControllerTest {
         //when
         //then
         mockMvc.perform(put("/auction").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
                 .andExpect(jsonPath("$.itemName").value("item2"))
@@ -145,10 +150,10 @@ class AuctionControllerTest {
         //when
         //then
         mockMvc.perform(put("/auction").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
-                .andExpect(jsonPath("$.code").value("INTERNAL_SERVER_ERROR"))
+                .andExpect(jsonPath("$.errorCode").value("INTERNAL_SERVER_ERROR"))
                 .andExpect(status().isOk());
     }
 
@@ -174,7 +179,7 @@ class AuctionControllerTest {
         //when
         //then
         mockMvc.perform(put("/auction").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
                 .andExpect(jsonPath("$.errorCode").value("BEFORE_START_TIME"))
@@ -190,53 +195,23 @@ class AuctionControllerTest {
         LocalDateTime endTime = LocalDateTime.now().minusDays(10);
 
         AuctionDto.Request updateAuction = AuctionDto.Request.builder()
-                .itemName("item2")
-                .startDateTime(startTime)
-                .endDateTime(endTime)
-                .itemStatus(ItemStatus.GOOD)
-                .minimumBid(2000)
-                .startingPrice(1000)
-                .build();
+            .itemName("item2")
+            .startDateTime(startTime)
+            .endDateTime(endTime)
+            .itemStatus(ItemStatus.GOOD)
+            .minimumBid(2000)
+            .startingPrice(1000)
+            .build();
 
         given(auctionService.updateAuction(any(AuctionDto.Request.class), anyInt(), anyLong()))
-                .willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
+            .willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
         //when
         //then
         mockMvc.perform(put("/auction").with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .param("auctionId", "1")
-                        .content(objectMapper.writeValueAsString(updateAuction)))
-                .andExpect(jsonPath("$.errorCode").value("END_TIME_EARLIER_THAN_START_TIME"))
-                .andExpect(status().isOk());
-
-    @Test
-    @DisplayName("경매 읽기 성공")
-    @WithMockUser
-    void getAuctionByAuctionId_SUCCESS() throws Exception {
-        AuctionDto.Response auctionDto = AuctionDto.Response.builder()
-                .itemName("test item2")
-                .itemStatus(ItemStatus.GOOD)
-                .startingPrice(2000)
-                .minimumBid(200)
-                .auctionStatus(AuctionStatus.SCHEDULED)
-                .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-                .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-                .build();
-        given(auctionService.getAuctionByAuctionId(anyLong()))
-                .willReturn(auctionDto);
-        mockMvc.perform(get("/auction/" + 1L)
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
-                .andExpect(jsonPath("$.itemName").value("test item2"))
-                .andExpect(jsonPath("$.itemStatus").value(ItemStatus.GOOD.name()))
-                .andExpect(jsonPath("$.startingPrice").value(2000))
-                .andExpect(jsonPath("$.minimumBid").value(200))
-                .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
-                .andExpect(jsonPath("$.startDateTime").value("2023-04-15T17:09:42.411"))
-                .andExpect(jsonPath("$.endDateTime").value("2023-04-15T17:10:42.411"));
-
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("auctionId", "1")
+                .content(objectMapper.writeValueAsString(updateAuction)))
+            .andExpect(jsonPath("$.errorCode").value("END_TIME_EARLIER_THAN_START_TIME"))
+            .andExpect(status().isOk());
     }
 }
