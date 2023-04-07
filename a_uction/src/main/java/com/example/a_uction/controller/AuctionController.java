@@ -3,9 +3,11 @@ package com.example.a_uction.controller;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
+import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,4 +41,24 @@ public class AuctionController {
         int userId = 0;
         return ResponseEntity.ok(auctionService.updateAuction(updateAuction, userId, auctionId));
     }
+
+
+    @GetMapping("/read")
+    public ResponseEntity<?> getAllAuctionListByUserId(Pageable pageable){
+        //TODO userId 토큰을 통해 받을 예정
+        int userId = 0;
+        return ResponseEntity.ok(auctionService.getAllAuctionListByUserId(userId, pageable));
+    }
+
+    @GetMapping("/read/{auctionStatus}")
+    public ResponseEntity<?> getAuctionListByUserIdAndStatus(@PathVariable AuctionStatus auctionStatus,
+            Pageable pageable){
+
+        //TODO userId 토큰을 통해 받을 예정
+        int userId = 0;
+        var result = auctionService.getAuctionListByUserIdAndAuctionStatus(userId, auctionStatus, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+
 }
