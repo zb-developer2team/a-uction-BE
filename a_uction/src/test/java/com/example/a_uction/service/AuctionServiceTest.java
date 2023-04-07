@@ -1,8 +1,8 @@
 package com.example.a_uction.service;
 
 import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
-import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
@@ -23,6 +23,8 @@ import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TI
 import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -81,7 +83,7 @@ class AuctionServiceTest {
     void addAuction_FAIL_DATE() {
         //given
         //when
-        RuntimeException exception = assertThrows(RuntimeException.class,
+        AuctionException exception = assertThrows(AuctionException.class,
                 () -> auctionService.addAuction(
                         AuctionDto.Request.builder()
                         .itemName("test item2")
@@ -89,18 +91,18 @@ class AuctionServiceTest {
                         .startingPrice(1000)
                         .minimumBid(100)
                         .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-                        .endDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
+                        .endDateTime(LocalDateTime.parse("2023-04-15T17:09:41.411"))
                         .build()));
         //then
-        assertEquals(new RuntimeException().getMessage(), exception.getMessage());
+        assertEquals(new AuctionException(END_TIME_EARLIER_THAN_START_TIME).getMessage(), exception.getMessage());
     }
 
     @Test
-    @DisplayName("경매 등록 실패- 경매 시작 날짜 확인")
+    @DisplayName("경매 등록 실패- 경매 시작 날짜가 등록일 보다 이름")
     void addAuction_FAIL_STARTDATE() {
         //given
         //when
-        RuntimeException exception = assertThrows(RuntimeException.class,
+        RuntimeException exception = assertThrows(AuctionException.class,
                 () -> auctionService.addAuction(
                         AuctionDto.Request.builder()
                                 .itemName("test item2")
@@ -111,7 +113,47 @@ class AuctionServiceTest {
                                 .endDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                                 .build()));
         //then
-        assertEquals(new RuntimeException().getMessage(), exception.getMessage());
+        assertEquals(new AuctionException(BEFORE_START_TIME).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("경매 아이디로 읽어오기")
+    void getAuctionByAuctionIdTest(){
+        //given
+        given(auctionRepository.findById(anyLong()))
+                .willReturn(Optional.of(AuctionEntity.builder()
+                        .itemName("test item")
+                        .itemStatus(ItemStatus.BAD)
+                        .startingPrice(2000)
+                        .minimumBid(200)
+                        .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
+                        .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+                        .auctionStatus(AuctionStatus.SCHEDULED)
+                        .build()));
+        //when
+        AuctionDto.Response response = auctionService.getAuctionByAuctionId(1L);
+        //then
+        verify(auctionRepository, times(1)).findById(1L);
+        assertEquals("test item", response.getItemName());
+        assertEquals(ItemStatus.BAD, response.getItemStatus());
+        assertEquals(2000, response.getStartingPrice());
+        assertEquals(200, response.getMinimumBid());
+        assertEquals(AuctionStatus.SCHEDULED, response.getAuctionStatus());
+        assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
+        assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
+    }
+    @Test
+    @DisplayName("경매 아이디로 읽어오기 실패 - 경매 없음")
+    void getAuctionByAuctionId_NOTFOUND(){
+        //given
+        given(auctionRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+        //when
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> auctionService.getAuctionByAuctionId(1L));
+        //then
+        verify(auctionRepository, times(1)).findById(1L);
+        assertEquals(new AuctionException(ErrorCode.AUCTION_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
