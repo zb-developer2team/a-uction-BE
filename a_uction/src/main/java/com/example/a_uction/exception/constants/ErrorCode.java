@@ -15,6 +15,7 @@ public enum ErrorCode {
 	AUCTION_NOT_FOUND(BAD_REQUEST, "해당 경매를 찾을 수 없습니다."),
 
 
+	INVALID_TOKEN(FORBIDDEN, "토큰이 만료되었습니다."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),
 
