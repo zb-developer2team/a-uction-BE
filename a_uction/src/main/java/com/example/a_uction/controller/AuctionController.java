@@ -1,6 +1,8 @@
 package com.example.a_uction.controller;
 
 
+import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,14 @@ public class AuctionController {
     @PostMapping
     public ResponseEntity<AuctionDto.Response> addAuction(@RequestBody @Valid AuctionDto.Request auction, BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
-            throw new RuntimeException("잘못된 인풋입니다.");
+            throw new AuctionException(ErrorCode.INVALID_REQUEST);
         }
         return ResponseEntity.ok(auctionService.addAuction(auction));
+    }
+
+    @GetMapping("/{auctionId}")
+    public ResponseEntity<AuctionDto.Response> getAuctionByAuctionId(@PathVariable Long auctionId){
+        return ResponseEntity.ok(auctionService.getAuctionByAuctionId(auctionId));
     }
 
     @PutMapping

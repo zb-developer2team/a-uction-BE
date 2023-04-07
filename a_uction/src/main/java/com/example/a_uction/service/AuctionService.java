@@ -1,6 +1,7 @@
 package com.example.a_uction.service;
 
 import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
@@ -31,6 +32,12 @@ public class AuctionService {
         }
         auction.setAuctionStatus(AuctionStatus.SCHEDULED);
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity()));
+    }
+
+    public AuctionDto.Response getAuctionByAuctionId(Long auctionId){
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new AuctionException(ErrorCode.AUCTION_NOT_FOUND));
+        return new AuctionDto.Response().fromEntity(auctionEntity);
     }
 
     public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, int userId, Long auctionId){
