@@ -1,6 +1,9 @@
 package com.example.a_uction.service.user;
 
+import com.example.a_uction.model.user.entity.UserEntity;
+import com.example.a_uction.model.user.repository.UserRepository;
 import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,6 +28,7 @@ public class KakaoService {
 	private String REDIRECT_URL;
 
 	private final RestTemplate restTemplate;
+	private final UserRepository userRepository;
 	public String getAccessToken (String authorize_code) {
 
 		String reqURL = "https://kauth.kakao.com/oauth/token";
@@ -96,6 +100,27 @@ public class KakaoService {
 		userInfo.put("email", kakao_account.get("email").toString());
 
 		return userInfo;
+	}
+
+	public String kakaoLogin(Map<String, String>userInfo) {
+
+		String email = userInfo.get("email");
+
+		if (!isExist(email)) {
+			// [의논] 없는 정보는 null, 소셜 타입 추가 ???
+			userRepository.save(UserEntity.builder()
+				.username(userInfo.get("nickname"))
+				.userEmail(email)
+				.build());
+		}
+
+		// ToDo jwt 토큰 발급
+
+		return null;
+	}
+
+	public boolean isExist(String email) {
+		return userRepository.existsByUserEmail(email);
 	}
 
 }
