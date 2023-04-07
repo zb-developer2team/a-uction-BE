@@ -7,12 +7,13 @@ import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
+import static com.example.a_uction.exception.constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +65,21 @@ public class AuctionService {
         auction.setUpdateDateTime(LocalDateTime.now());
 
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction));
+    }
+
+    public Page<AuctionDto.Response> getAllAuctionListByUserId(int userId, Pageable pageable){
+        var auctionList =  auctionRepository.findByUserId(userId, pageable);
+        if(auctionList.isEmpty()) throw new AuctionException(NOT_FOUND_AUCTION_LIST);
+
+        return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));
+    }
+
+    public Page<AuctionDto.Response> getAuctionListByUserIdAndAuctionStatus(
+            int userId, AuctionStatus auctionStatus, Pageable pageable) {
+
+        Page<AuctionEntity> auctionList = auctionRepository.findByUserIdAndAuctionStatus(userId, auctionStatus, pageable);
+        if(auctionList.isEmpty()) throw new AuctionException(AUCTION_NOT_FOUND);
+
+        return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));
     }
 }
