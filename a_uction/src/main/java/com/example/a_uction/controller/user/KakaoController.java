@@ -18,11 +18,10 @@ public class KakaoController {
 	private final KakaoService kakaoService;
 
 	@GetMapping("/kakao/callback")
-	public ResponseEntity<?> kakaoCallback(@RequestParam(name = "code") String code) {
-		log.info("[CODE = {}]", code);
+	public ResponseEntity<?> kakaoLogin(@RequestParam(name = "code") String code) {
 
-		String accessToken = kakaoService.getAccessToken(code);
-		return ResponseEntity.ok(accessToken);
-		// 현재 테스트 위해서 토큰 return , 추후에 리턴 값은 변경 할 것임
+		log.info("[CODE = {}]", code);
+		return ResponseEntity.ok(kakaoService.kakaoLogIn(code));
+
 	}
 }
