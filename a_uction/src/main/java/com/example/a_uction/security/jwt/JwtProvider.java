@@ -4,16 +4,20 @@ package com.example.a_uction.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
 	private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;
@@ -40,13 +44,24 @@ public class JwtProvider {
 		return parseClaims(token).get(CLAIM_KEY, String.class);
 	}
 
-	public boolean validateToken(String token) {
+	public boolean validateToken(String token){
 
-		if (!StringUtils.hasText(token)) {
-			return false;
+		try {
+			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			return true;
+		} catch (IllegalArgumentException e) {
+			log.error("토큰은 필수입니다.", e);
+		} catch (MalformedJwtException e) {
+			log.error("손상된 토큰입니다.", e);
+		} catch(ExpiredJwtException e) {
+			log.error("만료된 토큰입니다.", e);
+		} catch (UnsupportedJwtException e) {
+			log.error("지원하지 않는 토큰입니다.", e);
+		} catch (SignatureException e) {
+			log.error("시그니처 검증에 실패한 토큰입니다.", e);
 		}
 
-		return !parseClaims(token).getExpiration().before(new Date());
+		return false;
 	}
 
 	public UsernamePasswordAuthenticationToken getAuthentication(String token) {
@@ -56,10 +71,7 @@ public class JwtProvider {
 	}
 
 	private Claims parseClaims(String token) {
-		try {
-			return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-		} catch (ExpiredJwtException e) {
-			return e.getClaims();
-		}
+
+		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 	}
 }

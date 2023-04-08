@@ -16,6 +16,8 @@ public enum ErrorCode {
 
 
 	INVALID_TOKEN(FORBIDDEN, "토큰이 만료되었습니다."),
+	USER_NOT_FOUND(BAD_REQUEST, "유저를 찾을 수 없습니다."),
+	ENTERED_THE_WRONG_PASSWORD(BAD_REQUEST, "비밀번호를 확인 해 주세요."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),
 
