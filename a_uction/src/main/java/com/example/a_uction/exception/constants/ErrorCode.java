@@ -21,9 +21,13 @@ public enum ErrorCode {
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),
 
+	// kakao
+	INVALID_PARSE_ERROR(BAD_REQUEST, "JSON 파싱에 실패하였습니다."),
+
 	//auction
 	BEFORE_START_TIME (BAD_REQUEST, "경매 시작 시간이 등록 시간보다 이전입니다."),
-	END_TIME_EARLIER_THAN_START_TIME (BAD_REQUEST, "경매 종료 시간이 경매 시작 시간보다 이전입니다.")
+	END_TIME_EARLIER_THAN_START_TIME (BAD_REQUEST, "경매 종료 시간이 경매 시작 시간보다 이전입니다."),
+	NOT_FOUND_AUCTION_LIST(BAD_REQUEST, "등록하신 경매 이력이 없습니다.")
 	;
 	private final HttpStatus httpStatus;
 	private final String description;
