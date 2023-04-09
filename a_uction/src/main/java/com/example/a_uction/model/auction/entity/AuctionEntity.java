@@ -22,7 +22,7 @@ public class AuctionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionId;
     //@ManyToOne(targetEntity = .class, fetch = FetchType.LAZY)
-    private int userId;
+    private String userId;
 
     @NotNull(message = "상품 이름을 입력하세요")
     private String itemName;
