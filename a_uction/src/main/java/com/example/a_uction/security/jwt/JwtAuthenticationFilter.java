@@ -29,6 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String token = resolveTokenFromRequest(request);
 
+		if (request.getRequestURI().contains("login") ||
+			request.getRequestURI().contains("register")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		if (provider.validateToken(token)) {
 			UsernamePasswordAuthenticationToken authentication =
 				provider.getAuthentication(token);

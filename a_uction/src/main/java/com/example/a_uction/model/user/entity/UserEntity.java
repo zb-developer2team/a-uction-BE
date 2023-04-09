@@ -1,6 +1,8 @@
 package com.example.a_uction.model.user.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Builder
@@ -18,6 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
 
 	@Id
@@ -30,4 +36,11 @@ public class UserEntity {
 	private String password;
 	private String username;
 	private String phoneNumber;
+	private boolean verify;
+
+	@CreatedDate
+	private LocalDateTime createDateTime;
+	@LastModifiedDate
+	private LocalDateTime updateDateTime;
+
 }

@@ -1,6 +1,7 @@
 package com.example.a_uction.model.user.dto;
 
 import com.example.a_uction.model.user.entity.UserEntity;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,7 @@ public class RegisterUser {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class Request {
+		@Email
 		@NotNull
 		private String userEmail;
 		@NotNull

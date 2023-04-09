@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
-import com.example.a_uction.model.user.dto.RegisterUser;
-import com.example.a_uction.service.UserRegisterService;
+import com.example.a_uction.model.user.dto.LoginUser;
+import com.example.a_uction.service.UserLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,17 +21,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class UserRegisterControllerTest {
+class UserLoginControllerTest {
 
 	@MockBean
-	private UserRegisterService userRegisterService;
+	private UserLoginService userLoginService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -39,53 +38,58 @@ class UserRegisterControllerTest {
 	private MockMvc mockMvc;
 
 	@Test
-	@WithMockUser
-	void register_SUCCESS() throws Exception {
+	@DisplayName("로그인 성공")
+	void login_SUCCESS() throws Exception {
+		given(userLoginService.login(any()))
+			.willReturn("tokentoken");
+
+		mockMvc.perform(post("/login")
+				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+					new LoginUser("zerobase@gmail.com", "1234")
+				)))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("로그인실패 - 이메일 잘못 입력")
+	void LOGIN_FAIL_EMAIL() throws Exception {
 	    //given
-		given(userRegisterService.register(any()))
-			.willReturn(RegisterUser.builder()
-				.userEmail("zerobase@gmail.com")
-				.username("zerobase")
-				.build());
+		given(userLoginService.login(any()))
+			.willThrow(new AuctionException(ErrorCode.USER_NOT_FOUND));
 	    //when
 	    //then
-		mockMvc.perform(post("/register")
+		mockMvc.perform(post("/login")
 				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new RegisterUser.Request(
-						"zerobase@gmail.com",
-						"1234",
-						"zerobase",
-						"01012345678")
-				))
-				.contentType(MediaType.APPLICATION_JSON))
+					new LoginUser("zerobase@gmail.com", "1234")
+				)))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.userEmail").value("zerobase@gmail.com"))
-			.andExpect(jsonPath("$.username").value("zerobase"));
+			.andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value("유저를 찾을 수 없습니다."));
 	}
+
 	@Test
-	@WithMockUser
-	@DisplayName("회원가입 실패 - 컨트롤러 테스트")
-	void register_FAIL() throws Exception {
+	@DisplayName("로그인실패 - 비밀번호 잘못 입력")
+	void LOGIN_FAIL_PASSWORD() throws Exception {
 		//given
-		given(userRegisterService.register(any()))
-			.willThrow(new AuctionException(ErrorCode.THIS_EMAIL_ALREADY_EXIST));
+		given(userLoginService.login(any()))
+			.willThrow(new AuctionException(ErrorCode.ENTERED_THE_WRONG_PASSWORD));
 		//when
 		//then
-		mockMvc.perform(post("/register")
+		mockMvc.perform(post("/login")
 				.with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new RegisterUser.Request(
-						"zerobase@gmail.com",
-						"1234",
-						"zerobase",
-						"01012345678")
-				))
-				.contentType(MediaType.APPLICATION_JSON))
+					new LoginUser("zerobase@gmail.com", "1234")
+				)))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.errorCode").value("THIS_EMAIL_ALREADY_EXIST"))
-			.andExpect(jsonPath("$.message").value("해당 이메일은 이미 존재합니다."));
+			.andExpect(jsonPath("$.errorCode").value("ENTERED_THE_WRONG_PASSWORD"))
+			.andExpect(jsonPath("$.message").value("비밀번호를 확인 해 주세요."));
 	}
 }

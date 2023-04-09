@@ -8,3 +8,35 @@ Content-Type: application/json
   "username": "zerobase",
   "phoneNumber": "01012345678"
 }
+
+###로그인 성공
+POST http://localhost:8081/login
+Content-Type: application/json
+
+{
+  "userEmail": "zerobase@gmail.com",
+  "password": "1234"
+}
+
+###로그인 실패 - 이메일 틀림
+POST http://localhost:8081/login
+Content-Type: application/json
+
+{
+  "userEmail": "zerobase@g.c",
+  "password": "1234"
+}
+
+###로그인 실패 - 비밀번호 틀림
+POST http://localhost:8081/login
+Content-Type: application/json
+
+{
+  "userEmail": "zerobase@gmail.com",
+  "password": "123"
+}
+
+###토큰으로 유저 이메일 받아오기
+GET http://localhost:8081/detail
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJpYXQiOjE2ODA5NjEwNTksImV4cCI6MTY4MTA0NzQ1OX0.YW0rzMRoYMZR_scQaQ4-OiKV4ZM0l4vAVpmnrUK5RWQ
