@@ -1,5 +1,8 @@
 package com.example.a_uction.security.jwt;
 
+import static com.example.a_uction.exception.constants.ErrorCode.LOGOUT_USER_ERROR;
+
+import com.example.a_uction.exception.AuctionException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -7,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
@@ -19,15 +22,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private static final String TOKEN_HEADER = "Authorization";
-	private static final String TOKEN_PREFIX = "Bearer ";
-
 	private final JwtProvider provider;
+	private final RedisTemplate redisTemplate;
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String token = resolveTokenFromRequest(request);
+		String path = request.getServletPath();
+		log.info("REQUEST [ SERVLET_PATH : {} ]", path);
+		if (isPass(path)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+		String token = provider.resolveTokenFromRequest(request);
 
 		if (request.getRequestURI().contains("login") ||
 			request.getRequestURI().contains("register")) {
@@ -36,25 +45,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		if (provider.validateToken(token)) {
-			UsernamePasswordAuthenticationToken authentication =
-				provider.getAuthentication(token);
+			if (!this.isBlocked(token)) {
+				UsernamePasswordAuthenticationToken authentication =
+					provider.getAuthentication(token);
 
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+				authentication.setDetails(
+					new WebAuthenticationDetailsSource().buildDetails(request));
 
-			SecurityContextHolder.getContext()
-				.setAuthentication(authentication);
+				SecurityContextHolder.getContext()
+					.setAuthentication(authentication);
+			} else {
+				throw new AuctionException(LOGOUT_USER_ERROR);
+			}
 		}
-
 		filterChain.doFilter(request, response);
 	}
-	private String resolveTokenFromRequest(HttpServletRequest request) {
 
-		String token = request.getHeader(TOKEN_HEADER);
+	private boolean isPass(String path) {
+		return
+			path.contains("login") ||
+				path.contains("oauth/kakao") ||
+				path.contains("register") ||
+				path.contains("auction") ||
+				path.equals("/");
+	}
 
-		if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
-			return token.substring(TOKEN_PREFIX.length());
+	private boolean isBlocked(String token) {
+		if (redisTemplate.opsForValue().get("BLOCK:" + token) != null) {
+			return true;
 		}
-
-		return null;
+		return false;
 	}
 }

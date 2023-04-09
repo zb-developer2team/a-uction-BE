@@ -3,16 +3,22 @@ package com.example.a_uction.service.user;
 import static com.example.a_uction.exception.constants.ErrorCode.INVALID_PARSE_ERROR;
 
 import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.model.user.dto.LogoutUser;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.security.jwt.JwtAuthenticationFilter;
 import com.example.a_uction.security.jwt.JwtProvider;
+import com.example.a_uction.security.jwt.dto.TokenDto;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,9 +39,11 @@ public class KakaoService {
 
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
-	private final JwtProvider jwtProvider;
+	private final JwtProvider provider;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final RedisTemplate redisTemplate;
 
-	public String kakaoLogIn(String code) {
+	public TokenDto kakaoLogIn(String code) {
 		String kakaoToken = this.getAccessToken(code);
 		return this.getTokenByKakao(this.getUserInfoByKakao(kakaoToken));
 	}
@@ -113,7 +121,7 @@ public class KakaoService {
 		return userInfo;
 	}
 
-	private String getTokenByKakao(Map<String, String> userInfo) {
+	public TokenDto getTokenByKakao(Map<String, String> userInfo) {
 
 		String email = userInfo.get("email");
 
@@ -124,11 +132,36 @@ public class KakaoService {
 				.build());
 		}
 
-		return jwtProvider.createToken(email);
+		// AccessToken, RefreshToken 생성
+		TokenDto tokenDto = provider.createToken(email);
+
+		// refresh토큰 redis 저장
+		redisTemplate.opsForValue()
+			.set("RT:" + email, tokenDto.getRefreshToken(),
+				tokenDto.getRefreshTokenExpireTime(), TimeUnit.MILLISECONDS);
+
+		return tokenDto;
 	}
 
 	public boolean isExist(String email) {
 		return userRepository.existsByUserEmail(email);
+	}
+
+	public LogoutUser kakaoLogout (HttpServletRequest request) {
+		String accessToken = request.getParameter("state");
+		//String accessToken = provider.resolveTokenFromRequest(request);
+		String email = provider.getUserEmail(accessToken);
+
+		// refreshToken 삭제
+		if (redisTemplate.opsForValue().get("RF:" + email) != null) {
+			redisTemplate.delete("RF:" + email);
+		}
+
+		long expiration = provider.getExpiration(accessToken);
+		redisTemplate.opsForValue()
+			.set("BLOCK:" + accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+		return LogoutUser.builder().userEmail(email).build();
 	}
 
 }

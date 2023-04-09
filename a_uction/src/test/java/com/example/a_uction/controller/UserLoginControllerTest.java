@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.user.dto.LoginUser;
+import com.example.a_uction.security.jwt.dto.TokenDto;
 import com.example.a_uction.service.UserLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,10 @@ class UserLoginControllerTest {
 	@DisplayName("로그인 성공")
 	void login_SUCCESS() throws Exception {
 		given(userLoginService.login(any()))
-			.willReturn("tokentoken");
+			.willReturn(TokenDto.builder()
+				.accessToken("tokentoken")
+				.refreshToken("refreshToken")
+				.build());
 
 		mockMvc.perform(post("/login")
 				.with(csrf())

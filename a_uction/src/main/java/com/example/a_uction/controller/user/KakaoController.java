@@ -1,9 +1,12 @@
 package com.example.a_uction.controller.user;
 
 import com.example.a_uction.service.user.KakaoService;
+import java.security.Principal;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,5 +26,21 @@ public class KakaoController {
 		log.info("[CODE = {}]", code);
 		return ResponseEntity.ok(kakaoService.kakaoLogIn(code));
 
+	}
+
+	@GetMapping("/kakao/logout")
+	public ResponseEntity<?> kakaoLogout(HttpServletRequest request) {
+		return ResponseEntity.ok(kakaoService.kakaoLogout(request));
+
+	}
+
+	/**
+	 * test용 api
+	 */
+	@GetMapping("/detail")
+	public ResponseEntity<String> test(Authentication authentication, Principal principal) {
+		authentication.setAuthenticated(false);
+		log.info(principal.getName());
+		return ResponseEntity.ok(authentication.getName());
 	}
 }

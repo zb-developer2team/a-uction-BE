@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,6 +47,8 @@ class AuctionControllerTest {
     private JwtProvider jwtProvider;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    @MockBean
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private MockMvc mockMvc;
