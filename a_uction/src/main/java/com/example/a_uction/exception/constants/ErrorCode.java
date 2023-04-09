@@ -20,6 +20,7 @@ public enum ErrorCode {
 	ENTERED_THE_WRONG_PASSWORD(BAD_REQUEST, "비밀번호를 확인 해 주세요."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),
+	LOGOUT_USER_ERROR(BAD_REQUEST, "로그아웃 된 사용자입니다."),
 
 	// kakao
 	INVALID_PARSE_ERROR(BAD_REQUEST, "JSON 파싱에 실패하였습니다."),
