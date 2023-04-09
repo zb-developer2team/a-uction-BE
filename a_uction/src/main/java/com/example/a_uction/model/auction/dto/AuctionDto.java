@@ -27,8 +27,9 @@ public class AuctionDto {
         private LocalDateTime startDateTime;
         private LocalDateTime endDateTime;
 
-        public AuctionEntity toEntity(){
+        public AuctionEntity toEntity(String userId){
             return AuctionEntity.builder()
+                    .userId(userId)
                     .itemName(this.itemName)
                     .itemStatus(this.itemStatus)
                     .startingPrice(this.startingPrice)

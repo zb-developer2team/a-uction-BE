@@ -7,26 +7,31 @@ import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/auction")
 @RequiredArgsConstructor
+@Slf4j
 public class AuctionController {
 
     private final AuctionService auctionService;
 
     @PostMapping
-    public ResponseEntity<AuctionDto.Response> addAuction(@RequestBody @Valid AuctionDto.Request auction, BindingResult bindingResult) {
+    public ResponseEntity<AuctionDto.Response> addAuction(@RequestBody @Valid AuctionDto.Request auction,
+                                                          BindingResult bindingResult,
+                                                          Principal principal) {
         if (bindingResult.hasErrors()){
             throw new AuctionException(ErrorCode.INVALID_REQUEST);
         }
-        return ResponseEntity.ok(auctionService.addAuction(auction));
+        return ResponseEntity.ok(auctionService.addAuction(auction, principal.getName()));
     }
 
     @GetMapping("/{auctionId}")
@@ -36,28 +41,22 @@ public class AuctionController {
 
     @PutMapping
     public ResponseEntity<?> updateAction(@RequestBody AuctionDto.Request updateAuction,
-                                          @RequestParam Long auctionId){
-        //TODO userId 토큰을 통해 받을 예정
-        int userId = 0;
-        return ResponseEntity.ok(auctionService.updateAuction(updateAuction, userId, auctionId));
+                                          @RequestParam Long auctionId,Principal principal){
+        return ResponseEntity.ok(auctionService.updateAuction(updateAuction, principal.getName(), auctionId));
     }
 
 
     @GetMapping("/read")
-    public ResponseEntity<?> getAllAuctionListByUserId(Pageable pageable){
-        //TODO userId 토큰을 통해 받을 예정
-        int userId = 0;
-        return ResponseEntity.ok(auctionService.getAllAuctionListByUserId(userId, pageable));
+    public ResponseEntity<?> getAllAuctionListByUserId(Principal principal, Pageable pageable){
+        return ResponseEntity.ok(auctionService.getAllAuctionListByUserId(principal.getName(), pageable));
     }
 
     @GetMapping("/read/{auctionStatus}")
-    public ResponseEntity<?> getAuctionListByUserIdAndStatus(@PathVariable AuctionStatus auctionStatus,
+    public ResponseEntity<?> getAuctionListByUserIdAndStatus(Principal principal, @PathVariable AuctionStatus auctionStatus,
             Pageable pageable){
 
-        //TODO userId 토큰을 통해 받을 예정
-        int userId = 0;
-        var result = auctionService.getAuctionListByUserIdAndAuctionStatus(userId, auctionStatus, pageable);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(auctionService.getAuctionListByUserIdAndAuctionStatus(
+                principal.getName(), auctionStatus, pageable));
     }
 
 

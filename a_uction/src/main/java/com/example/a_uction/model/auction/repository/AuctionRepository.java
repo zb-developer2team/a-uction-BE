@@ -11,10 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
-    Optional<AuctionEntity> findByUserIdAndAuctionId(int userId, Long auctionId);
+    Optional<AuctionEntity> findByUserIdAndAuctionId(String userId, Long auctionId);
 
-    Page<AuctionEntity> findByUserId(int userId, Pageable pageable);
+    Page<AuctionEntity> findByUserId(String userId, Pageable pageable);
 
-    Page<AuctionEntity> findByUserIdAndAuctionStatus(int userId, AuctionStatus auctionStatus, Pageable pageable);
+    Page<AuctionEntity> findByUserIdAndAuctionStatus(String userId, AuctionStatus auctionStatus, Pageable pageable);
 
 }
