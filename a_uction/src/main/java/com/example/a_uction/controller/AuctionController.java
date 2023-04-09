@@ -48,14 +48,14 @@ public class AuctionController {
 
     @GetMapping("/read")
     public ResponseEntity<?> getAllAuctionListByUserId(Principal principal, Pageable pageable){
-        return ResponseEntity.ok(auctionService.getAllAuctionListByUserId(principal.getName(), pageable));
+        return ResponseEntity.ok(auctionService.getAllAuctionListByUserEmail(principal.getName(), pageable));
     }
 
     @GetMapping("/read/{auctionStatus}")
     public ResponseEntity<?> getAuctionListByUserIdAndStatus(Principal principal, @PathVariable AuctionStatus auctionStatus,
             Pageable pageable){
 
-        return ResponseEntity.ok(auctionService.getAuctionListByUserIdAndAuctionStatus(
+        return ResponseEntity.ok(auctionService.getAuctionListByUserEmailAndAuctionStatus(
                 principal.getName(), auctionStatus, pageable));
     }
 

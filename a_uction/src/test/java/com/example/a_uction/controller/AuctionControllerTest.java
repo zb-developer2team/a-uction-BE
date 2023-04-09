@@ -110,7 +110,7 @@ class AuctionControllerTest {
 
         AuctionEntity auctionEntity = AuctionEntity.builder()
                 .auctionId(1L)
-                .userId("user1")
+                .userEmail("user1")
                 .itemName("item2")
                 .startingPrice(1000)
                 .minimumBid(2000)
@@ -279,7 +279,7 @@ class AuctionControllerTest {
 
         Page<AuctionDto.Response> page = new PageImpl<>(list);
 
-        given(auctionService.getAllAuctionListByUserId(any(), any())).willReturn(page);
+        given(auctionService.getAllAuctionListByUserEmail(any(), any())).willReturn(page);
 
         //when
         //then
@@ -304,7 +304,7 @@ class AuctionControllerTest {
     @WithMockUser
     void getAllAuctionListByUserIdFail() throws Exception {
         //given
-        given(auctionService.getAllAuctionListByUserId(any(),any()))
+        given(auctionService.getAllAuctionListByUserEmail(any(),any()))
                 .willThrow(new AuctionException(NOT_FOUND_AUCTION_LIST));
         //when
         //then
@@ -342,7 +342,7 @@ class AuctionControllerTest {
 
         Page<AuctionDto.Response> page = new PageImpl<>(list);
 
-        given(auctionService.getAuctionListByUserIdAndAuctionStatus(any(), any(), any())).willReturn(page);
+        given(auctionService.getAuctionListByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(page);
 
         //when
         //then
@@ -367,7 +367,7 @@ class AuctionControllerTest {
     @WithMockUser
     void getAuctionListByUserIdAndStatusFail() throws Exception {
         //given
-        given(auctionService.getAuctionListByUserIdAndAuctionStatus(any(),any(),any()))
+        given(auctionService.getAuctionListByUserEmailAndAuctionStatus(any(),any(),any()))
                 .willThrow(new AuctionException(AUCTION_NOT_FOUND));
         //when
         //then
