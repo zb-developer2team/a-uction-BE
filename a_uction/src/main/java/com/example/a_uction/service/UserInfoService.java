@@ -30,7 +30,7 @@ public class UserInfoService {
 		}
 
 		userEntity.setUsername(updateRequest.getUsername());
-		userEntity.setPhoneNumber(updateRequest.getPhone());
+		userEntity.setPhoneNumber(updateRequest.getPhoneNumber());
 
 		if(!updateRequest.getUpdatePassword().isEmpty()){
 			userEntity.setPassword(passwordEncoder.encode(updateRequest.getUpdatePassword()));

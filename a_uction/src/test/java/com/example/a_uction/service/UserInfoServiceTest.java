@@ -51,7 +51,7 @@ class UserInfoServiceTest {
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("1234")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -64,7 +64,7 @@ class UserInfoServiceTest {
 
         //then
         assertEquals("test1", result.getUsername());
-        assertEquals("01043214321", result.getPhone());
+        assertEquals("01043214321", result.getPhoneNumber());
     }
 
     @Test
@@ -73,7 +73,7 @@ class UserInfoServiceTest {
         //given
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("1234")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -103,7 +103,7 @@ class UserInfoServiceTest {
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("4321")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -138,7 +138,7 @@ class UserInfoServiceTest {
         //then
         assertEquals("test", result.getUsername());
         assertEquals("test@test.com", result.getUserEmail());
-        assertEquals("01012345678", result.getPhone());
+        assertEquals("01012345678", result.getPhoneNumber());
     }
 
     @Test

@@ -12,12 +12,12 @@ public class InfoUser {
 
 	private String username;
 	private String userEmail;
-	private String phone;
+	private String phoneNumber;
 
 	public InfoUser fromEntity(UserEntity userEntity){
 		return InfoUser.builder()
 				.userEmail(userEntity.getUserEmail())
-				.phone(userEntity.getPhoneNumber())
+				.phoneNumber(userEntity.getPhoneNumber())
 				.username(userEntity.getUsername())
 				.build();
 	}
