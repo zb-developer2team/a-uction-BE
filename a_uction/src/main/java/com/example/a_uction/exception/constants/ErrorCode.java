@@ -1,6 +1,7 @@
 package com.example.a_uction.exception.constants;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,8 @@ public enum ErrorCode {
 
 	INVALID_TOKEN(UNAUTHORIZED, "토큰이 만료되었습니다."),
 	USER_NOT_FOUND(BAD_REQUEST, "유저를 찾을 수 없습니다."),
+	THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION(BAD_REQUEST, "이 번호는 이미 인증이 완료되었습니다."),
+	WRONG_CODE_INPUT(BAD_REQUEST, "코드를 잘못 입력하셨습니다. 처음부터 다시 시도해주세요."),
 	ENTERED_THE_WRONG_PASSWORD(BAD_REQUEST, "비밀번호를 확인 해 주세요."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),

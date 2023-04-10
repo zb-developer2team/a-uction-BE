@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenDto {
-	String accessToken;
-	String refreshToken;
+	private String accessToken;
+	private String refreshToken;
 
-	long refreshTokenExpireTime;
+	private Long refreshTokenExpireTime;
 
 	@Getter
 	@Builder
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class AccessToken {
-		String accessToken;
-		String expiresIn;
-		String tokenType;
+		private String accessToken;
+		private String expiresIn;
+		private String tokenType;
 	}
 }

@@ -86,7 +86,7 @@ public class JwtProvider {
 			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 			return true;
 		} catch (IllegalArgumentException e) {
-			log.info("토큰은 필수입니다.", e);
+			log.info("");
 		} catch (MalformedJwtException e) {
 			log.info("손상된 토큰입니다.", e);
 		} catch (ExpiredJwtException e) {
