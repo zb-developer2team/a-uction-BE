@@ -1,0 +1,124 @@
+package com.example.a_uction.controller;
+
+import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.model.user.dto.ModifyUser;
+import com.example.a_uction.security.jwt.JwtProvider;
+import com.example.a_uction.service.AuctionService;
+import com.example.a_uction.service.UserModifyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static com.example.a_uction.exception.constants.ErrorCode.ENTERED_THE_WRONG_PASSWORD;
+import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(UserInfoModifyController.class)
+class UserInfoModifyControllerTest {
+
+    @MockBean
+    private UserModifyService userModifyService;
+    @MockBean
+    private JwtProvider jwtProvider;
+    @MockBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    @MockBean
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    @WithMockUser
+    @DisplayName("회원정보 수정 - 성공")
+    void modifySuccess() throws Exception {
+        //given
+        ModifyUser.Request updateUser = ModifyUser.Request.builder()
+                .currentPassword("4321")
+                .phone("01043214321")
+                .updatePassword("")
+                .username("test1")
+                .build();
+
+        ModifyUser.Response response = ModifyUser.Response.builder()
+                .username("test1")
+                .phone("01043214321")
+                .build();
+
+        given(userModifyService.modifyUserDetail(any(), any())).willReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(post("/user/detail/modify").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUser)))
+                .andExpect(jsonPath("$.username").value("test1"))
+                .andExpect(jsonPath("$.phone").value("01043214321"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("회원정보 수정 - 실패 - 사용자 없음")
+    void modifyFailUser() throws Exception {
+        //given
+        ModifyUser.Request updateUser = ModifyUser.Request.builder()
+                .currentPassword("4321")
+                .phone("01043214321")
+                .updatePassword("")
+                .username("test1")
+                .build();
+
+        given(userModifyService.modifyUserDetail(any(), any())).willThrow(new AuctionException(USER_NOT_FOUND));
+
+        //when
+        //then
+        mockMvc.perform(post("/user/detail/modify").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUser)))
+                .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    @WithMockUser
+    @DisplayName("회원정보 수정 - 실패 - 비밀번호 일치하지 않음")
+    void modifyFailPassword() throws Exception {
+        //given
+        ModifyUser.Request updateUser = ModifyUser.Request.builder()
+                .currentPassword("4321")
+                .phone("01043214321")
+                .updatePassword("")
+                .username("test1")
+                .build();
+
+
+        given(userModifyService.modifyUserDetail(any(), any())).willThrow(new AuctionException(ENTERED_THE_WRONG_PASSWORD));
+
+        //when
+        //then
+        mockMvc.perform(post("/user/detail/modify").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUser)))
+                .andExpect(jsonPath("$.errorCode").value("ENTERED_THE_WRONG_PASSWORD"))
+                .andExpect(status().isOk());
+    }
+}

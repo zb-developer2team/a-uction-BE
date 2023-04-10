@@ -177,9 +177,8 @@ class AuctionServiceTest {
                 .build();
 
         AuctionEntity auctionEntity = AuctionEntity.builder()
-                .userId("user1")
+                .userEmail("user1")
                 .auctionId(1L)
-                .userId("user1")
                 .itemName("item")
                 .startingPrice(1234)
                 .minimumBid(1000)
@@ -190,7 +189,7 @@ class AuctionServiceTest {
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
 
-        given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
                 .willReturn(Optional.ofNullable(auctionEntity));
         given(auctionRepository.save(any())).willReturn(auctionEntity);
 
@@ -224,7 +223,7 @@ class AuctionServiceTest {
 
         AuctionEntity auctionEntity = AuctionEntity.builder()
                 .auctionId(1L)
-                .userId("user1")
+                .userEmail("user1")
                 .itemName("item")
                 .startingPrice(1234)
                 .minimumBid(1000)
@@ -235,7 +234,7 @@ class AuctionServiceTest {
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
 
-        given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
                 .willReturn(Optional.ofNullable(auctionEntity));
 
         //when
@@ -264,7 +263,7 @@ class AuctionServiceTest {
 
         AuctionEntity auctionEntity = AuctionEntity.builder()
                 .auctionId(1L)
-                .userId("user1")
+                .userEmail("user1")
                 .itemName("item")
                 .startingPrice(1234)
                 .minimumBid(1000)
@@ -275,7 +274,7 @@ class AuctionServiceTest {
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
 
-        given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
                 .willReturn(Optional.ofNullable(auctionEntity));
 
         //when
@@ -294,7 +293,7 @@ class AuctionServiceTest {
         List<AuctionEntity> list = List.of(
                 AuctionEntity.builder()
                         .auctionId(1L)
-                        .userId("user1")
+                        .userEmail("user1")
                         .itemName("item1")
                         .startingPrice(1111)
                         .minimumBid(1000)
@@ -305,7 +304,7 @@ class AuctionServiceTest {
                         .build(),
                 AuctionEntity.builder()
                         .auctionId(2L)
-                        .userId("user1")
+                        .userEmail("user1")
                         .itemName("item2")
                         .startingPrice(2222)
                         .minimumBid(2000)
@@ -318,10 +317,10 @@ class AuctionServiceTest {
         );
         Page<AuctionEntity> page = new PageImpl<>(list);
 
-        given(auctionRepository.findByUserId(any(), any())).willReturn(page);
+        given(auctionRepository.findByUserEmail(any(), any())).willReturn(page);
 
         //when
-        var result = auctionService.getAllAuctionListByUserId("user1", Pageable.ofSize(10));
+        var result = auctionService.getAllAuctionListByUserEmail("user1", Pageable.ofSize(10));
 
         //then
         assertEquals(2, result.getTotalElements());
@@ -339,11 +338,11 @@ class AuctionServiceTest {
     @DisplayName("해당 유저의 모든 경매 리스트 가져오기 - 실패")
     void getAllAuctionListByUserIdFail(){
         //given
-        given(auctionRepository.findByUserId(any(), any())).willReturn(Page.empty());
+        given(auctionRepository.findByUserEmail(any(), any())).willReturn(Page.empty());
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> auctionService.getAllAuctionListByUserId("user1", Pageable.ofSize(10)));
+                () -> auctionService.getAllAuctionListByUserEmail("user1", Pageable.ofSize(10)));
 
         //then
         assertEquals(NOT_FOUND_AUCTION_LIST, exception.getErrorCode());
@@ -356,7 +355,7 @@ class AuctionServiceTest {
         List<AuctionEntity> list = List.of(
                 AuctionEntity.builder()
                         .auctionId(1L)
-                        .userId("user1")
+                        .userEmail("user1")
                         .itemName("item1")
                         .startingPrice(1111)
                         .minimumBid(1000)
@@ -368,7 +367,7 @@ class AuctionServiceTest {
                         .build(),
                 AuctionEntity.builder()
                         .auctionId(2L)
-                        .userId("user1")
+                        .userEmail("user1")
                         .itemName("item2")
                         .startingPrice(2222)
                         .minimumBid(2000)
@@ -382,10 +381,10 @@ class AuctionServiceTest {
         );
         Page<AuctionEntity> page = new PageImpl<>(list);
 
-        given(auctionRepository.findByUserIdAndAuctionStatus(any(), any(), any())).willReturn(page);
+        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(page);
 
         //when
-        var result = auctionService.getAuctionListByUserIdAndAuctionStatus("user1", AuctionStatus.SCHEDULED, Pageable.ofSize(10));
+        var result = auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.SCHEDULED, Pageable.ofSize(10));
 
         //then
         assertEquals(2, result.getTotalElements());
@@ -405,11 +404,11 @@ class AuctionServiceTest {
     @DisplayName("경매 상태 별 리스트 가져오기 - 실패")
     void getAuctionListByUserIdAndAuctionStatusFail(){
         //given
-        given(auctionRepository.findByUserIdAndAuctionStatus(any(), any(), any())).willReturn(Page.empty());
+        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(Page.empty());
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> auctionService.getAuctionListByUserIdAndAuctionStatus("user1", AuctionStatus.COMPLETE, Pageable.ofSize(10)));
+                () -> auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.COMPLETE, Pageable.ofSize(10)));
 
         //then
         assertEquals(AUCTION_NOT_FOUND, exception.getErrorCode());
