@@ -45,7 +45,7 @@ public class UserRegisterController {
 	}
 
 	@GetMapping("/verify/sms/codeCheck")
-	public ResponseEntity<Boolean> codeCheck(@RequestBody String code) {
-		return ResponseEntity.ok(verifyService.verifyCode(code));
+	public ResponseEntity<Boolean> codeCheck(@RequestBody Verify.Form form) {
+		return ResponseEntity.ok(verifyService.verifyCode(form));
 	}
 }

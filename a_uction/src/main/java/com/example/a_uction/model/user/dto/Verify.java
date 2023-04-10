@@ -50,8 +50,8 @@ public class Verify {
 	@NoArgsConstructor
 	@Setter
 	@Getter
-	public static class TestMessage {
+	public static class Form {
 		private String phoneNumber;
-		private String content;
+		private String code;
 	}
 }

@@ -92,11 +92,12 @@ public class VerifyService {
 			new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + this.serviceId + "/messages"), body, Verify.Response.class
 		);
 	}
-	public boolean verifyCode(String code) {
-		if (verificationEntityRepository.findByCode(code).isEmpty()) {
+	public boolean verifyCode(Verify.Form form) {
+		if (verificationEntityRepository
+			.findByCodeAndPhoneNumber(form.getCode(), form.getPhoneNumber()).isEmpty()) {
 			throw new AuctionException(WRONG_CODE_INPUT);
 		}
-		deleteVerification(code);
+		deleteVerification(form);
 		return true;
 	}
 	private void validatePhoneNumber(String phoneNumber) {
@@ -115,8 +116,10 @@ public class VerifyService {
 		return verifyCode;
 	}
 
-	private void deleteVerification(String code) {
-		Optional<UserVerificationEntity> user = verificationEntityRepository.findByCode(code);
+	private void deleteVerification(Verify.Form form) {
+		Optional<UserVerificationEntity> user =
+			verificationEntityRepository
+				.findByCodeAndPhoneNumber(form.getCode(), form.getPhoneNumber());
 		user.ifPresent(verificationEntityRepository::delete);
 	}
 

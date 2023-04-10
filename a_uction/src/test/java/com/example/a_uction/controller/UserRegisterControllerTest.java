@@ -108,7 +108,7 @@ class UserRegisterControllerTest {
 	@DisplayName("인증완료 - 코드체크 성공")
 	void codeCheck_SUCCESS() throws Exception {
 	    //given
-		given(verifyService.verifyCode(anyString()))
+		given(verifyService.verifyCode(any()))
 			.willReturn(true);
 	    //when
 	    //then
@@ -124,7 +124,7 @@ class UserRegisterControllerTest {
 	@DisplayName("인증완료 - 코드체크 실패")
 	void codeCheck_FAIL() throws Exception {
 		//given
-		given(verifyService.verifyCode(anyString()))
+		given(verifyService.verifyCode(any()))
 			.willThrow(new AuctionException(ErrorCode.WRONG_CODE_INPUT));
 		//when
 		//then
