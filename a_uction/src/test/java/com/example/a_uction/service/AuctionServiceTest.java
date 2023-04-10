@@ -381,7 +381,7 @@ class AuctionServiceTest {
         );
         Page<AuctionEntity> page = new PageImpl<>(list);
 
-        given(auctionRepository.findByUserIdAndAuctionStatus(any(), any(), any())).willReturn(page);
+        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(page);
 
         //when
         var result = auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.SCHEDULED, Pageable.ofSize(10));
@@ -404,7 +404,7 @@ class AuctionServiceTest {
     @DisplayName("경매 상태 별 리스트 가져오기 - 실패")
     void getAuctionListByUserIdAndAuctionStatusFail(){
         //given
-        given(auctionRepository.findByUserIdAndAuctionStatus(any(), any(), any())).willReturn(Page.empty());
+        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(Page.empty());
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,

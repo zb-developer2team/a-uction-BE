@@ -80,7 +80,7 @@ public class AuctionService {
     public Page<AuctionDto.Response> getAuctionListByUserEmailAndAuctionStatus(
             String userEmail, AuctionStatus auctionStatus, Pageable pageable) {
 
-        Page<AuctionEntity> auctionList = auctionRepository.findByUserIdAndAuctionStatus(userEmail, auctionStatus, pageable);
+        Page<AuctionEntity> auctionList = auctionRepository.findByUserEmailAndAuctionStatus(userEmail, auctionStatus, pageable);
         if(auctionList.isEmpty()) throw new AuctionException(AUCTION_NOT_FOUND);
 
         return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));

@@ -15,6 +15,6 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     Page<AuctionEntity> findByUserEmail(String userEmail, Pageable pageable);
 
-    Page<AuctionEntity> findByUserIdAndAuctionStatus(String userId, AuctionStatus auctionStatus, Pageable pageable);
+    Page<AuctionEntity> findByUserEmailAndAuctionStatus(String userEmail, AuctionStatus auctionStatus, Pageable pageable);
 
 }
