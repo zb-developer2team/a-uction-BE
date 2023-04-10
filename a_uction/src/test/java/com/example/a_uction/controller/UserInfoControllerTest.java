@@ -3,9 +3,7 @@ package com.example.a_uction.controller;
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.ModifyUser;
 import com.example.a_uction.security.jwt.JwtProvider;
-import com.example.a_uction.service.AuctionService;
-import com.example.a_uction.service.UserModifyService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.a_uction.service.UserInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,20 +18,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.a_uction.exception.constants.ErrorCode.ENTERED_THE_WRONG_PASSWORD;
 import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserInfoModifyController.class)
-class UserInfoModifyControllerTest {
+@WebMvcTest(UserInfoController.class)
+class UserInfoControllerTest {
 
     @MockBean
-    private UserModifyService userModifyService;
+    private UserInfoService userInfoService;
     @MockBean
     private JwtProvider jwtProvider;
     @MockBean
@@ -62,7 +58,7 @@ class UserInfoModifyControllerTest {
                 .phone("01043214321")
                 .build();
 
-        given(userModifyService.modifyUserDetail(any(), any())).willReturn(response);
+        given(userInfoService.modifyUserDetail(any(), any())).willReturn(response);
 
         //when
         //then
@@ -86,7 +82,7 @@ class UserInfoModifyControllerTest {
                 .username("test1")
                 .build();
 
-        given(userModifyService.modifyUserDetail(any(), any())).willThrow(new AuctionException(USER_NOT_FOUND));
+        given(userInfoService.modifyUserDetail(any(), any())).willThrow(new AuctionException(USER_NOT_FOUND));
 
         //when
         //then
@@ -111,7 +107,7 @@ class UserInfoModifyControllerTest {
                 .build();
 
 
-        given(userModifyService.modifyUserDetail(any(), any())).willThrow(new AuctionException(ENTERED_THE_WRONG_PASSWORD));
+        given(userInfoService.modifyUserDetail(any(), any())).willThrow(new AuctionException(ENTERED_THE_WRONG_PASSWORD));
 
         //when
         //then

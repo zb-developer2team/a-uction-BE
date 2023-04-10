@@ -24,13 +24,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class UserModifyServiceTest {
+class UserInfoServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserModifyService userModifyService;
+    private UserInfoService userInfoService;
 
     @Spy
     private BCryptPasswordEncoder passwordEncoder;
@@ -60,7 +60,7 @@ class UserModifyServiceTest {
         given(userRepository.save(any())).willReturn(userEntity);
 
         //when
-        var result = userModifyService.modifyUserDetail("test@test.com", updateUser);
+        var result = userInfoService.modifyUserDetail("test@test.com", updateUser);
 
         //then
         assertEquals("test1", result.getUsername());
@@ -82,7 +82,7 @@ class UserModifyServiceTest {
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> userModifyService.modifyUserDetail("test1@test.com", updateUser));
+                () -> userInfoService.modifyUserDetail("test1@test.com", updateUser));
 
         //then
         assertEquals(USER_NOT_FOUND, exception.getErrorCode());
@@ -112,7 +112,7 @@ class UserModifyServiceTest {
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> userModifyService.modifyUserDetail("test1@test.com", updateUser));
+                () -> userInfoService.modifyUserDetail("test1@test.com", updateUser));
 
         //then
         assertEquals(ENTERED_THE_WRONG_PASSWORD, exception.getErrorCode());
