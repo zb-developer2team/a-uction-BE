@@ -117,4 +117,41 @@ class UserInfoServiceTest {
         //then
         assertEquals(ENTERED_THE_WRONG_PASSWORD, exception.getErrorCode());
     }
+
+    @Test
+    @DisplayName("사용자 정보 보기 - 성공")
+    void userInfoSuccess(){
+        //given
+        UserEntity user = UserEntity.builder()
+                .username("test")
+                .userEmail("test@test.com")
+                .phoneNumber("01012345678")
+                .id(1L)
+                .createDateTime(LocalDateTime.of(2023,4,1,00,00,00))
+                .build();
+
+        given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(user));
+
+        //when
+        var result = userInfoService.userInfo("test@test.com");
+
+        //then
+        assertEquals("test", result.getUsername());
+        assertEquals("test@test.com", result.getUserEmail());
+        assertEquals("01012345678", result.getPhone());
+    }
+
+    @Test
+    @DisplayName("사용자 정보 보기 - 실패")
+    void userInfoFail(){
+        //given
+        given(userRepository.findByUserEmail(any())).willThrow(new AuctionException(USER_NOT_FOUND));
+
+        //when
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> userInfoService.userInfo("test@test.com"));
+
+        //then
+        assertEquals(USER_NOT_FOUND, exception.getErrorCode());
+    }
 }
