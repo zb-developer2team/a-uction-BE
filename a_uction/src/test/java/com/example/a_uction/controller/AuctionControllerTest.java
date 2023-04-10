@@ -25,14 +25,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
-import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_LIST;
+import static com.example.a_uction.exception.constants.ErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -374,6 +374,55 @@ class AuctionControllerTest {
         mockMvc.perform(get("/auction/read/SCHEDULED").with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.errorCode").value("AUCTION_NOT_FOUND"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("유저의 경매 삭제 - 성공")
+    @WithMockUser
+    void deleteAuctionSuccess() throws Exception{
+        AuctionDto.Response auctionDto = AuctionDto.Response.builder()
+                .itemName("test item2")
+                .itemStatus(ItemStatus.GOOD)
+                .startingPrice(2000)
+                .minimumBid(200)
+                .auctionStatus(AuctionStatus.SCHEDULED)
+                .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
+                .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+                .build();
+        given(auctionService.deleteAuction(anyLong(), anyString()))
+                .willReturn(auctionDto);
+        mockMvc.perform(delete("/auction/1")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
+                .andExpect(jsonPath("$.itemName").value("test item2"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("다른 유저의 경매 삭제 - 실패")
+    @WithMockUser
+    void deleteAuctionFail() throws Exception{
+        given(auctionService.deleteAuction(anyLong(), anyString()))
+                .willThrow(new AuctionException(AUCTION_NOT_FOUND));
+        mockMvc.perform(delete("/auction/1")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(jsonPath("$.errorCode").value("AUCTION_NOT_FOUND"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("이미 시작된 경매 삭제 - 실패")
+    @WithMockUser
+    void deleteStartedAuctionFail() throws Exception{
+        given(auctionService.deleteAuction(anyLong(), anyString()))
+                .willThrow(new AuctionException(UNABLE_DELETE_AUCTION));
+        mockMvc.perform(delete("/auction/1")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(jsonPath("$.errorCode").value("UNABLE_DELETE_AUCTION"))
                 .andExpect(status().isOk());
     }
 }

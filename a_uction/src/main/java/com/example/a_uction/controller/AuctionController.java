@@ -35,6 +35,11 @@ public class AuctionController {
         return ResponseEntity.ok(auctionService.addAuction(auction, principal.getName()));
     }
 
+    @DeleteMapping("/{auctionId}")
+    public ResponseEntity<?> deleteAuctionByAuctionId(@PathVariable Long auctionId, Principal principal){
+        return ResponseEntity.ok(auctionService.deleteAuction(auctionId, principal.getName()));
+    }
+
     @GetMapping("/{auctionId}")
     public ResponseEntity<AuctionDto.Response> getAuctionByAuctionId(@PathVariable Long auctionId){
         return ResponseEntity.ok(auctionService.getAuctionByAuctionId(auctionId));

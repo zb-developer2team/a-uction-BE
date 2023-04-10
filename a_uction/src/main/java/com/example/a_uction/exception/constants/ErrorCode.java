@@ -32,7 +32,8 @@ public enum ErrorCode {
 	BEFORE_START_TIME (BAD_REQUEST, "경매 시작 시간이 등록 시간보다 이전입니다."),
 	END_TIME_EARLIER_THAN_START_TIME (BAD_REQUEST, "경매 종료 시간이 경매 시작 시간보다 이전입니다."),
 	NOT_FOUND_AUCTION_LIST(BAD_REQUEST, "등록하신 경매 이력이 없습니다."),
-	UNABLE_UPDATE_AUCTION(BAD_REQUEST, "진행 예정인 경매만 수정이 가능합니다.")
+	UNABLE_UPDATE_AUCTION(BAD_REQUEST, "진행 예정인 경매만 수정이 가능합니다."),
+	UNABLE_DELETE_AUCTION(BAD_REQUEST, "진행 예정인 경매만 삭제가 가능합니다.")
 	;
 	private final HttpStatus httpStatus;
 	private final String description;

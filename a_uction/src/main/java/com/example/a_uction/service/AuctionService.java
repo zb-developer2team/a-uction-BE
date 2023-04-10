@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountException;
 import java.time.LocalDateTime;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
@@ -22,7 +23,7 @@ public class AuctionService {
 
     public AuctionDto.Response addAuction(AuctionDto.Request auction, String userEmail){
         if (auction.getEndDateTime().isBefore(auction.getStartDateTime())){
-            // 경매 종료 시간이 경매 시작 시간보다 이트름
+            // 경매 종료 시간이 경매 시작 시간보다 이름
             throw new AuctionException(END_TIME_EARLIER_THAN_START_TIME);
         }
 
@@ -31,7 +32,19 @@ public class AuctionService {
             throw new AuctionException(BEFORE_START_TIME);
         }
         auction.setAuctionStatus(AuctionStatus.SCHEDULED);
+        System.out.println(userEmail);
+        System.out.println(auction.getItemName());
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity(userEmail)));
+    }
+
+    public AuctionDto.Response deleteAuction(Long auctionId, String userEmail){
+        AuctionEntity auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
+                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+        if (auction.getStartDateTime().isBefore(LocalDateTime.now())){
+            throw new AuctionException(UNABLE_DELETE_AUCTION);
+        }
+        auctionRepository.delete(auction);
+        return new AuctionDto.Response().fromEntity(auction);
     }
 
     public AuctionDto.Response getAuctionByAuctionId(Long auctionId){
