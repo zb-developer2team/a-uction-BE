@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountException;
 import java.time.LocalDateTime;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
@@ -37,13 +38,13 @@ public class AuctionService {
     }
 
     public AuctionDto.Response deleteAuction(Long auctionId, String userEmail){
-        var auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
+        AuctionEntity auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-        if(auction.getUserEmail().equals(userEmail)){
-            auctionRepository.deleteById(auctionId);
-            return new AuctionDto.Response().fromEntity(auction);
+        if (auction.getStartDateTime().isBefore(LocalDateTime.now())){
+            throw new AuctionException(UNABLE_DELETE_AUCTION);
         }
-        return null;
+        auctionRepository.delete(auction);
+        return new AuctionDto.Response().fromEntity(auction);
     }
 
     public AuctionDto.Response getAuctionByAuctionId(Long auctionId){

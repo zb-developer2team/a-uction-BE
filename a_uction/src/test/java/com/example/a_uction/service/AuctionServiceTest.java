@@ -8,6 +8,7 @@ import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.user.entity.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -409,6 +410,73 @@ class AuctionServiceTest {
         //when
         AuctionException exception = assertThrows(AuctionException.class,
                 () -> auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.COMPLETE, Pageable.ofSize(10)));
+
+        //then
+        assertEquals(AUCTION_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("경매 삭제 - 성공")
+    void deleteAuction(){
+        UserEntity user = UserEntity.builder()
+                .userEmail("zerobase@gmail.com").build();
+        AuctionEntity auction = AuctionEntity.builder()
+                .auctionId(1L)
+                .userEmail(user.getUserEmail())
+                .itemName("item1")
+                .startingPrice(1111)
+                .minimumBid(1000)
+                .transactionStatus(TransactionStatus.SALE)
+                .itemStatus(ItemStatus.BAD)
+                .startDateTime(LocalDateTime.of(2023,4,12,00,00,00))
+                .endDateTime(LocalDateTime.of(2023,4,13,00,00,00))
+                .build();
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+                .willReturn(Optional.of(auction));
+        ArgumentCaptor<AuctionEntity> captor = ArgumentCaptor.forClass(AuctionEntity.class);
+        AuctionDto.Response auctionDto = auctionService.deleteAuction(1L, "zerobase@gmail.com");
+        //then
+        verify(auctionRepository, times(1)).delete(captor.capture());
+        assertEquals("item1", auctionDto.getItemName());
+        assertEquals(TransactionStatus.SALE, captor.getValue().getTransactionStatus());
+        assertEquals(1000, captor.getValue().getMinimumBid());
+    }
+
+    @Test
+    @DisplayName("경매 삭제 - 실패 - 이미 시작된 경매")
+    void deleteSTARTEDAuctionFAIL(){
+        UserEntity user = UserEntity.builder()
+                .userEmail("zerobase@gmail.com").build();
+        AuctionEntity auction = AuctionEntity.builder()
+                .auctionId(1L)
+                .userEmail(user.getUserEmail())
+                .itemName("item1")
+                .startingPrice(1111)
+                .minimumBid(1000)
+                .transactionStatus(TransactionStatus.SALE)
+                .itemStatus(ItemStatus.BAD)
+                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
+                .endDateTime(LocalDateTime.of(2023,4,13,00,00,00))
+                .build();
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+                .willReturn(Optional.of(auction));
+        //then
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> auctionService.deleteAuction(1L, "zerobase@gmail.com"));
+
+        //then
+        assertEquals(UNABLE_DELETE_AUCTION, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("경매 삭제 - 실패 - 유저가 등록한 경매가 아님")
+    void deleteAnotherUsersAuctionFAIL(){
+
+        given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+                .willReturn(Optional.empty());
+        //then
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> auctionService.deleteAuction(1L, "zerobase@gmail.com"));
 
         //then
         assertEquals(AUCTION_NOT_FOUND, exception.getErrorCode());
