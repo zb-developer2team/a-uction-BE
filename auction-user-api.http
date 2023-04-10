@@ -42,18 +42,22 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 
 ###회원정보 수정
-POST localhost:8081/user/detail/modify
+PUT localhost:8081/user/detail/modify
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
 
 {
   "currentPassword" : "1234",
   "updatePassword" : "",
   "username" : "test",
-  "phone" : "01012341234"
+  "phoneNumber" : "01012341234"
 }
 
 ###리프레시 토큰 사용하여 어세스토큰 갱신
 POST http://localhost:8081/auth/refresh
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 Authorization-refresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSZWZyZXNoVG9rZW4iLCJpYXQiOjE2ODExMDc0MTUsImV4cCI6MTY4MjMxNzAxNX0.X-MBwGjQ-B97_73v9SmctLZ5rZitRZocUA6daup7xzk
+
+###회원정보 보기
+GET localhost:8081/user/detail
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4

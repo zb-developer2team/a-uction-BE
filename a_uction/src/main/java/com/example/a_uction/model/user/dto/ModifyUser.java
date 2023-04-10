@@ -14,7 +14,7 @@ public class ModifyUser {
 		private String currentPassword;
 		private String updatePassword;
 		private String username;
-		private String phone;
+		private String phoneNumber;
 	}
 
 	@Getter
@@ -24,11 +24,11 @@ public class ModifyUser {
 	@AllArgsConstructor
 	public static class Response{
 		private String username;
-		private String phone;
+		private String phoneNumber;
 
 		public ModifyUser.Response fromEntity(UserEntity userEntity){
 			return Response.builder()
-					.phone(userEntity.getPhoneNumber())
+					.phoneNumber(userEntity.getPhoneNumber())
 					.username(userEntity.getUsername())
 					.build();
 		}

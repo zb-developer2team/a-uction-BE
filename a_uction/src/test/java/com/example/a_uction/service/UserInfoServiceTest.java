@@ -24,13 +24,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class UserModifyServiceTest {
+class UserInfoServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserModifyService userModifyService;
+    private UserInfoService userInfoService;
 
     @Spy
     private BCryptPasswordEncoder passwordEncoder;
@@ -51,7 +51,7 @@ class UserModifyServiceTest {
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("1234")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -60,11 +60,11 @@ class UserModifyServiceTest {
         given(userRepository.save(any())).willReturn(userEntity);
 
         //when
-        var result = userModifyService.modifyUserDetail("test@test.com", updateUser);
+        var result = userInfoService.modifyUserDetail("test@test.com", updateUser);
 
         //then
         assertEquals("test1", result.getUsername());
-        assertEquals("01043214321", result.getPhone());
+        assertEquals("01043214321", result.getPhoneNumber());
     }
 
     @Test
@@ -73,7 +73,7 @@ class UserModifyServiceTest {
         //given
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("1234")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -82,7 +82,7 @@ class UserModifyServiceTest {
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> userModifyService.modifyUserDetail("test1@test.com", updateUser));
+                () -> userInfoService.modifyUserDetail("test1@test.com", updateUser));
 
         //then
         assertEquals(USER_NOT_FOUND, exception.getErrorCode());
@@ -103,7 +103,7 @@ class UserModifyServiceTest {
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
                 .currentPassword("4321")
-                .phone("01043214321")
+                .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
                 .build();
@@ -112,9 +112,46 @@ class UserModifyServiceTest {
 
         //when
         AuctionException exception = assertThrows(AuctionException.class,
-                () -> userModifyService.modifyUserDetail("test1@test.com", updateUser));
+                () -> userInfoService.modifyUserDetail("test1@test.com", updateUser));
 
         //then
         assertEquals(ENTERED_THE_WRONG_PASSWORD, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("사용자 정보 보기 - 성공")
+    void userInfoSuccess(){
+        //given
+        UserEntity user = UserEntity.builder()
+                .username("test")
+                .userEmail("test@test.com")
+                .phoneNumber("01012345678")
+                .id(1L)
+                .createDateTime(LocalDateTime.of(2023,4,1,00,00,00))
+                .build();
+
+        given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(user));
+
+        //when
+        var result = userInfoService.userInfo("test@test.com");
+
+        //then
+        assertEquals("test", result.getUsername());
+        assertEquals("test@test.com", result.getUserEmail());
+        assertEquals("01012345678", result.getPhoneNumber());
+    }
+
+    @Test
+    @DisplayName("사용자 정보 보기 - 실패")
+    void userInfoFail(){
+        //given
+        given(userRepository.findByUserEmail(any())).willThrow(new AuctionException(USER_NOT_FOUND));
+
+        //when
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> userInfoService.userInfo("test@test.com"));
+
+        //then
+        assertEquals(USER_NOT_FOUND, exception.getErrorCode());
     }
 }
