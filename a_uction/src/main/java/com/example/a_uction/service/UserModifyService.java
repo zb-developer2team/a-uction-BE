@@ -32,7 +32,6 @@ public class UserModifyService {
 
 		userEntity.setUsername(updateRequest.getUsername());
 		userEntity.setPhoneNumber(updateRequest.getPhone());
-		userEntity.setUpdateDateTime(LocalDateTime.now());
 
 		if(!updateRequest.getUpdatePassword().isEmpty()){
 			userEntity.setPassword(passwordEncoder.encode(updateRequest.getUpdatePassword()));

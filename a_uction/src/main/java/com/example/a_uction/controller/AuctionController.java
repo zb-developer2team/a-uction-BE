@@ -8,6 +8,7 @@ import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -40,20 +41,20 @@ public class AuctionController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateAction(@RequestBody AuctionDto.Request updateAuction,
+    public ResponseEntity<AuctionDto.Response> updateAction(@RequestBody AuctionDto.Request updateAuction,
                                           @RequestParam Long auctionId,Principal principal){
         return ResponseEntity.ok(auctionService.updateAuction(updateAuction, principal.getName(), auctionId));
     }
 
 
     @GetMapping("/read")
-    public ResponseEntity<?> getAllAuctionListByUserId(Principal principal, Pageable pageable){
+    public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionListByUserId(Principal principal, Pageable pageable){
         return ResponseEntity.ok(auctionService.getAllAuctionListByUserEmail(principal.getName(), pageable));
     }
 
     @GetMapping("/read/{auctionStatus}")
-    public ResponseEntity<?> getAuctionListByUserIdAndStatus(Principal principal, @PathVariable AuctionStatus auctionStatus,
-            Pageable pageable){
+    public ResponseEntity<Page<AuctionDto.Response>> getAuctionListByUserIdAndStatus(
+            Principal principal, @PathVariable AuctionStatus auctionStatus, Pageable pageable){
 
         return ResponseEntity.ok(auctionService.getAuctionListByUserEmailAndAuctionStatus(
                 principal.getName(), auctionStatus, pageable));

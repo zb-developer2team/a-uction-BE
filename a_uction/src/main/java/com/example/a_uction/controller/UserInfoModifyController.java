@@ -18,8 +18,8 @@ public class UserInfoModifyController {
 	private final UserModifyService userModifyService;
 
 	@PostMapping("/detail/modify")
-	public ResponseEntity<?> modify(Principal principal,
-									@RequestBody ModifyUser.Request request) {
+	public ResponseEntity<ModifyUser.Response> modify(Principal principal,
+													  @RequestBody ModifyUser.Request request) {
 
 		return ResponseEntity.ok(userModifyService.modifyUserDetail(principal.getName(), request));
 	}
