@@ -1,0 +1,44 @@
+###경매 생성
+POST http://localhost:8081/auction
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
+
+{
+  "itemName": "air force 1",
+  "itemStatus": "GOOD",
+  "startingPrice": 1000,
+  "minimumBid": 100,
+  "category": "SHOES",
+  "startDateTime": "2023-04-11T13:41:30.416Z",
+  "endDateTime": "2023-04-30T13:41:30.416Z"
+}
+
+###경매 보기
+GET http://localhost:8081/auction/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTAwNiwiZXhwIjoxNjgxMTM0NjA2fQ.1qIxzvIRdxMITQ1TheoADMls9irD44MQudfeaxETkhg
+
+###경매 수정
+PUT http://localhost:8081/auction?auctionId=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
+
+{
+  "itemName": "air force 1",
+  "itemStatus": "GOOD",
+  "startingPrice": 1000,
+  "minimumBid": 100,
+  "category": "SHOES",
+  "startDateTime": "2023-04-12T13:41:30.416Z",
+  "endDateTime": "2023-04-30T13:41:30.416Z"
+}
+
+###user의 모든 경매 가져오기
+GET http://localhost:8081/auction/read
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
+
+###경매 삭제
+DELETE http://localhost:8081/auction/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTAwNiwiZXhwIjoxNjgxMTM0NjA2fQ.1qIxzvIRdxMITQ1TheoADMls9irD44MQudfeaxETkhg

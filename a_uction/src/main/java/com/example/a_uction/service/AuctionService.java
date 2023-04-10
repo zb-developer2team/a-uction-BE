@@ -2,7 +2,6 @@ package com.example.a_uction.service;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountException;
 import java.time.LocalDateTime;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
@@ -31,7 +29,6 @@ public class AuctionService {
             //경매 시작시간이 등록 시간보다 이름
             throw new AuctionException(BEFORE_START_TIME);
         }
-        auction.setAuctionStatus(AuctionStatus.SCHEDULED);
         System.out.println(userEmail);
         System.out.println(auction.getItemName());
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity(userEmail)));
@@ -54,10 +51,10 @@ public class AuctionService {
     }
 
     public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, String userEmail, Long auctionId){
-        var auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
+        AuctionEntity auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
 
-        if(!auction.getAuctionStatus().equals(AuctionStatus.SCHEDULED)){
+        if(auction.getStartDateTime().isBefore(LocalDateTime.now())){
             throw new AuctionException(UNABLE_UPDATE_AUCTION);
         }
 
@@ -76,8 +73,7 @@ public class AuctionService {
         auction.setStartDateTime(updateAuction.getStartDateTime());
         auction.setEndDateTime(updateAuction.getEndDateTime());
         auction.setItemStatus(updateAuction.getItemStatus());
-        //TODO 아직 카테고리 상세 내역을 정하지 않아 추후 확정시 추가 예정
-        //auction.setCategory(updateAuction.getCategory());
+        auction.setCategory(updateAuction.getCategory());
         auction.setUpdateDateTime(LocalDateTime.now());
 
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction));
@@ -86,15 +82,6 @@ public class AuctionService {
     public Page<AuctionDto.Response> getAllAuctionListByUserEmail(String userEmail, Pageable pageable){
         var auctionList =  auctionRepository.findByUserEmail(userEmail, pageable);
         if(auctionList.isEmpty()) throw new AuctionException(NOT_FOUND_AUCTION_LIST);
-
-        return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));
-    }
-
-    public Page<AuctionDto.Response> getAuctionListByUserEmailAndAuctionStatus(
-            String userEmail, AuctionStatus auctionStatus, Pageable pageable) {
-
-        Page<AuctionEntity> auctionList = auctionRepository.findByUserEmailAndAuctionStatus(userEmail, auctionStatus, pageable);
-        if(auctionList.isEmpty()) throw new AuctionException(AUCTION_NOT_FOUND);
 
         return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));
     }

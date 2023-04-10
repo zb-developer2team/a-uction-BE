@@ -1,6 +1,5 @@
 package com.example.a_uction.model.auction.dto;
 
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
@@ -32,7 +31,6 @@ public class AuctionDto {
         private int minimumBid;
         @Enumerated(EnumType.STRING)
         private Category category;
-        private AuctionStatus auctionStatus;
         @NotNull(message = "경매 시작 시간을 입력하세요")
         private LocalDateTime startDateTime;
         @NotNull(message = "경매 종료 시간을 입력하세요")
@@ -45,9 +43,9 @@ public class AuctionDto {
                     .itemStatus(this.itemStatus)
                     .startingPrice(this.startingPrice)
                     .minimumBid(this.minimumBid)
-                    .auctionStatus(this.auctionStatus)
                     .startDateTime(this.startDateTime)
                     .endDateTime(this.endDateTime)
+                    .category(this.category)
                     .build();
         }
 
@@ -62,7 +60,6 @@ public class AuctionDto {
         private String itemName;
         private ItemStatus itemStatus;
         private TransactionStatus transactionStatus;
-        private AuctionStatus auctionStatus;
         private int startingPrice;
         private int minimumBid;
         private Category category;
@@ -74,7 +71,6 @@ public class AuctionDto {
             return AuctionDto.Response.builder()
                     .itemName(auctionEntity.getItemName())
                     .itemStatus(auctionEntity.getItemStatus())
-                    .auctionStatus(auctionEntity.getAuctionStatus())
                     .transactionStatus(auctionEntity.getTransactionStatus())
                     .startingPrice(auctionEntity.getStartingPrice())
                     .minimumBid(auctionEntity.getMinimumBid())
