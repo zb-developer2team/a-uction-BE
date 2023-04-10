@@ -24,22 +24,25 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 @Component
 public class JwtProvider {
-
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;
-	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 14;
-
 	private static final String TOKEN_HEADER = "Authorization";
-	private static final String TOKEN_PREFIX = "Bearer ";
+	private static final String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
 	private static final String CLAIM_KEY = "userEmail";
 	private static final String ROLE = "USER";
+
+	@Value("${jwt.prefix}")
+	private String tokenPrefix;
+	@Value("${jwt.access.expiration}")
+	private long accessTokenExpireTime;
+	@Value("${jwt.refresh.expiration}")
+	private long refreshTokenExpireTime;
 	@Value("${spring.jwt.secret}")
 	protected String secretKey;
 
 	public TokenDto createToken(String userEmail) {
 		return new TokenDto(this.createAccessToken(userEmail), this.createRefreshToken(),
-			REFRESH_TOKEN_EXPIRE_TIME);
+			refreshTokenExpireTime);
 	}
 
 	public String createAccessToken(String userEmail) {
@@ -52,7 +55,7 @@ public class JwtProvider {
 			.setClaims(claims)
 			.setSubject(ACCESS_TOKEN_SUBJECT)
 			.setIssuedAt(new Date(time))
-			.setExpiration(new Date(time + ACCESS_TOKEN_EXPIRE_TIME))
+			.setExpiration(new Date(time + accessTokenExpireTime))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 	}
@@ -63,7 +66,7 @@ public class JwtProvider {
 		return Jwts.builder()
 			.setSubject(REFRESH_TOKEN_SUBJECT)
 			.setIssuedAt(new Date())
-			.setExpiration(new Date(time + REFRESH_TOKEN_EXPIRE_TIME))
+			.setExpiration(new Date(time + refreshTokenExpireTime))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 	}
@@ -110,16 +113,22 @@ public class JwtProvider {
 		}
 	}
 
-	public String resolveTokenFromRequest(HttpServletRequest request) {
+	private String resolveTokenFromRequest(HttpServletRequest request, String header) {
 
-		String token = request.getHeader(TOKEN_HEADER);
+		String token = request.getHeader(header);
 
-		if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
-			return token.substring(TOKEN_PREFIX.length());
+		if (!ObjectUtils.isEmpty(token) && token.startsWith(tokenPrefix)) {
+			return token.substring(tokenPrefix.length());
 		}
-
 		return null;
 	}
 
+	public String resolveAccessTokenFromRequest(HttpServletRequest request) {
+		return this.resolveTokenFromRequest(request, TOKEN_HEADER);
+	}
+
+	public String resolveRefreshTokenFromRequest(HttpServletRequest request) {
+		return this.resolveTokenFromRequest(request, REFRESH_TOKEN_HEADER);
+	}
 
 }
