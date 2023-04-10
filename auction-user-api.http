@@ -39,13 +39,12 @@ Content-Type: application/json
 ###토큰으로 유저 이메일 받아오기
 GET http://localhost:8081/detail
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJpYXQiOjE2ODA5NjEwNTksImV4cCI6MTY4MTA0NzQ1OX0.YW0rzMRoYMZR_scQaQ4-OiKV4ZM0l4vAVpmnrUK5RWQ
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 
 ###회원정보 수정
 POST localhost:8081/user/detail/modify
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTA4MjMxNywiZXhwIjoxNjgxMDg1OTE3fQ.xCbOujpg7H0z7LxZQ6RKtz6LicuQn3D6Yrxaev_WaII
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 
 {
   "currentPassword" : "1234",
@@ -53,3 +52,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
   "username" : "test",
   "phone" : "01012341234"
 }
+
+###리프레시 토큰 사용하여 어세스토큰 갱신
+POST http://localhost:8081/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
+Authorization-refresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSZWZyZXNoVG9rZW4iLCJpYXQiOjE2ODExMDc0MTUsImV4cCI6MTY4MjMxNzAxNX0.X-MBwGjQ-B97_73v9SmctLZ5rZitRZocUA6daup7xzk

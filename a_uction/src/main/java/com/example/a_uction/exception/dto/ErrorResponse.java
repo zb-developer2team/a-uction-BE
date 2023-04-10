@@ -14,4 +14,8 @@ public class ErrorResponse {
 	private HttpStatus httpStatus;
 	private ErrorCode errorCode;
 	private String message;
+
+	public static ErrorResponse from (ErrorCode errorCode) {
+		return new ErrorResponse(errorCode.getHttpStatus(), errorCode, errorCode.getDescription());
+	}
 }

@@ -1,8 +1,10 @@
 package com.example.a_uction.security.jwt;
 
 import static com.example.a_uction.exception.constants.ErrorCode.LOGOUT_USER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
-import com.example.a_uction.exception.AuctionException;
+import com.example.a_uction.exception.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -36,13 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String token = provider.resolveTokenFromRequest(request);
-
-		if (request.getRequestURI().contains("login") ||
-			request.getRequestURI().contains("register")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+		String token = provider.resolveAccessTokenFromRequest(request);
 
 		if (provider.validateToken(token)) {
 			if (!this.isBlocked(token)) {
@@ -55,7 +51,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext()
 					.setAuthentication(authentication);
 			} else {
-				throw new AuctionException(LOGOUT_USER_ERROR);
+				// 필터에서 예외 발생
+				log.warn("JwtFilter : 로그아웃 된 회원입니다.");
+				response.setStatus(SC_UNAUTHORIZED);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("utf-8");
+				new ObjectMapper().writeValue(response.getWriter(),
+					ErrorResponse.from(LOGOUT_USER_ERROR));
+				//throw new AuctionException(LOGOUT_USER_ERROR);
 			}
 		}
 		filterChain.doFilter(request, response);
@@ -67,6 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				path.contains("oauth/kakao") ||
 				path.contains("register") ||
 				path.contains("auction") ||
+				path.equals("/auth/refresh") ||
 				path.equals("/");
 	}
 

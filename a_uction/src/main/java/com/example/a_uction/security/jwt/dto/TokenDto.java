@@ -14,4 +14,14 @@ public class TokenDto {
 	String refreshToken;
 
 	long refreshTokenExpireTime;
+
+	@Getter
+	@Builder
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class AccessToken {
+		String accessToken;
+		String expiresIn;
+		String tokenType;
+	}
 }
