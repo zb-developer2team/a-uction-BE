@@ -180,8 +180,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2024,4,1,00,00,00))
+                .endDateTime(LocalDateTime.of(2024,4,10,00,00,00))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
@@ -224,8 +224,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2024,4,1,00,00,00))
+                .endDateTime(LocalDateTime.of(2025,4,10,00,00,00))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
@@ -263,8 +263,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2023,5,1,00,00,00))
+                .endDateTime(LocalDateTime.of(2023,6,10,00,00,00))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
