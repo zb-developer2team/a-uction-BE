@@ -1,6 +1,5 @@
 package com.example.a_uction.model.auction.entity;
 
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
@@ -32,8 +31,6 @@ public class AuctionEntity {
     private ItemStatus itemStatus;
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
-    @Enumerated(EnumType.STRING)
-    private AuctionStatus auctionStatus;
 
     private int buyerId;
     @Min(value = 100, message = "최소 시작 금액은 100원 이상입니다.")

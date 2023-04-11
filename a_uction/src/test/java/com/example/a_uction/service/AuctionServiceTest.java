@@ -2,7 +2,6 @@ package com.example.a_uction.service;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
@@ -54,7 +53,6 @@ class AuctionServiceTest {
                         .minimumBid(200)
                         .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                         .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-                        .auctionStatus(AuctionStatus.SCHEDULED)
                         .build());
         //when
         AuctionDto.Response response = auctionService.addAuction(
@@ -77,7 +75,6 @@ class AuctionServiceTest {
         assertEquals(2000, response.getStartingPrice());
         assertEquals(100, captor.getValue().getMinimumBid());
         assertEquals(200, response.getMinimumBid());
-        assertEquals(AuctionStatus.SCHEDULED, response.getAuctionStatus());
         assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
         assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
     }
@@ -132,7 +129,6 @@ class AuctionServiceTest {
                         .minimumBid(200)
                         .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                         .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-                        .auctionStatus(AuctionStatus.SCHEDULED)
                         .build()));
         //when
         AuctionDto.Response response = auctionService.getAuctionByAuctionId(1L);
@@ -142,7 +138,6 @@ class AuctionServiceTest {
         assertEquals(ItemStatus.BAD, response.getItemStatus());
         assertEquals(2000, response.getStartingPrice());
         assertEquals(200, response.getMinimumBid());
-        assertEquals(AuctionStatus.SCHEDULED, response.getAuctionStatus());
         assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
         assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
     }
@@ -185,7 +180,6 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .auctionStatus(AuctionStatus.SCHEDULED)
                 .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
@@ -230,7 +224,6 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .auctionStatus(AuctionStatus.SCHEDULED)
                 .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
@@ -270,7 +263,6 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .auctionStatus(AuctionStatus.SCHEDULED)
                 .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
                 .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
                 .build();
@@ -349,71 +341,6 @@ class AuctionServiceTest {
         assertEquals(NOT_FOUND_AUCTION_LIST, exception.getErrorCode());
     }
 
-    @Test
-    @DisplayName("경매 상태 별 리스트 가져오기 - 성공")
-    void getAuctionListByUserIdAndAuctionStatusSuccess(){
-        //given
-        List<AuctionEntity> list = List.of(
-                AuctionEntity.builder()
-                        .auctionId(1L)
-                        .userEmail("user1")
-                        .itemName("item1")
-                        .startingPrice(1111)
-                        .minimumBid(1000)
-                        .transactionStatus(TransactionStatus.SALE)
-                        .itemStatus(ItemStatus.BAD)
-                        .auctionStatus(AuctionStatus.SCHEDULED)
-                        .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                        .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
-                        .build(),
-                AuctionEntity.builder()
-                        .auctionId(2L)
-                        .userEmail("user1")
-                        .itemName("item2")
-                        .startingPrice(2222)
-                        .minimumBid(2000)
-                        .transactionStatus(TransactionStatus.SALE)
-                        .auctionStatus(AuctionStatus.SCHEDULED)
-                        .itemStatus(ItemStatus.GOOD)
-                        .startDateTime(LocalDateTime.of(2023,4,11,00,00,00))
-                        .endDateTime(LocalDateTime.of(2023,4,20,00,00,00))
-                        .build()
-
-        );
-        Page<AuctionEntity> page = new PageImpl<>(list);
-
-        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(page);
-
-        //when
-        var result = auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.SCHEDULED, Pageable.ofSize(10));
-
-        //then
-        assertEquals(2, result.getTotalElements());
-        assertEquals("item1", result.toList().get(0).getItemName());
-        assertEquals(AuctionStatus.SCHEDULED, result.toList().get(0).getAuctionStatus());
-        assertEquals(1111, result.toList().get(0).getStartingPrice());
-        assertEquals(1000, result.toList().get(0).getMinimumBid());
-        assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
-        assertEquals("item2", result.toList().get(1).getItemName());
-        assertEquals(AuctionStatus.SCHEDULED, result.toList().get(1).getAuctionStatus());
-        assertEquals(2222, result.toList().get(1).getStartingPrice());
-        assertEquals(2000, result.toList().get(1).getMinimumBid());
-        assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
-    }
-
-    @Test
-    @DisplayName("경매 상태 별 리스트 가져오기 - 실패")
-    void getAuctionListByUserIdAndAuctionStatusFail(){
-        //given
-        given(auctionRepository.findByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(Page.empty());
-
-        //when
-        AuctionException exception = assertThrows(AuctionException.class,
-                () -> auctionService.getAuctionListByUserEmailAndAuctionStatus("user1", AuctionStatus.COMPLETE, Pageable.ofSize(10)));
-
-        //then
-        assertEquals(AUCTION_NOT_FOUND, exception.getErrorCode());
-    }
 
     @Test
     @DisplayName("경매 삭제 - 성공")

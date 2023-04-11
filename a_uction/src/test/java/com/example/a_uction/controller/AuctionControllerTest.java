@@ -2,7 +2,6 @@ package com.example.a_uction.controller;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
@@ -65,7 +64,6 @@ class AuctionControllerTest {
                 .itemStatus(ItemStatus.GOOD)
                 .startingPrice(2000)
                 .minimumBid(200)
-                .auctionStatus(AuctionStatus.SCHEDULED)
                 .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                 .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
                 .build();
@@ -85,7 +83,6 @@ class AuctionControllerTest {
                                 .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
                                 .build())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
                 .andExpect(jsonPath("$.itemName").value("test item2"))
                 .andDo(print());
     }
@@ -230,7 +227,6 @@ class AuctionControllerTest {
             .itemStatus(ItemStatus.GOOD)
             .startingPrice(2000)
             .minimumBid(200)
-            .auctionStatus(AuctionStatus.SCHEDULED)
             .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
             .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
             .build();
@@ -241,12 +237,10 @@ class AuctionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
             .andExpect(jsonPath("$.itemName").value("test item2"))
             .andExpect(jsonPath("$.itemStatus").value(ItemStatus.GOOD.name()))
             .andExpect(jsonPath("$.startingPrice").value(2000))
             .andExpect(jsonPath("$.minimumBid").value(200))
-            .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
             .andExpect(jsonPath("$.startDateTime").value("2023-04-15T17:09:42.411"))
             .andExpect(jsonPath("$.endDateTime").value("2023-04-15T17:10:42.411"));
     }
@@ -262,7 +256,6 @@ class AuctionControllerTest {
                         .itemStatus(ItemStatus.GOOD)
                         .startingPrice(1000)
                         .minimumBid(100)
-                        .auctionStatus(AuctionStatus.SCHEDULED)
                         .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                         .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
                         .build(),
@@ -271,7 +264,6 @@ class AuctionControllerTest {
                         .itemStatus(ItemStatus.BAD)
                         .startingPrice(2000)
                         .minimumBid(200)
-                        .auctionStatus(AuctionStatus.COMPLETE)
                         .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                         .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
                         .build()
@@ -288,12 +280,10 @@ class AuctionControllerTest {
                 .andExpect(jsonPath("$.numberOfElements").value(2))
                 .andExpect(jsonPath("$.content[0].itemName").value("item1"))
                 .andExpect(jsonPath("$.content[0].itemStatus").value("GOOD"))
-                .andExpect(jsonPath("$.content[0].auctionStatus").value("SCHEDULED"))
                 .andExpect(jsonPath("$.content[0].startingPrice").value(1000))
                 .andExpect(jsonPath("$.content[0].minimumBid").value(100))
                 .andExpect(jsonPath("$.content[1].itemName").value("item2"))
                 .andExpect(jsonPath("$.content[1].itemStatus").value("BAD"))
-                .andExpect(jsonPath("$.content[1].auctionStatus").value("COMPLETE"))
                 .andExpect(jsonPath("$.content[1].startingPrice").value(2000))
                 .andExpect(jsonPath("$.content[1].minimumBid").value(200))
                 .andExpect(status().isOk());
@@ -315,69 +305,6 @@ class AuctionControllerTest {
     }
 
     @Test
-    @DisplayName("user 의 상태별 경매 리스트 가져오기 - 성공")
-    @WithMockUser
-    void getAuctionListByUserIdAndStatusSuccess() throws Exception {
-        //given
-        List<AuctionDto.Response> list = List.of(
-                AuctionDto.Response.builder()
-                        .itemName("item1")
-                        .itemStatus(ItemStatus.GOOD)
-                        .startingPrice(1000)
-                        .minimumBid(100)
-                        .auctionStatus(AuctionStatus.SCHEDULED)
-                        .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-                        .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-                        .build(),
-                AuctionDto.Response.builder()
-                        .itemName("item2")
-                        .itemStatus(ItemStatus.BAD)
-                        .startingPrice(2000)
-                        .minimumBid(200)
-                        .auctionStatus(AuctionStatus.SCHEDULED)
-                        .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-                        .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-                        .build()
-        );
-
-        Page<AuctionDto.Response> page = new PageImpl<>(list);
-
-        given(auctionService.getAuctionListByUserEmailAndAuctionStatus(any(), any(), any())).willReturn(page);
-
-        //when
-        //then
-        mockMvc.perform(get("/auction/read/SCHEDULED").with(csrf()))
-                .andDo(print())
-                .andExpect(jsonPath("$.numberOfElements").value(2))
-                .andExpect(jsonPath("$.content[0].itemName").value("item1"))
-                .andExpect(jsonPath("$.content[0].itemStatus").value("GOOD"))
-                .andExpect(jsonPath("$.content[0].auctionStatus").value("SCHEDULED"))
-                .andExpect(jsonPath("$.content[0].startingPrice").value(1000))
-                .andExpect(jsonPath("$.content[0].minimumBid").value(100))
-                .andExpect(jsonPath("$.content[1].itemName").value("item2"))
-                .andExpect(jsonPath("$.content[1].itemStatus").value("BAD"))
-                .andExpect(jsonPath("$.content[1].auctionStatus").value("SCHEDULED"))
-                .andExpect(jsonPath("$.content[1].startingPrice").value(2000))
-                .andExpect(jsonPath("$.content[1].minimumBid").value(200))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("user 의 상태별 경매 리스트 가져오기 - 실패")
-    @WithMockUser
-    void getAuctionListByUserIdAndStatusFail() throws Exception {
-        //given
-        given(auctionService.getAuctionListByUserEmailAndAuctionStatus(any(),any(),any()))
-                .willThrow(new AuctionException(AUCTION_NOT_FOUND));
-        //when
-        //then
-        mockMvc.perform(get("/auction/read/SCHEDULED").with(csrf()))
-                .andDo(print())
-                .andExpect(jsonPath("$.errorCode").value("AUCTION_NOT_FOUND"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     @DisplayName("유저의 경매 삭제 - 성공")
     @WithMockUser
     void deleteAuctionSuccess() throws Exception{
@@ -386,7 +313,6 @@ class AuctionControllerTest {
                 .itemStatus(ItemStatus.GOOD)
                 .startingPrice(2000)
                 .minimumBid(200)
-                .auctionStatus(AuctionStatus.SCHEDULED)
                 .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
                 .endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
                 .build();
@@ -395,7 +321,6 @@ class AuctionControllerTest {
         mockMvc.perform(delete("/auction/1")
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.auctionStatus").value(AuctionStatus.SCHEDULED.name()))
                 .andExpect(jsonPath("$.itemName").value("test item2"))
                 .andDo(print());
     }

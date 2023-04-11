@@ -3,7 +3,6 @@ package com.example.a_uction.controller;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
-import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
@@ -56,14 +55,5 @@ public class AuctionController {
     public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionListByUserId(Principal principal, Pageable pageable){
         return ResponseEntity.ok(auctionService.getAllAuctionListByUserEmail(principal.getName(), pageable));
     }
-
-    @GetMapping("/read/{auctionStatus}")
-    public ResponseEntity<Page<AuctionDto.Response>> getAuctionListByUserIdAndStatus(
-            Principal principal, @PathVariable AuctionStatus auctionStatus, Pageable pageable){
-
-        return ResponseEntity.ok(auctionService.getAuctionListByUserEmailAndAuctionStatus(
-                principal.getName(), auctionStatus, pageable));
-    }
-
 
 }
