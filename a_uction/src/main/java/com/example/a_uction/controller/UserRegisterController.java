@@ -44,7 +44,7 @@ public class UserRegisterController {
 		return ResponseEntity.ok(verifyService.sendVerificationCode(phoneNumber));
 	}
 
-	@GetMapping("/verify/sms/codeCheck")
+	@PostMapping("/verify/sms/codeCheck")
 	public ResponseEntity<Boolean> codeCheck(@RequestBody Verify.Form form) {
 		return ResponseEntity.ok(verifyService.verifyCode(form));
 	}
