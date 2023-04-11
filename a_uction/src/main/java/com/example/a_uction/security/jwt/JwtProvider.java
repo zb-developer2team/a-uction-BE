@@ -5,10 +5,7 @@ import com.example.a_uction.security.jwt.dto.TokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 @Slf4j
 @Component
 public class JwtProvider {
+
 	private static final String TOKEN_HEADER = "Authorization";
 	private static final String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
@@ -42,7 +40,7 @@ public class JwtProvider {
 
 	public TokenDto createToken(String userEmail) {
 		return new TokenDto(this.createAccessToken(userEmail), this.createRefreshToken(),
-			refreshTokenExpireTime);
+			accessTokenExpireTime, refreshTokenExpireTime);
 	}
 
 	public String createAccessToken(String userEmail) {
@@ -82,21 +80,9 @@ public class JwtProvider {
 	}
 
 	public boolean validateToken(String token) {
-		try {
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-			return true;
-		} catch (IllegalArgumentException e) {
-			log.info("토큰값은 필수 입니다.");
-		} catch (MalformedJwtException e) {
-			log.info("손상된 토큰입니다.", e);
-		} catch (ExpiredJwtException e) {
-			log.info("만료된 토큰입니다.", e);
-		} catch (UnsupportedJwtException e) {
-			log.info("지원하지 않는 토큰입니다.", e);
-		} catch (SignatureException e) {
-			log.info("시그니처 검증에 실패한 토큰입니다.", e);
-		}
-		return false;
+		Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+		return true;
+
 	}
 
 	public UsernamePasswordAuthenticationToken getAuthentication(String token) {
