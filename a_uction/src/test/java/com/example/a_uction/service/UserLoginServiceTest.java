@@ -54,7 +54,7 @@ class UserLoginServiceTest {
 		given(userRepository.findByUserEmail(anyString())).willReturn(Optional.of(user));
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 		given(provider.createToken(anyString())).willReturn(
-			new TokenDto("123qwe", "qwe123", 1000L));
+			new TokenDto("123qwe", "qwe123", 1000L, 1000L));
 		given(redisTemplate.opsForValue()).willReturn(mock(ValueOperations.class));
 		// when
 		TokenDto tokenDto = userLoginService.login(new LoginUser("zerobase@gmail.com", "1234"));
@@ -63,6 +63,7 @@ class UserLoginServiceTest {
 		assertNotNull(tokenDto);
 		assertEquals("123qwe", tokenDto.getAccessToken());
 		assertEquals("qwe123", tokenDto.getRefreshToken());
+		assertEquals(1000L, tokenDto.getAccessTokenExpireTime());
 		assertEquals(1000L, tokenDto.getRefreshTokenExpireTime());
 	}
 
