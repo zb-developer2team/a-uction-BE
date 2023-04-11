@@ -180,8 +180,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2026,5,1, 0,0,0))
+                .endDateTime(LocalDateTime.of(2026,5,2,0,0,0))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
@@ -224,8 +224,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2025,4,1,0,0,0))
+                .endDateTime(LocalDateTime.of(2025,4,10,0,0,0))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
@@ -263,8 +263,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                .startDateTime(LocalDateTime.of(2025,4,1,0,0,0))
+                .endDateTime(LocalDateTime.of(2025,4,10,0,0,0))
                 .build();
 
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
@@ -292,8 +292,8 @@ class AuctionServiceTest {
                         .minimumBid(1000)
                         .transactionStatus(TransactionStatus.SALE)
                         .itemStatus(ItemStatus.BAD)
-                        .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                        .endDateTime(LocalDateTime.of(2023,4,10,00,00,00))
+                        .startDateTime(LocalDateTime.of(2025,4,1,0,0,0))
+                        .endDateTime(LocalDateTime.of(2025,4,10,0,0,0))
                         .build(),
                 AuctionEntity.builder()
                         .auctionId(2L)
@@ -303,8 +303,8 @@ class AuctionServiceTest {
                         .minimumBid(2000)
                         .transactionStatus(TransactionStatus.SALE)
                         .itemStatus(ItemStatus.GOOD)
-                        .startDateTime(LocalDateTime.of(2023,4,11,00,00,00))
-                        .endDateTime(LocalDateTime.of(2023,4,20,00,00,00))
+                        .startDateTime(LocalDateTime.of(2023,4,11,0,0,0))
+                        .endDateTime(LocalDateTime.of(2023,4,20,0,0,0))
                         .build()
 
         );
@@ -355,8 +355,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,12,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,13,00,00,00))
+                .startDateTime(LocalDateTime.of(2023,4,12,0,0,0))
+                .endDateTime(LocalDateTime.of(2023,4,13,0,0,0))
                 .build();
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
                 .willReturn(Optional.of(auction));
@@ -382,8 +382,8 @@ class AuctionServiceTest {
                 .minimumBid(1000)
                 .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
-                .startDateTime(LocalDateTime.of(2023,4,1,00,00,00))
-                .endDateTime(LocalDateTime.of(2023,4,13,00,00,00))
+                .startDateTime(LocalDateTime.of(2023,4,1,0,0,0))
+                .endDateTime(LocalDateTime.of(2023,4,13,0,0,0))
                 .build();
         given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
                 .willReturn(Optional.of(auction));

@@ -11,12 +11,12 @@ POST http://localhost:8081/register/verify/sms
 
 
 ### 인증코드 입력하여 인증완료하기 *** 틀리면 오류메세지 반환
-GET http://localhost:8081/register/verify/sms/codeCheck
+POST http://localhost:8081/register/verify/sms/codeCheck
 Content-Type: application/json
 
 {
   "phoneNumber": "01033538090",
-  "code": "IKMr03"
+  "code": "WkPgLj"
 }
 
 

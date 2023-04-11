@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.user.dto.RegisterUser;
+import com.example.a_uction.model.user.dto.Verify;
 import com.example.a_uction.service.UserRegisterService;
 import com.example.a_uction.service.user.VerifyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +46,7 @@ class UserRegisterControllerTest {
 
 	@Test
 	@WithMockUser
+	@DisplayName("회원가입 성공")
 	void register_SUCCESS() throws Exception {
 	    //given
 		given(userRegisterService.register(any()))
@@ -82,8 +84,7 @@ class UserRegisterControllerTest {
 				.with(csrf())
 				.content("zerobase@gmail.com"))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andReturn().getResponse().toString().equals(true);
+			.andExpect(status().isOk());
 	}
 	@Test
 	@WithMockUser
@@ -112,12 +113,14 @@ class UserRegisterControllerTest {
 			.willReturn(true);
 	    //when
 	    //then
-		mockMvc.perform(get("/register/verify/sms/codeCheck")
+		mockMvc.perform(post("/register/verify/sms/codeCheck")
 				.with(csrf())
-				.content("qwe123"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+					new Verify.Form("01012345678","qwe123")
+				)))
 			.andDo(print())
-			.andExpect(status().isOk())
-			.andReturn().getResponse().toString().equals(true);
+			.andExpect(status().isOk());
 	}
 	@Test
 	@WithMockUser
@@ -128,9 +131,12 @@ class UserRegisterControllerTest {
 			.willThrow(new AuctionException(ErrorCode.WRONG_CODE_INPUT));
 		//when
 		//then
-		mockMvc.perform(get("/register/verify/sms/codeCheck")
+		mockMvc.perform(post("/register/verify/sms/codeCheck")
 				.with(csrf())
-				.content("qwe123"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+					new Verify.Form("01012345678","qwe123")
+				)))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.errorCode").value("WRONG_CODE_INPUT"))
