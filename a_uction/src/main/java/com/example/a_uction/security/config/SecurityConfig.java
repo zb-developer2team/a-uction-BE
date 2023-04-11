@@ -25,11 +25,11 @@ public class SecurityConfig {
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.authorizeRequests()
-			.antMatchers("/login/**", "/register/**", "/oauth/**").permitAll()
-			.antMatchers("/**").permitAll()
+				.authorizeRequests()
+					.antMatchers("/login/**", "/register/**", "/oauth/**").permitAll()
+       			.antMatchers("/**").permitAll()
 			.and()
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 }
