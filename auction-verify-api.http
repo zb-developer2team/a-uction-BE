@@ -1,0 +1,22 @@
+### 이메일 중복체크 *** 회원가입 완료휴에는 false 반환
+GET http://localhost:8081/register/emailCheck
+
+zerobase@gmail.com
+
+### 핸드폰번호 인증하기 문자 발송 *** 본인번호로 한번씩 테스트 해보셔도 됩니다 또한 이미 가입되어있는 번호면 에러메세지 반환
+POST http://localhost:8081/register/verify/sms
+
+01033538090
+
+
+
+### 인증코드 입력하여 인증완료하기 *** 틀리면 오류메세지 반환
+GET http://localhost:8081/register/verify/sms/codeCheck
+Content-Type: application/json
+
+{
+  "phoneNumber": "01033538090",
+  "code": "IKMr03"
+}
+
+

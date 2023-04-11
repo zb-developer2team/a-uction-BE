@@ -36,7 +36,6 @@ public class UserEntity {
 	private String password;
 	private String username;
 	private String phoneNumber;
-	private boolean verify;
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

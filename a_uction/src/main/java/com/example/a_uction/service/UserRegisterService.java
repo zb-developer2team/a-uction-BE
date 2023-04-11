@@ -21,21 +21,20 @@ public class UserRegisterService {
 
 	public RegisterUser register(RegisterUser.Request request) {
 
-		registerValidate(request);
-
 		return RegisterUser.fromEntity(
 			userRepository.save(UserEntity.builder()
-			.username(request.getUsername())
-			.phoneNumber(request.getPhoneNumber())
-			.password(passwordEncoder.encode(request.getPassword()))
-			.userEmail(request.getUserEmail())
-			.build()));
+				.username(request.getUsername())
+				.phoneNumber(request.getPhoneNumber())
+				.password(passwordEncoder.encode(request.getPassword()))
+				.userEmail(request.getUserEmail())
+				.build()));
 	}
-	private void registerValidate(RegisterUser.Request request) {
-		if (userRepository.findByUserEmail(request.getUserEmail()).isPresent()) {
+
+	public boolean emailCheck(String email) {
+		if (userRepository.findByUserEmail(email).isPresent()) {
 			log.error("중복된 이메일 가입 시도");
 			throw new AuctionException(THIS_EMAIL_ALREADY_EXIST);
 		}
+		return true;
 	}
-
 }
