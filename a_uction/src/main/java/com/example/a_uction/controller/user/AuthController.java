@@ -1,4 +1,4 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.user;
 
 import com.example.a_uction.security.jwt.dto.TokenDto;
 import com.example.a_uction.service.user.AuthService;

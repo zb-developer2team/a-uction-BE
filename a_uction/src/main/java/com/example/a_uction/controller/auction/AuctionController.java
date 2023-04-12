@@ -1,10 +1,10 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.auction;
 
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
-import com.example.a_uction.service.AuctionService;
+import com.example.a_uction.service.auction.AuctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/auction")
+@RequestMapping("/auctions")
 @RequiredArgsConstructor
 @Slf4j
 public class AuctionController {

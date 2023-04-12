@@ -1,4 +1,4 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

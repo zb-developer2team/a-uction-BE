@@ -1,8 +1,8 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.user;
 
 import com.example.a_uction.model.user.dto.InfoUser;
 import com.example.a_uction.model.user.dto.ModifyUser;
-import com.example.a_uction.service.UserInfoService;
+import com.example.a_uction.service.user.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user/detail")
+@RequestMapping("/users/detail")
 public class UserInfoController {
 	private final UserInfoService userInfoService;
 

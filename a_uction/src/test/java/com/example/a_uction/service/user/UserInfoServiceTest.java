@@ -1,9 +1,10 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.user;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.ModifyUser;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.service.user.UserInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -127,7 +128,7 @@ class UserInfoServiceTest {
                 .userEmail("test@test.com")
                 .phoneNumber("01012345678")
                 .id(1L)
-                .createDateTime(LocalDateTime.of(2023,4,1,00,00,00))
+                .createDateTime(LocalDateTime.of(2023,4,1,0,0,0))
                 .build();
 
         given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(user));

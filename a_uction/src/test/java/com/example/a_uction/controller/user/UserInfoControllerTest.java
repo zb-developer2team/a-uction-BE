@@ -1,10 +1,10 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.user;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.InfoUser;
 import com.example.a_uction.model.user.dto.ModifyUser;
 import com.example.a_uction.security.jwt.JwtProvider;
-import com.example.a_uction.service.UserInfoService;
+import com.example.a_uction.service.user.UserInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class UserInfoControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @MockBean
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -63,7 +63,7 @@ class UserInfoControllerTest {
 
         //when
         //then
-        mockMvc.perform(put("/user/detail/modify").with(csrf())
+        mockMvc.perform(put("/users/detail/modify").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUser)))
                 .andExpect(jsonPath("$.username").value("test1"))
@@ -87,7 +87,7 @@ class UserInfoControllerTest {
 
         //when
         //then
-        mockMvc.perform(put("/user/detail/modify").with(csrf())
+        mockMvc.perform(put("/users/detail/modify").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUser)))
                 .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
@@ -112,7 +112,7 @@ class UserInfoControllerTest {
 
         //when
         //then
-        mockMvc.perform(put("/user/detail/modify").with(csrf())
+        mockMvc.perform(put("/users/detail/modify").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUser)))
                 .andExpect(jsonPath("$.errorCode").value("ENTERED_THE_WRONG_PASSWORD"))
@@ -133,7 +133,7 @@ class UserInfoControllerTest {
         given(userInfoService.userInfo(any())).willReturn(infoUser);
         //when
         //then
-        mockMvc.perform(get("/user/detail").with(csrf()))
+        mockMvc.perform(get("/users/detail").with(csrf()))
                 .andExpect(jsonPath("$.username").value("test"))
                 .andExpect(jsonPath("$.userEmail").value("test@test.com"))
                 .andExpect(jsonPath("$.phoneNumber").value("01012345678"))
@@ -148,7 +148,7 @@ class UserInfoControllerTest {
         given(userInfoService.userInfo(any())).willThrow(new AuctionException(USER_NOT_FOUND));
         //when
         //then
-        mockMvc.perform(get("/user/detail").with(csrf()))
+        mockMvc.perform(get("/users/detail").with(csrf()))
                 .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
                 .andExpect(status().isOk());
     }

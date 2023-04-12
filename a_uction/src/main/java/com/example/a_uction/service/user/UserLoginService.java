@@ -1,4 +1,4 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.user;
 
 import static com.example.a_uction.exception.constants.ErrorCode.ENTERED_THE_WRONG_PASSWORD;
 import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;

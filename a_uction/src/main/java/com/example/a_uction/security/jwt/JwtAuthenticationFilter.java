@@ -9,7 +9,6 @@ import static com.example.a_uction.exception.constants.ErrorCode.LOGOUT_USER_ERR
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.exception.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
@@ -84,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			path.contains("login") ||
 				path.contains("kakao") ||
 				path.contains("register") ||
-				path.contains("auction") ||
+				path.isEmpty() ||
 				path.equals("/auth/refresh") ||
 				path.equals("/");
 	}
