@@ -15,8 +15,6 @@ public enum ErrorCode {
 	INVALID_REQUEST(BAD_REQUEST, "입력하신 데이터를 확인해 주세요. 잘못 된 요청입니다."),
 	AUCTION_NOT_FOUND(BAD_REQUEST, "해당 경매를 찾을 수 없습니다."),
 
-
-	INVALID_TOKEN(UNAUTHORIZED, "토큰이 만료되었습니다."),
 	USER_NOT_FOUND(BAD_REQUEST, "유저를 찾을 수 없습니다."),
 	THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION(BAD_REQUEST, "이 번호는 이미 인증이 완료되었습니다."),
 	WRONG_CODE_INPUT(BAD_REQUEST, "코드를 잘못 입력하셨습니다. 처음부터 다시 시도해주세요."),
@@ -28,6 +26,12 @@ public enum ErrorCode {
 	NOT_MATCH_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 일치하지 않습니다."),
 	SEND_ACCESS_TOKEN_ERROR(BAD_REQUEST, "엑세스 토큰 전송에 실패하였습니다."),
 
+	// jwt
+	INVALID_TOKEN(UNAUTHORIZED, "토큰이 올바르지 않습니다."),
+	UNKNOWN_ERROR(UNAUTHORIZED, "인증 관련 알수없는 에러입니다."),
+	EXPIRED_TOKEN(UNAUTHORIZED, "토큰이 만료되었습니다."),
+	EMPTY_TOKEN_ERROR(UNAUTHORIZED, "토큰이 비어있습니다."),
+	FAILED_VERIFY_SIGNATURE(UNAUTHORIZED, "시그니처 검증에 실패한 토큰입니다."),
 	// kakao
 	INVALID_PARSE_ERROR(BAD_REQUEST, "JSON 파싱에 실패하였습니다."),
 
