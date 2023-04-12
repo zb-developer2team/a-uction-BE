@@ -1,4 +1,4 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.auction;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;

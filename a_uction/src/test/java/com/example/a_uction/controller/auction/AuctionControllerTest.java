@@ -1,4 +1,4 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.auction;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
@@ -6,7 +6,7 @@ import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.security.jwt.JwtProvider;
-import com.example.a_uction.service.AuctionService;
+import com.example.a_uction.service.auction.AuctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class AuctionControllerTest {
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @MockBean
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     private MockMvc mockMvc;
@@ -70,7 +70,7 @@ class AuctionControllerTest {
 
         given(auctionService.addAuction(any(), any()))
                 .willReturn(auctionDto);
-        mockMvc.perform(post("/auction")
+        mockMvc.perform(post("/auctions")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
@@ -120,7 +120,7 @@ class AuctionControllerTest {
                 .willReturn(new AuctionDto.Response().fromEntity(auctionEntity));
         //when
         //then
-        mockMvc.perform(put("/auction").with(csrf())
+        mockMvc.perform(put("/auctions").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
@@ -152,7 +152,7 @@ class AuctionControllerTest {
                 .willThrow(new AuctionException(ErrorCode.INTERNAL_SERVER_ERROR));
         //when
         //then
-        mockMvc.perform(put("/auction").with(csrf())
+        mockMvc.perform(put("/auctions").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
@@ -181,7 +181,7 @@ class AuctionControllerTest {
                 .willThrow(new AuctionException(ErrorCode.BEFORE_START_TIME));
         //when
         //then
-        mockMvc.perform(put("/auction").with(csrf())
+        mockMvc.perform(put("/auctions").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("auctionId", "1")
                         .content(objectMapper.writeValueAsString(updateAuction)))
@@ -210,7 +210,7 @@ class AuctionControllerTest {
             .willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
         //when
         //then
-        mockMvc.perform(put("/auction").with(csrf())
+        mockMvc.perform(put("/auctions").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("auctionId", "1")
                 .content(objectMapper.writeValueAsString(updateAuction)))
@@ -232,7 +232,7 @@ class AuctionControllerTest {
             .build();
         given(auctionService.getAuctionByAuctionId(anyLong()))
             .willReturn(auctionDto);
-        mockMvc.perform(get("/auction/" + 1L)
+        mockMvc.perform(get("/auctions/" + 1L)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
@@ -275,7 +275,7 @@ class AuctionControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/auction/read").with(csrf()))
+        mockMvc.perform(get("/auctions/read").with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.numberOfElements").value(2))
                 .andExpect(jsonPath("$.content[0].itemName").value("item1"))
@@ -298,7 +298,7 @@ class AuctionControllerTest {
                 .willThrow(new AuctionException(NOT_FOUND_AUCTION_LIST));
         //when
         //then
-        mockMvc.perform(get("/auction/read").with(csrf()))
+        mockMvc.perform(get("/auctions/read").with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.errorCode").value("NOT_FOUND_AUCTION_LIST"))
                 .andExpect(status().isOk());
@@ -318,7 +318,7 @@ class AuctionControllerTest {
                 .build();
         given(auctionService.deleteAuction(anyLong(), anyString()))
                 .willReturn(auctionDto);
-        mockMvc.perform(delete("/auction/1")
+        mockMvc.perform(delete("/auctions/1")
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.itemName").value("test item2"))
@@ -331,7 +331,7 @@ class AuctionControllerTest {
     void deleteAuctionFail() throws Exception{
         given(auctionService.deleteAuction(anyLong(), anyString()))
                 .willThrow(new AuctionException(AUCTION_NOT_FOUND));
-        mockMvc.perform(delete("/auction/1")
+        mockMvc.perform(delete("/auctions/1")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.errorCode").value("AUCTION_NOT_FOUND"))
@@ -344,7 +344,7 @@ class AuctionControllerTest {
     void deleteStartedAuctionFail() throws Exception{
         given(auctionService.deleteAuction(anyLong(), anyString()))
                 .willThrow(new AuctionException(UNABLE_DELETE_AUCTION));
-        mockMvc.perform(delete("/auction/1")
+        mockMvc.perform(delete("/auctions/1")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.errorCode").value("UNABLE_DELETE_AUCTION"))

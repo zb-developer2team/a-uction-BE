@@ -1,4 +1,4 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.user;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -11,8 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.user.dto.LoginUser;
+import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.security.jwt.dto.TokenDto;
-import com.example.a_uction.service.UserLoginService;
+import com.example.a_uction.service.user.UserLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ class UserLoginControllerTest {
 	@MockBean
 	private UserLoginService userLoginService;
 
+	@MockBean
+	private JwtProvider jwtProvider;
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
@@ -60,11 +63,11 @@ class UserLoginControllerTest {
 	@Test
 	@DisplayName("로그인실패 - 이메일 잘못 입력")
 	void LOGIN_FAIL_EMAIL() throws Exception {
-	    //given
+		//given
 		given(userLoginService.login(any()))
 			.willThrow(new AuctionException(ErrorCode.USER_NOT_FOUND));
-	    //when
-	    //then
+		//when
+		//then
 		mockMvc.perform(post("/login")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)

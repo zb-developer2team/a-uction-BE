@@ -6,7 +6,6 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.LogoutUser;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
-import com.example.a_uction.security.jwt.JwtAuthenticationFilter;
 import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.security.jwt.dto.TokenDto;
 import java.util.HashMap;
@@ -40,8 +39,7 @@ public class KakaoService {
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
 	private final JwtProvider provider;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final RedisTemplate redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public TokenDto kakaoLogIn(String code) {
 		String kakaoToken = this.getAccessToken(code);

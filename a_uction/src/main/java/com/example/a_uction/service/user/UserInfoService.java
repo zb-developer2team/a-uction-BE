@@ -1,4 +1,4 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.user;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.InfoUser;

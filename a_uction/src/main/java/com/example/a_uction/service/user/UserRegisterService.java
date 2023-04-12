@@ -1,4 +1,4 @@
-package com.example.a_uction.service;
+package com.example.a_uction.service.user;
 
 import static com.example.a_uction.exception.constants.ErrorCode.THIS_EMAIL_ALREADY_EXIST;
 

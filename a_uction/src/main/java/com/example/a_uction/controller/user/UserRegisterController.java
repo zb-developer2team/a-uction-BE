@@ -1,8 +1,8 @@
-package com.example.a_uction.controller;
+package com.example.a_uction.controller.user;
 
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.dto.Verify;
-import com.example.a_uction.service.UserRegisterService;
+import com.example.a_uction.service.user.UserRegisterService;
 import com.example.a_uction.service.user.VerifyService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URISyntaxException;

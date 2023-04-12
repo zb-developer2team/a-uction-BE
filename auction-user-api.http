@@ -42,7 +42,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 
 ###회원정보 수정
-PUT localhost:8081/user/detail/modify
+PUT localhost:8081/users/detail/modify
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
 
@@ -59,5 +59,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
 Authorization-refresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSZWZyZXNoVG9rZW4iLCJpYXQiOjE2ODExMDc0MTUsImV4cCI6MTY4MjMxNzAxNX0.X-MBwGjQ-B97_73v9SmctLZ5rZitRZocUA6daup7xzk
 
 ###회원정보 보기
-GET localhost:8081/user/detail
+GET localhost:8081/users/detail
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
