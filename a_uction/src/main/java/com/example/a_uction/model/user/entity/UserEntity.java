@@ -1,13 +1,13 @@
 package com.example.a_uction.model.user.entity;
 
 import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+
+import com.example.a_uction.model.auction.entity.AuctionEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +36,9 @@ public class UserEntity {
 	private String password;
 	private String username;
 	private String phoneNumber;
+
+	@OneToMany(mappedBy = "user")
+	private List<AuctionEntity> auctions = new ArrayList<>();
 
 	@CreatedDate
 	private LocalDateTime createDateTime;

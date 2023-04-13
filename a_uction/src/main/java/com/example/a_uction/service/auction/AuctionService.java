@@ -5,6 +5,8 @@ import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.user.entity.UserEntity;
+import com.example.a_uction.model.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,11 @@ import static com.example.a_uction.exception.constants.ErrorCode.*;
 @RequiredArgsConstructor
 public class AuctionService {
     private final AuctionRepository auctionRepository;
+    private final UserRepository userRepository;
+
+    private UserEntity getUser(String userEmail){
+        return userRepository.getByUserEmail(userEmail);
+    }
 
     public AuctionDto.Response addAuction(AuctionDto.Request auction, String userEmail){
         if (auction.getEndDateTime().isBefore(auction.getStartDateTime())){
@@ -29,13 +36,11 @@ public class AuctionService {
             //경매 시작시간이 등록 시간보다 이름
             throw new AuctionException(BEFORE_START_TIME);
         }
-        System.out.println(userEmail);
-        System.out.println(auction.getItemName());
-        return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity(userEmail)));
+        return new AuctionDto.Response().fromEntity(auctionRepository.save(auction.toEntity(getUser(userEmail))));
     }
 
     public AuctionDto.Response deleteAuction(Long auctionId, String userEmail){
-        AuctionEntity auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
+        AuctionEntity auction =  auctionRepository.findByUserIdAndAuctionId(getUser(userEmail).getId(), auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
         if (auction.getStartDateTime().isBefore(LocalDateTime.now())){
             throw new AuctionException(UNABLE_DELETE_AUCTION);
@@ -51,7 +56,7 @@ public class AuctionService {
     }
 
     public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, String userEmail, Long auctionId){
-        AuctionEntity auction =  auctionRepository.findByUserEmailAndAuctionId(userEmail, auctionId)
+        AuctionEntity auction =  auctionRepository.findByUserIdAndAuctionId(getUser(userEmail).getId(), auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
 
         if(auction.getStartDateTime().isBefore(LocalDateTime.now())){
@@ -80,7 +85,7 @@ public class AuctionService {
     }
 
     public Page<AuctionDto.Response> getAllAuctionListByUserEmail(String userEmail, Pageable pageable){
-        var auctionList =  auctionRepository.findByUserEmail(userEmail, pageable);
+        var auctionList =  auctionRepository.findByUserId(getUser(userEmail).getId(), pageable);
         if(auctionList.isEmpty()) throw new AuctionException(NOT_FOUND_AUCTION_LIST);
 
         return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));

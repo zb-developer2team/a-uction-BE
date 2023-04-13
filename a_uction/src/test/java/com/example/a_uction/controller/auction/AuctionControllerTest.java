@@ -5,6 +5,7 @@ import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
+import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.service.auction.AuctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,7 +108,7 @@ class AuctionControllerTest {
 
         AuctionEntity auctionEntity = AuctionEntity.builder()
                 .auctionId(1L)
-                .userEmail("user1")
+                .user(UserEntity.builder().id(1L).build())
                 .itemName("item2")
                 .startingPrice(1000)
                 .minimumBid(2000)

@@ -10,8 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
-    Optional<AuctionEntity> findByUserEmailAndAuctionId(String userEmail, Long auctionId);
+    Optional<AuctionEntity> findByUserIdAndAuctionId(Long userId, Long auctionId);
 
-    Page<AuctionEntity> findByUserEmail(String userEmail, Pageable pageable);
+    Page<AuctionEntity> findByUserId(Long userId, Pageable pageable);
 
 }

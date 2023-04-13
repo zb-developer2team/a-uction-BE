@@ -3,7 +3,11 @@ package com.example.a_uction.model.auction.entity;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
+import com.example.a_uction.model.user.entity.UserEntity;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -16,12 +20,15 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class AuctionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long auctionId;
-    //@ManyToOne(targetEntity = .class, fetch = FetchType.LAZY)
-    private String userEmail;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @NotNull(message = "상품 이름을 입력하세요")
     private String itemName;
@@ -45,7 +52,9 @@ public class AuctionEntity {
     @NotNull(message = "경매 종료 시간을 입력하세요")
     private LocalDateTime endDateTime;
 
+    @CreatedDate
     private LocalDateTime createDateTime;
+    @LastModifiedDate
     private LocalDateTime updateDateTime;
 
 }

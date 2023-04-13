@@ -4,6 +4,7 @@ import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
+import com.example.a_uction.model.user.entity.UserEntity;
 import lombok.*;
 
 import javax.persistence.EnumType;
@@ -36,9 +37,9 @@ public class AuctionDto {
         @NotNull(message = "경매 종료 시간을 입력하세요")
         private LocalDateTime endDateTime;
 
-        public AuctionEntity toEntity(String userEmail){
+        public AuctionEntity toEntity(UserEntity user){
             return AuctionEntity.builder()
-                    .userEmail(userEmail)
+                    .user(user)
                     .itemName(this.itemName)
                     .itemStatus(this.itemStatus)
                     .startingPrice(this.startingPrice)

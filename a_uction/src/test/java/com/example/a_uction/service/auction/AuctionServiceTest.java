@@ -24,6 +24,8 @@ import com.example.a_uction.model.user.entity.UserEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.a_uction.model.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +43,9 @@ class AuctionServiceTest {
 	@Mock
 	private AuctionRepository auctionRepository;
 
+	@Mock
+	private UserRepository userRepository;
+
 	@InjectMocks
 	private AuctionService auctionService;
 
@@ -57,6 +62,10 @@ class AuctionServiceTest {
 				.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
 				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
 				.build());
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 		//when
 		AuctionDto.Response response = auctionService.addAuction(
 			AuctionDto.Request.builder()
@@ -179,7 +188,7 @@ class AuctionServiceTest {
 			.build();
 
 		AuctionEntity auctionEntity = AuctionEntity.builder()
-			.userEmail("user1")
+			.user(UserEntity.builder().id(1L).build())
 			.auctionId(1L)
 			.itemName("item")
 			.startingPrice(1234)
@@ -190,9 +199,13 @@ class AuctionServiceTest {
 			.endDateTime(LocalDateTime.of(2026, 5, 2, 0, 0, 0))
 			.build();
 
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.ofNullable(auctionEntity));
 		given(auctionRepository.save(any())).willReturn(auctionEntity);
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 
 		//when
 		var result = auctionService.updateAuction(updateAuction, "user1", 1L);
@@ -224,7 +237,7 @@ class AuctionServiceTest {
 
 		AuctionEntity auctionEntity = AuctionEntity.builder()
 			.auctionId(1L)
-			.userEmail("user1")
+			.user(UserEntity.builder().id(1L).build())
 			.itemName("item")
 			.startingPrice(1234)
 			.minimumBid(1000)
@@ -234,8 +247,12 @@ class AuctionServiceTest {
 			.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
 			.build();
 
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.ofNullable(auctionEntity));
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 
 		//when
 		AuctionException exception = assertThrows(AuctionException.class,
@@ -263,7 +280,7 @@ class AuctionServiceTest {
 
 		AuctionEntity auctionEntity = AuctionEntity.builder()
 			.auctionId(1L)
-			.userEmail("user1")
+			.user(UserEntity.builder().id(1L).build())
 			.itemName("item")
 			.startingPrice(1234)
 			.minimumBid(1000)
@@ -273,8 +290,12 @@ class AuctionServiceTest {
 			.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
 			.build();
 
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.ofNullable(auctionEntity));
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 
 		//when
 		AuctionException exception = assertThrows(AuctionException.class,
@@ -292,7 +313,7 @@ class AuctionServiceTest {
 		List<AuctionEntity> list = List.of(
 			AuctionEntity.builder()
 				.auctionId(1L)
-				.userEmail("user1")
+				.user(UserEntity.builder().id(1L).build())
 				.itemName("item1")
 				.startingPrice(1111)
 				.minimumBid(1000)
@@ -303,7 +324,7 @@ class AuctionServiceTest {
 				.build(),
 			AuctionEntity.builder()
 				.auctionId(2L)
-				.userEmail("user1")
+				.user(UserEntity.builder().id(1L).build())
 				.itemName("item2")
 				.startingPrice(2222)
 				.minimumBid(2000)
@@ -316,7 +337,11 @@ class AuctionServiceTest {
 		);
 		Page<AuctionEntity> page = new PageImpl<>(list);
 
-		given(auctionRepository.findByUserEmail(any(), any())).willReturn(page);
+		given(auctionRepository.findByUserId(any(), any())).willReturn(page);
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 
 		//when
 		var result = auctionService.getAllAuctionListByUserEmail("user1", Pageable.ofSize(10));
@@ -337,7 +362,11 @@ class AuctionServiceTest {
 	@DisplayName("해당 유저의 모든 경매 리스트 가져오기 - 실패")
 	void getAllAuctionListByUserIdFail() {
 		//given
-		given(auctionRepository.findByUserEmail(any(), any())).willReturn(Page.empty());
+		given(auctionRepository.findByUserId(any(), any())).willReturn(Page.empty());
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 
 		//when
 		AuctionException exception = assertThrows(AuctionException.class,
@@ -352,10 +381,10 @@ class AuctionServiceTest {
 	@DisplayName("경매 삭제 - 성공")
 	void deleteAuction() {
 		UserEntity user = UserEntity.builder()
-			.userEmail("zerobase@gmail.com").build();
+			.userEmail("zerobase@gmail.com").id(1L).build();
 		AuctionEntity auction = AuctionEntity.builder()
 			.auctionId(1L)
-			.userEmail(user.getUserEmail())
+			.user(user)
 			.itemName("item1")
 			.startingPrice(1111)
 			.minimumBid(1000)
@@ -364,8 +393,12 @@ class AuctionServiceTest {
 			.startDateTime(LocalDateTime.of(2025, 4, 12, 0, 0, 0))
 			.endDateTime(LocalDateTime.of(2025, 4, 13, 0, 0, 0))
 			.build();
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.of(auction));
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 		ArgumentCaptor<AuctionEntity> captor = ArgumentCaptor.forClass(AuctionEntity.class);
 		AuctionDto.Response auctionDto = auctionService.deleteAuction(1L, "zerobase@gmail.com");
 		//then
@@ -379,10 +412,10 @@ class AuctionServiceTest {
 	@DisplayName("경매 삭제 - 실패 - 이미 시작된 경매")
 	void deleteSTARTEDAuctionFAIL() {
 		UserEntity user = UserEntity.builder()
-			.userEmail("zerobase@gmail.com").build();
+			.userEmail("zerobase@gmail.com").id(1L).build();
 		AuctionEntity auction = AuctionEntity.builder()
 			.auctionId(1L)
-			.userEmail(user.getUserEmail())
+			.user(user)
 			.itemName("item1")
 			.startingPrice(1111)
 			.minimumBid(1000)
@@ -391,8 +424,12 @@ class AuctionServiceTest {
 			.startDateTime(LocalDateTime.of(2023, 4, 1, 0, 0, 0))
 			.endDateTime(LocalDateTime.of(2023, 4, 13, 0, 0, 0))
 			.build();
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.of(auction));
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 		//then
 		AuctionException exception = assertThrows(AuctionException.class,
 			() -> auctionService.deleteAuction(1L, "zerobase@gmail.com"));
@@ -405,8 +442,12 @@ class AuctionServiceTest {
 	@DisplayName("경매 삭제 - 실패 - 유저가 등록한 경매가 아님")
 	void deleteAnotherUsersAuctionFAIL() {
 
-		given(auctionRepository.findByUserEmailAndAuctionId(any(), anyLong()))
+		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.empty());
+		given(userRepository.getByUserEmail(any()))
+				.willReturn(UserEntity.builder()
+						.id(1L)
+						.build());
 		//then
 		AuctionException exception = assertThrows(AuctionException.class,
 			() -> auctionService.deleteAuction(1L, "zerobase@gmail.com"));
