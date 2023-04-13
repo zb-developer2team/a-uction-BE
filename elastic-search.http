@@ -1,0 +1,24 @@
+###es save
+POST http://localhost:8081/search/auctionDocument/2
+
+###Starting Price
+GET http://localhost:8081/search/auctions/startingPrice?startingPrice=1000&size=10
+
+###minimumBid
+GET http://localhost:8081/search/auctions/minimumBid?minimumBid=100&size=10
+
+###itemStatus
+GET http://localhost:8081/search/auctions/itemStatus?itemStatus=GOOD&size=10
+
+###category
+GET http://localhost:8081/search/auctions/category?category=SHOES&size=10
+
+###SearchCondition
+GET http://localhost:8081/search/auctions?category=ETC&itemStatus=BAD&size=10
+
+###description match
+GET http://localhost:8081/search/auctions/description/matches?description=애플&size=10
+
+###description contains
+GET http://localhost:8081/search/auctions/description/contains?description=애플&size=10
+

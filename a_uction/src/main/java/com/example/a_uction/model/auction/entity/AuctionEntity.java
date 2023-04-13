@@ -57,4 +57,7 @@ public class AuctionEntity {
     @LastModifiedDate
     private LocalDateTime updateDateTime;
 
+    @NotNull(message = "상품 설명을 입력하세요")
+    private String description;
+
 }

@@ -85,6 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				path.contains("register") ||
 				path.isEmpty() ||
 				path.equals("/auth/refresh") ||
+				path.contains("search") ||
 				path.equals("/");
 	}
 

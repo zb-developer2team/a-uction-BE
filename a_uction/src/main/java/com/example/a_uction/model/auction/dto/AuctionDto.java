@@ -36,6 +36,8 @@ public class AuctionDto {
         private LocalDateTime startDateTime;
         @NotNull(message = "경매 종료 시간을 입력하세요")
         private LocalDateTime endDateTime;
+        @NotNull(message = "상품 설명을 입력하세요")
+        private String description;
 
         public AuctionEntity toEntity(UserEntity user){
             return AuctionEntity.builder()
@@ -47,6 +49,7 @@ public class AuctionDto {
                     .startDateTime(this.startDateTime)
                     .endDateTime(this.endDateTime)
                     .category(this.category)
+                    .description((this.description))
                     .build();
         }
 
@@ -66,6 +69,7 @@ public class AuctionDto {
         private Category category;
         private LocalDateTime startDateTime;
         private LocalDateTime endDateTime;
+        private String description;
 
 
         public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
@@ -78,6 +82,7 @@ public class AuctionDto {
                     .category(auctionEntity.getCategory())
                     .startDateTime(auctionEntity.getStartDateTime())
                     .endDateTime(auctionEntity.getEndDateTime())
+                    .description(auctionEntity.getDescription())
                     .build();
         }
     }

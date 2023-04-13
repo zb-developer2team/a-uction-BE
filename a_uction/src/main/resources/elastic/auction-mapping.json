@@ -1,0 +1,17 @@
+{
+  "properties" : {
+    "auctionId" : {"type" : "keyword"},
+    "userEmail" : {"type" : "keyword"},
+    "itemName" : {"type" : "keyword"},
+    "itemStatus" : {"type" : "text"},
+    "transactionStatus" : {"type" : "keyword"},
+    "startingPrice" : {"type" : "keyword"},
+    "minimumBid" : {"type" : "keyword"},
+    "category" : {"type" : "keyword"},
+
+    "description" : {
+      "type" : "text",
+      "analyzer" : "korean"
+    }
+  }
+}
