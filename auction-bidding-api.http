@@ -1,0 +1,9 @@
+###경매 입찰 생성
+POST http://localhost:8081/biddingHistory
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODE0MTA2NzIsImV4cCI6MTY4MTQxNDI3Mn0.LjuwJoPNuZwB9wfyZfG91MtfAWs7HFki1vKOrActUq0
+
+{
+  "auctionId": 2,
+  "price": 11000
+}

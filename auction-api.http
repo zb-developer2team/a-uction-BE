@@ -1,17 +1,16 @@
 ###경매 생성
 POST http://localhost:8081/auctions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTM3OTUyNiwiZXhwIjoxNjgxMzgzMTI2fQ.mNtb6GIpLPX_swZ92wilu07qizsv5-luE-xkT6HyeLw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTI4OTE5NywiZXhwIjoxNjgxMjkyNzk3fQ.nh01Laz3Zrj2RiZdarN4ETRb_4rZgp6MY9MPegDRF3E
 
 {
-  "itemName": "i-pod 1",
+  "itemName": "air force 1",
   "itemStatus": "GOOD",
   "startingPrice": 1000,
   "minimumBid": 100,
-  "category": "ETC",
+  "category": "SHOES",
   "startDateTime": "2024-04-11T13:41:30.416Z",
-  "endDateTime": "2024-04-30T13:41:30.416Z",
-  "description" : "this is i-pod 이것은 아이팟 입니다. 애플 애플 애플이다."
+  "endDateTime": "2024-04-30T13:41:30.416Z"
 }
 
 ###경매 보기
