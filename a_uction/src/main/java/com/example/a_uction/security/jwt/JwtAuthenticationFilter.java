@@ -33,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider provider;
 	private final RedisTemplate<String, Object> redisTemplate;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -83,6 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			path.contains("login") ||
 				path.contains("kakao") ||
 				path.contains("register") ||
+				path.contains("ws") ||
 				path.isEmpty() ||
 				path.equals("/auth/refresh") ||
 				path.contains("search") ||
@@ -98,6 +100,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
-		new ObjectMapper().writeValue(response.getWriter(), ErrorResponse.from(errorCode));
+		objectMapper.writeValue(response.getWriter(), ErrorResponse.from(errorCode));
 	}
 }
