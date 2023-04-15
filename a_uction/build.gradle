@@ -27,6 +27,8 @@ dependencies {
 
 	// websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
 
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
