@@ -21,10 +21,10 @@ public enum ErrorCode {
 	ENTERED_THE_WRONG_PASSWORD(BAD_REQUEST, "비밀번호를 확인 해 주세요."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
 	THIS_EMAIL_ALREADY_EXIST(BAD_REQUEST, "해당 이메일은 이미 존재합니다."),
-	LOGOUT_USER_ERROR(UNAUTHORIZED, "로그아웃 된 사용자입니다."),
-	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 유효하지 않습니다."),
-	NOT_MATCH_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 일치하지 않습니다."),
 	SEND_ACCESS_TOKEN_ERROR(BAD_REQUEST, "엑세스 토큰 전송에 실패하였습니다."),
+
+	// balance
+	NOT_ENOUGH_BALANCE(BAD_REQUEST, "예치금이 충분하지 않습니다."),
 
 	// jwt
 	INVALID_TOKEN(UNAUTHORIZED, "토큰이 올바르지 않습니다."),
@@ -32,8 +32,12 @@ public enum ErrorCode {
 	EXPIRED_TOKEN(UNAUTHORIZED, "토큰이 만료되었습니다."),
 	EMPTY_TOKEN_ERROR(UNAUTHORIZED, "토큰이 비어있습니다."),
 	FAILED_VERIFY_SIGNATURE(UNAUTHORIZED, "시그니처 검증에 실패한 토큰입니다."),
+	LOGOUT_USER_ERROR(UNAUTHORIZED, "로그아웃 된 사용자입니다."),
+	INVALID_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 유효하지 않습니다."),
+	NOT_MATCH_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 일치하지 않습니다."),
+
 	// kakao
-	INVALID_PARSE_ERROR(BAD_REQUEST, "JSON 파싱에 실패하였습니다."),
+	INVALID_PARSE_ERROR(UNAUTHORIZED, "JSON 파싱에 실패하였습니다."),
 
 	//auction
 	BEFORE_START_TIME (BAD_REQUEST, "경매 시작 시간이 등록 시간보다 이전입니다."),

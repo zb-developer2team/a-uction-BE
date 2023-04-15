@@ -61,3 +61,13 @@ Authorization-refresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSZWZyZXNoVG9rZW4iL
 ###회원정보 보기
 GET localhost:8081/users/detail
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
+
+###예치금 충전
+PUT http://localhost:8081/users/balance/charge
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTUzNDEwNSwiZXhwIjoxNjgxNTM3NzA1fQ.AuQCV2ArKRNpGxdLZKFT_YBpCigKPvgmHY9jkiYeGJk
+
+{
+ "from" : "카카오",
+ "money" : 100000
+}
