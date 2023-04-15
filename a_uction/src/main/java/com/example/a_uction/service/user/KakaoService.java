@@ -130,10 +130,8 @@ public class KakaoService {
 				.build());
 		}
 
-		// AccessToken, RefreshToken 생성
 		TokenDto tokenDto = provider.createToken(email);
 
-		// refresh토큰 redis 저장
 		redisTemplate.opsForValue()
 			.set("RT:" + email, tokenDto.getRefreshToken(),
 				tokenDto.getRefreshTokenExpireTime(), TimeUnit.MILLISECONDS);
@@ -145,14 +143,12 @@ public class KakaoService {
 		return userRepository.existsByUserEmail(email);
 	}
 
-	public LogoutUser kakaoLogout (HttpServletRequest request) {
+	public LogoutUser kakaoLogout(HttpServletRequest request) {
 		String accessToken = request.getParameter("state");
-		//String accessToken = provider.resolveTokenFromRequest(request);
 		String email = provider.getUserEmail(accessToken);
 
-		// refreshToken 삭제
-		if (redisTemplate.opsForValue().get("RF:" + email) != null) {
-			redisTemplate.delete("RF:" + email);
+		if (redisTemplate.opsForValue().get("RT:" + email) != null) {
+			redisTemplate.delete("RT:" + email);
 		}
 
 		long expiration = provider.getExpiration(accessToken);
