@@ -3,6 +3,7 @@ package com.example.a_uction.model.auction.entity;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
+import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.user.entity.UserEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -60,4 +61,16 @@ public class AuctionEntity {
     @NotNull(message = "상품 설명을 입력하세요")
     private String description;
 
+    public void updateEntity(AuctionDto.Request updateAuction){
+        this.setItemName(updateAuction.getItemName());
+        this.setItemStatus(updateAuction.getItemStatus());
+        this.setStartingPrice(updateAuction.getStartingPrice());
+        this.setMinimumBid(updateAuction.getMinimumBid());
+        this.setStartDateTime(updateAuction.getStartDateTime());
+        this.setEndDateTime(updateAuction.getEndDateTime());
+        this.setItemStatus(updateAuction.getItemStatus());
+        this.setCategory(updateAuction.getCategory());
+        this.setUpdateDateTime(LocalDateTime.now());
+        this.setDescription(updateAuction.getDescription());
+    }
 }

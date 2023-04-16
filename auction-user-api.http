@@ -44,13 +44,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
 ###회원정보 수정
 PUT localhost:8081/users/detail/modify
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MDMwOSwiZXhwIjoxNjgxNjQzOTA5fQ.I3fxg2usj5_BiDVis_mTLUQt3LUlmJmzSPS1YYZGI64
 
 {
   "currentPassword" : "1234",
-  "updatePassword" : "",
+  "updatePassword" : "4321",
   "username" : "test",
-  "phoneNumber" : "01012341234"
+  "phoneNumber" : "01012341234",
+  "description" : "hello 나는야 경매왕!"
 }
 
 ###리프레시 토큰 사용하여 어세스토큰 갱신
@@ -60,7 +61,7 @@ Authorization-refresh: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJSZWZyZXNoVG9rZW4iL
 
 ###회원정보 보기
 GET localhost:8081/users/detail
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTExODEwMywiZXhwIjoxNjgxMTIxNzAzfQ.Dej55zK_cAvSTiru9iQcwk-5KxOZ8OHJjxEar5Rm6d4
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MDMwOSwiZXhwIjoxNjgxNjQzOTA5fQ.I3fxg2usj5_BiDVis_mTLUQt3LUlmJmzSPS1YYZGI64
 
 ###예치금 충전
 PUT http://localhost:8081/users/balance/charge
