@@ -12,9 +12,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessage {
+public class Message {
 	private MessageType messageType;
 	private String sender;
 	private String chatRoomId;
-	private String message;
+	private String contents;
 }

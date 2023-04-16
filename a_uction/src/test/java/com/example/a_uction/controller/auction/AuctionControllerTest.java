@@ -58,7 +58,6 @@ class AuctionControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-
 	@Test
 	@DisplayName("경매 생성 성공")
 	@WithMockUser
@@ -92,7 +91,6 @@ class AuctionControllerTest {
 			.andExpect(jsonPath("$.itemName").value("test item2"))
 			.andDo(print());
 	}
-
 
 	@Test
 	@WithMockUser
