@@ -36,6 +36,10 @@ public class AuctionSearchService {
         auctionSearchRepository.save(result);
     }
 
+    @Transactional
+    public void deleteAuctionDocuments(Long auctionId) {
+        auctionSearchRepository.deleteById(auctionId);
+    }
 
     public List<AuctionDocumentResponse> findByStartingPrice(int startingPrice, Pageable pageable) {
         return auctionSearchRepository.findByStartingPrice(startingPrice, pageable)

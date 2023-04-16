@@ -4,6 +4,7 @@ package com.example.a_uction.controller.auction;
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
+import com.example.a_uction.service.auction.AuctionSearchService;
 import com.example.a_uction.service.auction.AuctionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.security.Principal;
 public class AuctionController {
 
     private final AuctionService auctionService;
+    private final AuctionSearchService auctionSearchService;
 
     @PostMapping
     public ResponseEntity<AuctionDto.Response> addAuction(@RequestBody @Valid AuctionDto.Request auction,
@@ -31,11 +33,14 @@ public class AuctionController {
         if (bindingResult.hasErrors()){
             throw new AuctionException(ErrorCode.INVALID_REQUEST);
         }
-        return ResponseEntity.ok(auctionService.addAuction(auction, principal.getName()));
+        AuctionDto.Response response = auctionService.addAuction(auction, principal.getName());
+        auctionSearchService.saveAuctionDocuments(response.getAuctionId());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{auctionId}")
     public ResponseEntity<?> deleteAuctionByAuctionId(@PathVariable Long auctionId, Principal principal){
+        auctionSearchService.deleteAuctionDocuments(auctionId);
         return ResponseEntity.ok(auctionService.deleteAuction(auctionId, principal.getName()));
     }
 
@@ -47,7 +52,9 @@ public class AuctionController {
     @PutMapping
     public ResponseEntity<AuctionDto.Response> updateAction(@RequestBody AuctionDto.Request updateAuction,
                                           @RequestParam Long auctionId,Principal principal){
-        return ResponseEntity.ok(auctionService.updateAuction(updateAuction, principal.getName(), auctionId));
+        AuctionDto.Response response = auctionService.updateAuction(updateAuction, principal.getName(), auctionId);
+        auctionSearchService.saveAuctionDocuments(auctionId);
+        return ResponseEntity.ok(response);
     }
 
 
