@@ -39,9 +39,10 @@ public class AuctionController {
     }
 
     @DeleteMapping("/{auctionId}")
-    public ResponseEntity<?> deleteAuctionByAuctionId(@PathVariable Long auctionId, Principal principal){
+    public ResponseEntity<AuctionDto.Response> deleteAuctionByAuctionId(@PathVariable Long auctionId, Principal principal){
+        AuctionDto.Response response = auctionService.deleteAuction(auctionId, principal.getName());
         auctionSearchService.deleteAuctionDocuments(auctionId);
-        return ResponseEntity.ok(auctionService.deleteAuction(auctionId, principal.getName()));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{auctionId}")
