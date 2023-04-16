@@ -76,4 +76,11 @@ public class AuctionSearchController {
     public ResponseEntity<List<AuctionDocumentResponse>> searchByContainsDescription(@RequestParam String description, Pageable pageable){
         return ResponseEntity.ok(auctionSearchService.findByContainsDescription(description,pageable));
     }
+
+    //delete
+    @DeleteMapping("/auctionDocument/{auctionId}")
+    public ResponseEntity<Void> deleteAuctionDocuments(@PathVariable Long auctionId){
+        auctionSearchService.deleteAuctionDocuments(auctionId);
+        return ResponseEntity.ok().build();
+    }
 }

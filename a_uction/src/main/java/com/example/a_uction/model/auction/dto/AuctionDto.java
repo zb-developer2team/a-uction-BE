@@ -61,6 +61,7 @@ public class AuctionDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response{
+        private Long auctionId;
         private String itemName;
         private ItemStatus itemStatus;
         private TransactionStatus transactionStatus;
@@ -73,7 +74,8 @@ public class AuctionDto {
 
 
         public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
-            return AuctionDto.Response.builder()
+            return Response.builder()
+                    .auctionId(auctionEntity.getAuctionId())
                     .itemName(auctionEntity.getItemName())
                     .itemStatus(auctionEntity.getItemStatus())
                     .transactionStatus(auctionEntity.getTransactionStatus())
