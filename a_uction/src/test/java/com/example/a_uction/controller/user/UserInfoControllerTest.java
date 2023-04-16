@@ -52,11 +52,13 @@ class UserInfoControllerTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("나는야 경매왕")
                 .build();
 
         ModifyUser.Response response = ModifyUser.Response.builder()
                 .username("test1")
                 .phoneNumber("01043214321")
+                .description("나는야 경매왕")
                 .build();
 
         given(userInfoService.modifyUserDetail(any(), any())).willReturn(response);
@@ -68,6 +70,7 @@ class UserInfoControllerTest {
                         .content(objectMapper.writeValueAsString(updateUser)))
                 .andExpect(jsonPath("$.username").value("test1"))
                 .andExpect(jsonPath("$.phoneNumber").value("01043214321"))
+                .andExpect(jsonPath("$.description").value("나는야 경매왕"))
                 .andExpect(status().isOk());
     }
 
@@ -81,6 +84,7 @@ class UserInfoControllerTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("나는야 경매왕")
                 .build();
 
         given(userInfoService.modifyUserDetail(any(), any())).willThrow(new AuctionException(USER_NOT_FOUND));
@@ -105,6 +109,7 @@ class UserInfoControllerTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("나는야 경매왕")
                 .build();
 
 
@@ -128,6 +133,7 @@ class UserInfoControllerTest {
                 .username("test")
                 .userEmail("test@test.com")
                 .phoneNumber("01012345678")
+                .description("나는야 경매왕")
                 .build();
 
         given(userInfoService.userInfo(any())).willReturn(infoUser);
@@ -137,6 +143,7 @@ class UserInfoControllerTest {
                 .andExpect(jsonPath("$.username").value("test"))
                 .andExpect(jsonPath("$.userEmail").value("test@test.com"))
                 .andExpect(jsonPath("$.phoneNumber").value("01012345678"))
+                .andExpect(jsonPath("$.description").value("나는야 경매왕"))
                 .andExpect(status().isOk());
     }
 

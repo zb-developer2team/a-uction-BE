@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import com.example.a_uction.model.user.dto.ModifyUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,5 +53,13 @@ public class UserEntity {
 	private LocalDateTime createDateTime;
 	@LastModifiedDate
 	private LocalDateTime updateDateTime;
+
+	private String description;
+
+	public void updateUserEntity(ModifyUser.Request updateRequest){
+		this.setUsername(updateRequest.getUsername());
+		this.setPhoneNumber(updateRequest.getPhoneNumber());
+		this.setDescription(updateRequest.getDescription());
+	}
 
 }

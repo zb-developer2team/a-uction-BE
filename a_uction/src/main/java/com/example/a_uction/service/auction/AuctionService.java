@@ -71,15 +71,7 @@ public class AuctionService {
             throw new AuctionException(BEFORE_START_TIME);
         }
 
-        auction.setItemName(updateAuction.getItemName());
-        auction.setItemStatus(updateAuction.getItemStatus());
-        auction.setStartingPrice(updateAuction.getStartingPrice());
-        auction.setMinimumBid(updateAuction.getMinimumBid());
-        auction.setStartDateTime(updateAuction.getStartDateTime());
-        auction.setEndDateTime(updateAuction.getEndDateTime());
-        auction.setItemStatus(updateAuction.getItemStatus());
-        auction.setCategory(updateAuction.getCategory());
-        auction.setUpdateDateTime(LocalDateTime.now());
+        auction.updateEntity(updateAuction);
 
         return new AuctionDto.Response().fromEntity(auctionRepository.save(auction));
     }

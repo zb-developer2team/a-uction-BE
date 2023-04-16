@@ -15,6 +15,7 @@ public class ModifyUser {
 		private String updatePassword;
 		private String username;
 		private String phoneNumber;
+		private String description;
 	}
 
 	@Getter
@@ -25,11 +26,13 @@ public class ModifyUser {
 	public static class Response{
 		private String username;
 		private String phoneNumber;
+		private String description;
 
 		public ModifyUser.Response fromEntity(UserEntity userEntity){
 			return Response.builder()
 					.phoneNumber(userEntity.getPhoneNumber())
 					.username(userEntity.getUsername())
+					.description(userEntity.getDescription())
 					.build();
 		}
 

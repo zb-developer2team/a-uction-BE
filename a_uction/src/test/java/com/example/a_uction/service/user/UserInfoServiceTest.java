@@ -4,7 +4,6 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.ModifyUser;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
-import com.example.a_uction.service.user.UserInfoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,6 +47,7 @@ class UserInfoServiceTest {
                 .createDateTime(LocalDateTime.now())
                 .phoneNumber("01012341234")
                 .password(passwordEncoder.encode("1234"))
+                .description(null)
                 .build();
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
@@ -55,6 +55,7 @@ class UserInfoServiceTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("hello 나는야 경매왕!")
                 .build();
 
         given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(userEntity));
@@ -66,6 +67,7 @@ class UserInfoServiceTest {
         //then
         assertEquals("test1", result.getUsername());
         assertEquals("01043214321", result.getPhoneNumber());
+        assertEquals("hello 나는야 경매왕!", result.getDescription());
     }
 
     @Test
@@ -77,6 +79,7 @@ class UserInfoServiceTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("hello 나는야 경매왕!")
                 .build();
 
         given(userRepository.findByUserEmail(any())).willThrow(new AuctionException(USER_NOT_FOUND));
@@ -100,6 +103,7 @@ class UserInfoServiceTest {
                 .createDateTime(LocalDateTime.now())
                 .phoneNumber("01012341234")
                 .password(passwordEncoder.encode("1234"))
+                .description(null)
                 .build();
 
         ModifyUser.Request updateUser = ModifyUser.Request.builder()
@@ -107,6 +111,7 @@ class UserInfoServiceTest {
                 .phoneNumber("01043214321")
                 .updatePassword("")
                 .username("test1")
+                .description("hello 나는야 경매왕!")
                 .build();
 
         given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(userEntity));
@@ -129,6 +134,7 @@ class UserInfoServiceTest {
                 .phoneNumber("01012345678")
                 .id(1L)
                 .createDateTime(LocalDateTime.of(2023,4,1,0,0,0))
+                .description("hello 나는야 경매왕!")
                 .build();
 
         given(userRepository.findByUserEmail(any())).willReturn(Optional.ofNullable(user));
@@ -140,6 +146,7 @@ class UserInfoServiceTest {
         assertEquals("test", result.getUsername());
         assertEquals("test@test.com", result.getUserEmail());
         assertEquals("01012345678", result.getPhoneNumber());
+        assertEquals("hello 나는야 경매왕!", result.getDescription());
     }
 
     @Test
