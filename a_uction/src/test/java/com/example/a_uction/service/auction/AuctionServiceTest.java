@@ -59,8 +59,8 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.BAD)
 				.startingPrice(2000)
 				.minimumBid(200)
-				.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+				.startDateTime(LocalDateTime.parse("2025-04-15T17:09:42.411"))
+				.endDateTime(LocalDateTime.parse("2025-04-15T17:10:42.411"))
 				.build());
 		given(userRepository.getByUserEmail(any()))
 				.willReturn(UserEntity.builder()
@@ -73,8 +73,8 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.GOOD)
 				.startingPrice(1000)
 				.minimumBid(100)
-				.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+				.startDateTime(LocalDateTime.parse("2025-04-15T17:09:42.411"))
+				.endDateTime(LocalDateTime.parse("2025-04-15T17:10:42.411"))
 				.build(), "user1");
 		//then
 		ArgumentCaptor<AuctionEntity> captor = ArgumentCaptor.forClass(AuctionEntity.class);
@@ -87,8 +87,8 @@ class AuctionServiceTest {
 		assertEquals(2000, response.getStartingPrice());
 		assertEquals(100, captor.getValue().getMinimumBid());
 		assertEquals(200, response.getMinimumBid());
-		assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
-		assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
+		assertEquals(LocalDateTime.parse("2025-04-15T17:09:42.411"), response.getStartDateTime());
+		assertEquals(LocalDateTime.parse("2025-04-15T17:10:42.411"), response.getEndDateTime());
 	}
 
 	@Test
