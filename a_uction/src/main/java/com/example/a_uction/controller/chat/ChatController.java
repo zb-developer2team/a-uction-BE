@@ -27,7 +27,7 @@ public class ChatController {
 		return chatMessageService.bidding(message);
 	}
 
-	@GetMapping("/{chatRoomId}/getConnectedUsers")
+	@GetMapping("/{chatRoomId}/get-connected-users")
 	public Integer getUsers(@PathVariable String chatRoomId) {
 		return chatMessageService.getUsers(chatRoomId);
 	}

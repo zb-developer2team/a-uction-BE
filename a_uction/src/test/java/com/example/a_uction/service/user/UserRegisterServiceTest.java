@@ -40,6 +40,8 @@ class UserRegisterServiceTest {
 	@DisplayName("회원가입성공")
 	void register_SUCCESS() {
 		//given
+		given(userRepository.findByUserEmail(any()))
+			.willReturn(Optional.empty());
 		given(userRepository.save(any()))
 			.willReturn(UserEntity.builder()
 				.userEmail("zerobase@gmail.com")

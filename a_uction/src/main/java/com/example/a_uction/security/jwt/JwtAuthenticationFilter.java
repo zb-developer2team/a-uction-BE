@@ -85,6 +85,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				path.contains("kakao") ||
 				path.contains("register") ||
 				path.contains("ws") ||
+				path.contains("auctions/detail") ||
+				path.contains("auctions/list") ||
+				path.contains("get-time") ||
 				path.isEmpty() ||
 				path.equals("/auth/refresh") ||
 				path.contains("search") ||

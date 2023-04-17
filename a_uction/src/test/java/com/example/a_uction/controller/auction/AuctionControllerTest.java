@@ -236,7 +236,7 @@ class AuctionControllerTest {
 			.build();
 		given(auctionService.getAuctionByAuctionId(anyLong()))
 			.willReturn(auctionDto);
-		mockMvc.perform(get("/auctions/" + 1L)
+		mockMvc.perform(get("/auctions/detail/" + 1L)
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
@@ -279,7 +279,7 @@ class AuctionControllerTest {
 
 		//when
 		//then
-		mockMvc.perform(get("/auctions/read").with(csrf()))
+		mockMvc.perform(get("/auctions/my-auctions").with(csrf()))
 			.andDo(print())
 			.andExpect(jsonPath("$.numberOfElements").value(2))
 			.andExpect(jsonPath("$.content[0].itemName").value("item1"))
@@ -302,7 +302,7 @@ class AuctionControllerTest {
 			.willThrow(new AuctionException(NOT_FOUND_AUCTION_LIST));
 		//when
 		//then
-		mockMvc.perform(get("/auctions/read").with(csrf()))
+		mockMvc.perform(get("/auctions/my-auctions").with(csrf()))
 			.andDo(print())
 			.andExpect(jsonPath("$.errorCode").value("NOT_FOUND_AUCTION_LIST"))
 			.andExpect(status().isOk());
