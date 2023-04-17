@@ -1,17 +1,17 @@
 ###경매 생성
 POST http://localhost:8081/auctions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTM3OTUyNiwiZXhwIjoxNjgxMzgzMTI2fQ.mNtb6GIpLPX_swZ92wilu07qizsv5-luE-xkT6HyeLw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTcyNTQwNywiZXhwIjoxNjgxNzI5MDA3fQ.FHMlolKsN-9j5uK67dTayj79KAGI2QPjy0mlz_za9ng
 
 {
-  "itemName": "i-pod 1",
+  "itemName": "아이폰 14 프로",
   "itemStatus": "GOOD",
-  "startingPrice": 1000,
+  "startingPrice": 5000,
   "minimumBid": 100,
   "category": "ETC",
   "startDateTime": "2024-04-11T13:41:30.416Z",
   "endDateTime": "2024-04-30T13:41:30.416Z",
-  "description" : "this is i-pod 이것은 아이팟 입니다. 애플 애플 애플이다."
+  "description" : "this is i-phone 이것은 아이폰 프로14 입니다. 애플 애플 애플이다."
 }
 
 ###경매 보기
@@ -22,16 +22,17 @@ Content-Type: application/json
 ###경매 수정
 PUT http://localhost:8081/auctions?auctionId=1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MjY0NywiZXhwIjoxNjgxNjQ2MjQ3fQ.IFfbbqL7-puyt7mkjpLPM77DBkMp7mUzqY2TRrdr-a0
 
 {
-  "itemName": "air force 1",
+  "itemName": "i-pad pro 12.9 inch",
   "itemStatus": "GOOD",
-  "startingPrice": 1000,
+  "startingPrice": 5000,
   "minimumBid": 100,
-  "category": "SHOES",
-  "startDateTime": "2023-04-12T13:41:30.416Z",
-  "endDateTime": "2023-04-30T13:41:30.416Z"
+  "category": "ETC",
+  "startDateTime": "2024-04-11T13:41:30.416Z",
+  "endDateTime": "2024-04-30T13:41:30.416Z",
+  "description" : "this is i-pad pro 이것은 아이패드 프로 12.9인치 입니다. 애플 애플 애플이다."
 }
 
 ###user의 모든 경매 가져오기
@@ -42,10 +43,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
 ###경매 삭제
 DELETE http://localhost:8081/auctions/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTAwNiwiZXhwIjoxNjgxMTM0NjA2fQ.1qIxzvIRdxMITQ1TheoADMls9irD44MQudfeaxETkhg
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MzMwNiwiZXhwIjoxNjgxNjQ2OTA2fQ.hANtOdzIGD8U6H5iAhc2W9CaRjp5C9rQDwKJiOsavFM
 
-###경매 리스트
-GET http://localhost:8081/auctions/listAll
+###경매 리스트 (상태별) - 완료
+GET http://localhost:8081/auctions/listAll?status=COMPLETED
+Content-Type: application/json
+
+###경매 리스트 (상태별) - 진행중
+GET http://localhost:8081/auctions/listAll?status=SCHEDULED
+Content-Type: application/json
+
+###경매 리스트 (상태별) - 예정
+GET http://localhost:8081/auctions/listAll?status=SCHEDULED
 Content-Type: application/json
 
 ###서버 시간 받아오기

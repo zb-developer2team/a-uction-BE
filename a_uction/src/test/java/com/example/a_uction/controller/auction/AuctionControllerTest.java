@@ -30,10 +30,7 @@ import static com.example.a_uction.exception.constants.ErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -353,5 +350,68 @@ class AuctionControllerTest {
 			.andDo(print())
 			.andExpect(jsonPath("$.errorCode").value("UNABLE_DELETE_AUCTION"))
 			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("경매 상태별 리스트 보기 - 성공")
+	@WithMockUser
+	void getAllAuctionListSuccess() throws Exception {
+	    //given
+		List<AuctionDto.Response> list = List.of(
+				AuctionDto.Response.builder()
+						.itemName("item1")
+						.itemStatus(ItemStatus.GOOD)
+						.startingPrice(1000)
+						.minimumBid(100)
+						.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
+						.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+						.build(),
+				AuctionDto.Response.builder()
+						.itemName("item2")
+						.itemStatus(ItemStatus.BAD)
+						.startingPrice(2000)
+						.minimumBid(200)
+						.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
+						.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+						.build()
+		);
+
+		Page<AuctionDto.Response> page = new PageImpl<>(list);
+
+		given(auctionService.getAllAuctionListByStatus(any(), any())).willReturn(page);
+	    //when
+	    //then
+		mockMvc.perform(get("/auctions/listAll").with(csrf())
+						.param("status", "PROCEEDING")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(jsonPath("$.numberOfElements").value(2))
+				.andExpect(jsonPath("$.content[0].itemName").value("item1"))
+				.andExpect(jsonPath("$.content[0].itemStatus").value("GOOD"))
+				.andExpect(jsonPath("$.content[0].startingPrice").value(1000))
+				.andExpect(jsonPath("$.content[0].minimumBid").value(100))
+				.andExpect(jsonPath("$.content[1].itemName").value("item2"))
+				.andExpect(jsonPath("$.content[1].itemStatus").value("BAD"))
+				.andExpect(jsonPath("$.content[1].startingPrice").value(2000))
+				.andExpect(jsonPath("$.content[1].minimumBid").value(200))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("경매 상태별 리스트 보기 - 실패")
+	@WithMockUser
+	void getAllAuctionListFail() throws Exception {
+	    //given
+		given(auctionService.getAllAuctionListByStatus(any(), any()))
+				.willThrow(new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST));
+
+	    //when
+	    //then
+		mockMvc.perform(get("/auctions/listAll").with(csrf())
+						.param("status", "PROCEEDING")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(jsonPath("$.errorCode").value("NOT_FOUND_AUCTION_STATUS_LIST"))
+				.andExpect(status().isOk());
 	}
 }
