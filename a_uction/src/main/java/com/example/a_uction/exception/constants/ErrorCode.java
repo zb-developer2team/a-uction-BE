@@ -17,6 +17,7 @@ public enum ErrorCode {
 
 	USER_NOT_FOUND(BAD_REQUEST, "유저를 찾을 수 없습니다."),
 	THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION(BAD_REQUEST, "이 번호는 이미 인증이 완료되었습니다."),
+	VERIFICATION_CODE_TIME_OUT(BAD_REQUEST, "인증번호 유효 시간이 만료됐습니다."),
 	WRONG_CODE_INPUT(BAD_REQUEST, "코드를 잘못 입력하셨습니다. 처음부터 다시 시도해주세요."),
 	ENTERED_THE_WRONG_PASSWORD(BAD_REQUEST, "비밀번호를 확인 해 주세요."),
 	EMAIL_FORMAT_ERROR(BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),

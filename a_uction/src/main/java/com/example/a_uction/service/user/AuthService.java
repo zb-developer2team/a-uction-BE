@@ -22,7 +22,7 @@ public class AuthService {
 	@Value("${jwt.access.expiration}")
 	private String accessExpiresIn;
 	private final JwtProvider provider;
-	private final RedisTemplate redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 	public AccessToken reIssueAccessToken(HttpServletRequest request) {
 		String refreshToken = provider.resolveRefreshTokenFromRequest(request);
 		if (!provider.validateToken(refreshToken)) {

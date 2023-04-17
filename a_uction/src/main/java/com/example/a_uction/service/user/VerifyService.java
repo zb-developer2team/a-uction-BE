@@ -1,13 +1,12 @@
 package com.example.a_uction.service.user;
 
 import static com.example.a_uction.exception.constants.ErrorCode.THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION;
+import static com.example.a_uction.exception.constants.ErrorCode.VERIFICATION_CODE_TIME_OUT;
 import static com.example.a_uction.exception.constants.ErrorCode.WRONG_CODE_INPUT;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.Verify;
-import com.example.a_uction.model.user.entity.UserVerificationEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
-import com.example.a_uction.model.user.repository.UserVerificationEntityRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
@@ -17,13 +16,14 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,7 +37,19 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class VerifyService {
+	private static final String REDIS_PACKAGE = "verification:";
 
+	@Value("${sms.adminPhoneNum}")
+	private String ADMIN_PHONE_NUM;
+	@Value("${sms.contentType}")
+	private String CONTENT_TYPE;
+	@Value("${sms.countryCode}")
+	private String COUNTRY_CODE;
+	@Value("${sms.type}")
+	private String TYPE;
+
+	@Value("${sms.timeOut}")
+	private Long TIME_FOR_VERIFICATION;
 	@Value("${sms.serviceId}")
 	private String serviceId;
 	@Value("${sms.accessKey}")
@@ -45,11 +57,12 @@ public class VerifyService {
 	@Value("${sms.secretKey}")
 	private String secretKey;
 
+
 	private final ObjectMapper objectMapper;
 	private final HttpHeaders headers;
 	private final RestTemplate restTemplate;
 	private final UserRepository userRepository;
-	private final UserVerificationEntityRepository verificationEntityRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	public Verify.Response sendVerificationCode(String phoneNumber)
 		throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException, URISyntaxException {
@@ -67,10 +80,10 @@ public class VerifyService {
 
 		Verify.Request request =
 			Verify.Request.builder()
-				.type("SMS")
-				.contentType("COMM")
-				.countryCode("82")
-				.from("01033538090")
+				.type(TYPE)
+				.contentType(CONTENT_TYPE)
+				.countryCode(COUNTRY_CODE)
+				.from(ADMIN_PHONE_NUM)
 				.messages(messages)
 				.content(sendMessage)
 				.build();
@@ -93,11 +106,15 @@ public class VerifyService {
 		);
 	}
 	public boolean verifyCode(Verify.Form form) {
-		if (verificationEntityRepository
-			.findByCodeAndPhoneNumber(form.getCode(), form.getPhoneNumber()).isEmpty()) {
+		String code = (String) redisTemplate.opsForValue().get(REDIS_PACKAGE + form.getPhoneNumber());
+
+		if (code == null) {
+			throw new AuctionException(VERIFICATION_CODE_TIME_OUT);
+		}
+		if (!code.equals(form.getCode())) {
 			throw new AuctionException(WRONG_CODE_INPUT);
 		}
-		deleteVerification(form);
+		deleteVerification(form.getPhoneNumber());
 		return true;
 	}
 	private void validatePhoneNumber(String phoneNumber) {
@@ -108,19 +125,15 @@ public class VerifyService {
 
 	private String generateVerificationCode(String phoneNumber) {
 		String verifyCode = RandomStringUtils.random(6, true, true);
-		verificationEntityRepository.save(UserVerificationEntity.builder()
-			.code(verifyCode)
-			.phoneNumber(phoneNumber)
-			.build());
+
+		redisTemplate.opsForValue().set(REDIS_PACKAGE + phoneNumber,
+			verifyCode, TIME_FOR_VERIFICATION, TimeUnit.MINUTES);
 
 		return verifyCode;
 	}
 
-	private void deleteVerification(Verify.Form form) {
-		Optional<UserVerificationEntity> user =
-			verificationEntityRepository
-				.findByCodeAndPhoneNumber(form.getCode(), form.getPhoneNumber());
-		user.ifPresent(verificationEntityRepository::delete);
+	private void deleteVerification(String phoneNumber) {
+		redisTemplate.delete(REDIS_PACKAGE + phoneNumber);
 	}
 
 	private String messageFormat(String randomCode) {
