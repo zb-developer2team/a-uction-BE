@@ -8,7 +8,7 @@ public enum Category {
     ETC("기타")
     ;
 
-    String type;
+    final String type;
 
     Category(String type) {
         this.type = type;

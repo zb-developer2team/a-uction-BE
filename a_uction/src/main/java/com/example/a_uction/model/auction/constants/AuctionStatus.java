@@ -5,7 +5,7 @@ public enum AuctionStatus {
     SCHEDULED ("예정된"),
     COMPLETED ("완료된");
 
-    String condition;
+    final String condition;
 
     AuctionStatus(String condition) {
         this.condition = condition;
