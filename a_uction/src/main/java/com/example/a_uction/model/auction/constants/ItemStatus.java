@@ -7,7 +7,7 @@ public enum ItemStatus {
 
     ;
 
-    String condition;
+    final String condition;
 
     ItemStatus(String condition) {
         this.condition = condition;

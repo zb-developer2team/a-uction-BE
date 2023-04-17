@@ -3,6 +3,7 @@ package com.example.a_uction.controller.auction;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
+import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.service.auction.AuctionSearchService;
 import com.example.a_uction.service.auction.AuctionService;
@@ -71,8 +72,9 @@ public class AuctionController {
     }
 
     @GetMapping("/listAll")
-    public ResponseEntity<?> getAllAuctions() {
-        return null;
+    public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionList(
+            @RequestParam(required = false, value = "status") AuctionStatus status, Pageable pageable) {
+        return ResponseEntity.ok(auctionService.getAllAuctionListByStatus(status, pageable));
     }
 
 

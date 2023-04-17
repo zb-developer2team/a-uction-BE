@@ -1,10 +1,6 @@
 package com.example.a_uction.service.auction;
 
-import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
-import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_LIST;
-import static com.example.a_uction.exception.constants.ErrorCode.UNABLE_DELETE_AUCTION;
+import static com.example.a_uction.exception.constants.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +11,7 @@ import static org.mockito.Mockito.verify;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
+import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
@@ -454,5 +451,186 @@ class AuctionServiceTest {
 
 		//then
 		assertEquals(AUCTION_NOT_FOUND, exception.getErrorCode());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 성공 - 진행중")
+	void getAllAuctionListByStatusSuccessProceeding(){
+	    //given
+		List<AuctionEntity> list = List.of(
+				AuctionEntity.builder()
+						.auctionId(1L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item1")
+						.startingPrice(1111)
+						.minimumBid(1000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.BAD)
+						.startDateTime(LocalDateTime.of(2022, 4, 1, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
+						.build(),
+				AuctionEntity.builder()
+						.auctionId(2L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item2")
+						.startingPrice(2222)
+						.minimumBid(2000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.GOOD)
+						.startDateTime(LocalDateTime.of(2022, 4, 11, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2023, 4, 20, 0, 0, 0))
+						.build()
+		);
+		Page<AuctionEntity> page = new PageImpl<>(list);
+		given(auctionRepository.findByStartDateTimeBeforeAndEndDateTimeAfter(
+				any(), any(), any())).willReturn(page);
+	    //when
+		var result = auctionService.getAllAuctionListByStatus(AuctionStatus.PROCEEDING, Pageable.ofSize(10));
+
+		//then
+		assertEquals(2, result.getTotalElements());
+		assertEquals("item1", result.toList().get(0).getItemName());
+		assertEquals(1111, result.toList().get(0).getStartingPrice());
+		assertEquals(1000, result.toList().get(0).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
+		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
+		assertEquals("item2", result.toList().get(1).getItemName());
+		assertEquals(2222, result.toList().get(1).getStartingPrice());
+		assertEquals(2000, result.toList().get(1).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
+		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 성공 - 예정된")
+	void getAllAuctionListByStatusSuccessScheduled(){
+		//given
+		List<AuctionEntity> list = List.of(
+				AuctionEntity.builder()
+						.auctionId(1L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item1")
+						.startingPrice(1111)
+						.minimumBid(1000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.BAD)
+						.startDateTime(LocalDateTime.of(2024, 4, 1, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
+						.build(),
+				AuctionEntity.builder()
+						.auctionId(2L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item2")
+						.startingPrice(2222)
+						.minimumBid(2000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.GOOD)
+						.startDateTime(LocalDateTime.of(2024, 4, 11, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2025, 4, 20, 0, 0, 0))
+						.build()
+		);
+		Page<AuctionEntity> page = new PageImpl<>(list);
+		given(auctionRepository.findByStartDateTimeAfter(any(), any())).willReturn(page);
+		//when
+		var result = auctionService.getAllAuctionListByStatus(AuctionStatus.SCHEDULED, Pageable.ofSize(10));
+
+		//then
+		assertEquals(2, result.getTotalElements());
+		assertEquals("item1", result.toList().get(0).getItemName());
+		assertEquals(1111, result.toList().get(0).getStartingPrice());
+		assertEquals(1000, result.toList().get(0).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
+		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
+		assertEquals("item2", result.toList().get(1).getItemName());
+		assertEquals(2222, result.toList().get(1).getStartingPrice());
+		assertEquals(2000, result.toList().get(1).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
+		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 성공 - 완료")
+	void getAllAuctionListByStatusSuccessCompleted(){
+		//given
+		List<AuctionEntity> list = List.of(
+				AuctionEntity.builder()
+						.auctionId(1L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item1")
+						.startingPrice(1111)
+						.minimumBid(1000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.BAD)
+						.startDateTime(LocalDateTime.of(2021, 4, 1, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2022, 4, 10, 0, 0, 0))
+						.build(),
+				AuctionEntity.builder()
+						.auctionId(2L)
+						.user(UserEntity.builder().id(1L).build())
+						.itemName("item2")
+						.startingPrice(2222)
+						.minimumBid(2000)
+						.transactionStatus(TransactionStatus.SALE)
+						.itemStatus(ItemStatus.GOOD)
+						.startDateTime(LocalDateTime.of(2021, 4, 11, 0, 0, 0))
+						.endDateTime(LocalDateTime.of(2022, 4, 20, 0, 0, 0))
+						.build()
+		);
+		Page<AuctionEntity> page = new PageImpl<>(list);
+		given(auctionRepository.findByEndDateTimeBefore(any(), any())).willReturn(page);
+		//when
+		var result = auctionService.getAllAuctionListByStatus(AuctionStatus.COMPLETED, Pageable.ofSize(10));
+
+		//then
+		assertEquals(2, result.getTotalElements());
+		assertEquals("item1", result.toList().get(0).getItemName());
+		assertEquals(1111, result.toList().get(0).getStartingPrice());
+		assertEquals(1000, result.toList().get(0).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
+		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
+		assertEquals("item2", result.toList().get(1).getItemName());
+		assertEquals(2222, result.toList().get(1).getStartingPrice());
+		assertEquals(2000, result.toList().get(1).getMinimumBid());
+		assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
+		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 실패 - 진행중")
+	void getAllAuctionListByStatusFailProceeding(){
+		//given
+		given(auctionRepository.findByStartDateTimeBeforeAndEndDateTimeAfter(
+				any(), any(), any())).willReturn(Page.empty());
+		//when
+		AuctionException exception = assertThrows(AuctionException.class,
+				() -> auctionService.getAllAuctionListByStatus(AuctionStatus.PROCEEDING, Pageable.ofSize(10)));
+		//then
+		assertEquals(NOT_FOUND_AUCTION_STATUS_LIST, exception.getErrorCode());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 실패 - 예정된")
+	void getAllAuctionListByStatusFailScheduled(){
+		//given
+		given(auctionRepository.findByStartDateTimeAfter(
+				any(), any())).willReturn(Page.empty());
+		//when
+		AuctionException exception = assertThrows(AuctionException.class,
+				() -> auctionService.getAllAuctionListByStatus(AuctionStatus.SCHEDULED, Pageable.ofSize(10)));
+		//then
+		assertEquals(NOT_FOUND_AUCTION_STATUS_LIST, exception.getErrorCode());
+	}
+
+	@Test
+	@DisplayName("상태별 경매 리스트 보기 - 실패 - 완료된")
+	void getAllAuctionListByStatusFailCompleted(){
+		//given
+		given(auctionRepository.findByEndDateTimeBefore(
+				any(), any())).willReturn(Page.empty());
+		//when
+		AuctionException exception = assertThrows(AuctionException.class,
+				() -> auctionService.getAllAuctionListByStatus(AuctionStatus.COMPLETED, Pageable.ofSize(10)));
+		//then
+		assertEquals(NOT_FOUND_AUCTION_STATUS_LIST, exception.getErrorCode());
 	}
 }
