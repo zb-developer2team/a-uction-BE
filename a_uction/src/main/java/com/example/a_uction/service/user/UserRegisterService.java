@@ -21,6 +21,8 @@ public class UserRegisterService {
 
 	public RegisterUser register(RegisterUser.Request request) {
 
+		registerValidationCheck(request.getUserEmail());
+
 		return RegisterUser.fromEntity(
 			userRepository.save(UserEntity.builder()
 				.username(request.getUsername())
@@ -36,5 +38,12 @@ public class UserRegisterService {
 			throw new AuctionException(THIS_EMAIL_ALREADY_EXIST);
 		}
 		return true;
+	}
+
+	private void registerValidationCheck(String userEmail) {
+		userRepository.findByUserEmail(userEmail)
+			.orElseThrow(
+				() -> new AuctionException(THIS_EMAIL_ALREADY_EXIST)
+			);
 	}
 }

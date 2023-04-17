@@ -48,6 +48,7 @@ public class Verify {
 	}
 	@AllArgsConstructor
 	@NoArgsConstructor
+	@Builder
 	@Setter
 	@Getter
 	public static class Form {
