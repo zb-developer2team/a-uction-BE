@@ -41,9 +41,8 @@ public class UserRegisterService {
 	}
 
 	private void registerValidationCheck(String userEmail) {
-		userRepository.findByUserEmail(userEmail)
-			.orElseThrow(
-				() -> new AuctionException(THIS_EMAIL_ALREADY_EXIST)
-			);
+		if (userRepository.findByUserEmail(userEmail).isPresent()){
+			throw new AuctionException(THIS_EMAIL_ALREADY_EXIST);
+		}
 	}
 }
