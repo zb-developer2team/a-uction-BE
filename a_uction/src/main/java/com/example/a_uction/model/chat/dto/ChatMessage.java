@@ -17,4 +17,5 @@ public class ChatMessage {
 	private String sender;
 	private String chatRoomId;
 	private String message;
+	private Long auctionId;
 }

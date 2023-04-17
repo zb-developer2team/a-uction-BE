@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ChatController {
 
+
 	private final ChatMessageService chatMessageService;
 	@MessageMapping("/send")
 	public void sendMessage(@Payload ChatMessage message) {
@@ -20,8 +21,13 @@ public class ChatController {
 	}
 
 	@MessageMapping("/bid")
-	public Long bidding(@Payload ChatMessage message) {
-		return chatMessageService.bidding(message);
+	//@BiddingLock
+	public int bidding(@Payload ChatMessage message) throws InterruptedException {
+		for (int i = 0; i < 10; i++) {
+			Thread.sleep(500);
+			chatMessageService.bidding(message);
+		}
+		return 1;
 	}
 
 }
