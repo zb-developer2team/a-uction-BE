@@ -124,6 +124,6 @@ public class ChatMessageService {
 		if (!biddingPossible(request.getAuctionId(), user.getId(), request.getPrice())) {
 			throw  new AuctionException(ErrorCode.UNABLE_CREATE_BID);
 		}
-		new BiddingHistoryDto.Response().fromEntity(biddingHistoryRepository.save(request.toEntity(user)));
+		biddingHistoryRepository.save(request.toEntity(user));
 	}
 }
