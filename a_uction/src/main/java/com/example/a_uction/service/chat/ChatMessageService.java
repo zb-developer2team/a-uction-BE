@@ -20,6 +20,7 @@ import com.example.a_uction.model.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ChatMessageService {
 	private static final String ENTER_MESSAGE = "님이 입장하셨습니다.";
+	private static final String DESTINATION_PREFIX = "/topic/";
 
 	private final SimpMessageSendingOperations simpMessageSendingOperations;
 
@@ -35,20 +37,22 @@ public class ChatMessageService {
 	private final UserRepository userRepository;
 	private final AuctionRepository auctionRepository;
 	private final RedissonClient redissonClient;
+	private final ChatApplication chatApplication;
+
 	public void sendChatMessage(Message chatMessage) {
 
 		if (chatMessage.getMessageType().equals(MessageType.ENTER)) {
 			chatMessage.setContents(chatMessage.getSender() + ENTER_MESSAGE);
 			simpMessageSendingOperations
-				.convertAndSend("/topic/" + chatMessage.getChatRoomId(), chatMessage);
+				.convertAndSend(DESTINATION_PREFIX + chatMessage.getChatRoomId(), chatMessage);
 		} else {
 			simpMessageSendingOperations
-				.convertAndSend("/topic/" + chatMessage.getChatRoomId(), chatMessage);
+				.convertAndSend(DESTINATION_PREFIX + chatMessage.getChatRoomId(), chatMessage);
 		}
 	}
 
 	@Transactional
-	public int bidding(Message message) {
+	public void bidding(Message message) {
 		Long auctionId = Long.parseLong(message.getChatRoomId().replace("bid", ""));
 		String lockKey = "auction_lock:" + auctionId;
 		RLock lock = redissonClient.getLock(lockKey);
@@ -64,16 +68,19 @@ public class ChatMessageService {
 			createBiddingHistory(message.getSender(), request);
 
 			simpMessageSendingOperations
-					.convertAndSend("/topic/" + message.getChatRoomId(), message);
+					.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
 		} finally {
 			lock.unlock();
 		}
-		return 0;
 	}
 
 
 	private UserEntity getUser(String userEmail){
 		return userRepository.getByUserEmail(userEmail);
+	}
+
+	public Integer getUsers(String chatRoomId) {
+		return chatApplication.getUsers(chatRoomId);
 	}
 
 	public int getMaxBiddablePrice(Long auctionId){
@@ -92,13 +99,13 @@ public class ChatMessageService {
 		Optional<BiddingHistoryEntity> optionalBiddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(auctionId);
 
 		//경매 등록자 본인이 입찰 시도 - 테스트시 주석처리
-//		if (Objects.equals(auction.getUser().getId(), bidderId))
-//			throw new AuctionException(ErrorCode.REGISTER_CANNOT_BID);
-//		if (optionalBiddingHistory.isPresent()){
-//			if (Objects.equals(optionalBiddingHistory.get().getBidderId(), bidderId)){
-//				throw new AuctionException(ErrorCode.LAST_BIDDER_SAME);
-//			}
-//		}
+		if (Objects.equals(auction.getUser().getId(), bidderId))
+			throw new AuctionException(ErrorCode.REGISTER_CANNOT_BID);
+		if (optionalBiddingHistory.isPresent()){
+			if (Objects.equals(optionalBiddingHistory.get().getBidderId(), bidderId)){
+				throw new AuctionException(ErrorCode.LAST_BIDDER_SAME);
+			}
+		}
 		//경매 시작 안함
 		if (auction.getStartDateTime().isAfter(LocalDateTime.now()))
 			throw new AuctionException(ErrorCode.AUCTION_NOT_STARTS);

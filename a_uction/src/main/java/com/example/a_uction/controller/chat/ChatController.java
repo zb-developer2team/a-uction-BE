@@ -23,8 +23,8 @@ public class ChatController {
 	}
 
 	@MessageMapping("/bidding")
-	public Long bidding(@Payload Message message) {
-		return chatMessageService.bidding(message);
+	public void bidding(@Payload Message message) {
+		chatMessageService.bidding(message);
 	}
 
 	@GetMapping("/{chatRoomId}/get-connected-users")
