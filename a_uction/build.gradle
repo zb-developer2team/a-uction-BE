@@ -53,6 +53,9 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
 	testImplementation "org.testcontainers:elasticsearch:1.16.3"
 
+	//redisson client
+	implementation 'org.redisson:redisson:3.17.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
