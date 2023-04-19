@@ -36,7 +36,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
 }
 
 ###user의 모든 경매 가져오기
-GET http://localhost:8081/auctions/read
+GET http://localhost:8081/auctions/my-auctions
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
 
