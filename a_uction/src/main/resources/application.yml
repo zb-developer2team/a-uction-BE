@@ -15,6 +15,26 @@ spring:
       ddl-auto: create
     show-sql: true
     defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+  profiles:
+    include:
+      - jwt
+      - kakao
+      - sms
+      - log
+      - rabbitmq
+  redis:
+    port: 6379
+    host: localhost
 
 server:
   port: 8081
+management:
+  endpoints:
+    web:
+      exposure:
+        include: thread

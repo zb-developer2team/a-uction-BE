@@ -1,6 +1,7 @@
 package com.example.a_uction.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -13,7 +14,21 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+	private static final String TOPIC_DESTINATION_PREFIX = "/topic";
+
 	private final ChatInterceptor interceptor;
+
+	@Value("${rabbitmq.host}")
+	private String host;
+	@Value("${rabbitmq.virtualHost}")
+	private String virtualHost;
+	@Value("${websocket.port}")
+	private int websocketPort;
+	@Value("${rabbitmq.clientId}")
+	private String clientId;
+	@Value("${rabbitmq.clientPw}")
+	private String clientPw;
+
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry
@@ -24,13 +39,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
+
 		registry.setApplicationDestinationPrefixes("/pub")
-			.enableStompBrokerRelay("/topic")
-			.setRelayHost("127.0.0.1")
-			.setVirtualHost("/")
-			.setRelayPort(61613)
-			.setClientLogin("guest")
-			.setClientPasscode("guest");
+			.enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX)
+			.setRelayHost(host)
+			.setVirtualHost(virtualHost)
+			.setRelayPort(websocketPort)
+			.setClientLogin(clientId)
+			.setClientPasscode(clientPw);
 	}
 
 	@Override

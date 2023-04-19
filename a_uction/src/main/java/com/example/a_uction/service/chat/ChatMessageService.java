@@ -2,27 +2,26 @@ package com.example.a_uction.service.chat;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
+import com.example.a_uction.model.auction.entity.AuctionEntity;
+import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
+import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
+import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.chat.constants.MessageType;
 import com.example.a_uction.model.chat.dto.Message;
+import com.example.a_uction.model.user.entity.UserEntity;
+import com.example.a_uction.model.user.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
-import com.example.a_uction.model.auction.entity.AuctionEntity;
-import com.example.a_uction.model.auction.repository.AuctionRepository;
-import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
-import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
-import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
-import com.example.a_uction.model.user.entity.UserEntity;
-import com.example.a_uction.model.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -39,15 +38,15 @@ public class ChatMessageService {
 	private final RedissonClient redissonClient;
 	private final ChatApplication chatApplication;
 
-	public void sendChatMessage(Message chatMessage) {
+	public void sendChatMessage(Message message) {
 
-		if (chatMessage.getMessageType().equals(MessageType.ENTER)) {
-			chatMessage.setContents(chatMessage.getSender() + ENTER_MESSAGE);
+		if (message.getMessageType().equals(MessageType.ENTER)) {
+			message.setContents(message.getSender() + ENTER_MESSAGE);
 			simpMessageSendingOperations
-				.convertAndSend(DESTINATION_PREFIX + chatMessage.getChatRoomId(), chatMessage);
+				.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
 		} else {
 			simpMessageSendingOperations
-				.convertAndSend(DESTINATION_PREFIX + chatMessage.getChatRoomId(), chatMessage);
+				.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
 		}
 	}
 
@@ -75,10 +74,6 @@ public class ChatMessageService {
 	}
 
 
-	private UserEntity getUser(String userEmail){
-		return userRepository.getByUserEmail(userEmail);
-	}
-
 	public Integer getUsers(String chatRoomId) {
 		return chatApplication.getUsers(chatRoomId);
 	}
@@ -91,6 +86,10 @@ public class ChatMessageService {
 		return optionalBiddingHistory
 				.map(biddingHistoryEntity -> biddingHistoryEntity.getPrice() + auction.getMinimumBid())
 				.orElseGet(auction::getStartingPrice);
+	}
+
+	private UserEntity getUser(String userEmail){
+		return userRepository.getByUserEmail(userEmail);
 	}
 
 	private boolean biddingPossible(Long auctionId, Long bidderId, int price){
