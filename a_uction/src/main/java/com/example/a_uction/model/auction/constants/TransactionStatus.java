@@ -1,8 +1,8 @@
 package com.example.a_uction.model.auction.constants;
 
 public enum TransactionStatus {
-    NOT_SALE ("판매할 수 없음"),
-    SALE ("판매할 수 있음");
+    TRANSACTION_COMPLETE ("거래 성공"),
+    TRANSACTION_FAIL ("거래 실패");
 
     final String message;
 

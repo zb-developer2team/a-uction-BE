@@ -77,5 +77,10 @@ public class AuctionController {
         return ResponseEntity.ok(auctionService.getAllAuctionListByStatus(status, pageable));
     }
 
+    @GetMapping("/{auctionId}/end")
+    public ResponseEntity<AuctionDto.Response> auctionFinished(@PathVariable Long auctionId){
+        return ResponseEntity.ok(auctionService.auctionFinished(auctionId));
+    }
+
 
 }

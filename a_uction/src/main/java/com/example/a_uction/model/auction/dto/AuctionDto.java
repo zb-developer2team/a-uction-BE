@@ -71,6 +71,7 @@ public class AuctionDto {
         private LocalDateTime startDateTime;
         private LocalDateTime endDateTime;
         private String description;
+        private Long buyerId;
 
 
         public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
@@ -85,6 +86,7 @@ public class AuctionDto {
                     .startDateTime(auctionEntity.getStartDateTime())
                     .endDateTime(auctionEntity.getEndDateTime())
                     .description(auctionEntity.getDescription())
+                    .buyerId(auctionEntity.getBuyerId())
                     .build();
         }
     }
