@@ -54,7 +54,7 @@ public class UserBalanceService {
 
 	}
 
-	public BalanceHistoryEntity getByUserEmail(String userEmail) {
+	private BalanceHistoryEntity getByUserEmail(String userEmail) {
 
 		UserEntity user = userRepository.findByUserEmail(userEmail)
 			.orElseThrow(() -> new AuctionException(USER_NOT_FOUND));

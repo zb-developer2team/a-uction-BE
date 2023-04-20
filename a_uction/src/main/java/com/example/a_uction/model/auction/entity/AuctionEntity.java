@@ -4,7 +4,10 @@ import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
+import com.example.a_uction.model.file.entity.FileEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -61,7 +64,19 @@ public class AuctionEntity {
     @NotNull(message = "상품 설명을 입력하세요")
     private String description;
 
-    public void updateEntity(AuctionDto.Request updateAuction){
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<FileEntity> files = new ArrayList<>();
+
+    public void addFile(FileEntity file) {
+        if (files == null) {
+            files = new ArrayList<>();
+        }
+
+        files.add(file);
+        file.setAuction(this);
+    }
+    public void updateEntity(AuctionDto.Request updateAuction) {
         this.setItemName(updateAuction.getItemName());
         this.setItemStatus(updateAuction.getItemStatus());
         this.setStartingPrice(updateAuction.getStartingPrice());

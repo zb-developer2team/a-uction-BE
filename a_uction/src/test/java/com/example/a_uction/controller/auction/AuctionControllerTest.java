@@ -5,11 +5,17 @@ import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
+import com.example.a_uction.model.file.entity.FileEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.security.jwt.JwtProvider;
 import com.example.a_uction.service.auction.AuctionSearchService;
 import com.example.a_uction.service.auction.AuctionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +26,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -69,21 +78,33 @@ class AuctionControllerTest {
 			.description("설명")
 			.build();
 
-		given(auctionService.addAuction(any(), any()))
+		given(auctionService.addAuction(any(), any(), any()))
 			.willReturn(auctionDto);
-		mockMvc.perform(post("/auctions")
+
+		// 추가
+		String content = objectMapper.writeValueAsString(AuctionEntity.builder()
+			.itemName("test item")
+			.itemStatus(ItemStatus.BAD)
+			.startingPrice(2000)
+			.minimumBid(200)
+			.startDateTime(LocalDateTime.parse("2025-04-15T17:09:42.411"))
+			.endDateTime(LocalDateTime.parse("2025-04-15T17:10:42.411"))
+			.description("설명")
+			.build());
+
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json",
+			content.getBytes(
+				StandardCharsets.UTF_8));
+
+		mockMvc
+			.perform(multipart("/auctions")
+				.file(json)
+				.file(image)
 				.with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(
-					AuctionEntity.builder()
-						.itemName("test item")
-						.itemStatus(ItemStatus.BAD)
-						.startingPrice(2000)
-						.minimumBid(200)
-						.startDateTime(LocalDateTime.parse("2025-04-15T17:09:42.411"))
-						.endDateTime(LocalDateTime.parse("2025-04-15T17:10:42.411"))
-						.description("설명")
-						.build())))
+				.contentType("multipart/mixed")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.itemName").value("test item2"))
 			.andDo(print());
@@ -104,7 +125,17 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.minimumBid(2000)
 			.startingPrice(1000)
+			.description("설명")
 			.build();
+		String content = objectMapper.writeValueAsString(updateAuction);
+		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
+			StandardCharsets.UTF_8));
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+
+		List<FileEntity> files = List.of(FileEntity.builder()
+			.fileName("test")
+			.src("test.png")
+			.build());
 
 		AuctionEntity auctionEntity = AuctionEntity.builder()
 			.auctionId(1L)
@@ -115,16 +146,21 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.startDateTime(startTime)
 			.endDateTime(endTime)
+			.files(files)
 			.build();
 
-		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), anyLong()))
+		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
 			.willReturn(new AuctionDto.Response().fromEntity(auctionEntity));
 		//when
 		//then
-		mockMvc.perform(put("/auctions").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.param("auctionId", "1")
-				.content(objectMapper.writeValueAsString(updateAuction)))
+		mockMvc.perform(multipart("/auctions/update")
+				.file(image)
+				.file(json)
+				.with(csrf())
+				.contentType("multipart/mixed")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.param("auctionId", "1"))
 			.andExpect(jsonPath("$.itemName").value("item2"))
 			.andExpect(jsonPath("$.itemStatus").value("GOOD"))
 			.andExpect(jsonPath("$.minimumBid").value("2000"))
@@ -147,16 +183,27 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.minimumBid(2000)
 			.startingPrice(1000)
+			.description("설명")
 			.build();
 
-		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), anyLong()))
+		String content = objectMapper.writeValueAsString(updateAuction);
+		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
+			StandardCharsets.UTF_8));
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+
+
+		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
 			.willThrow(new AuctionException(ErrorCode.INTERNAL_SERVER_ERROR));
 		//when
 		//then
-		mockMvc.perform(put("/auctions").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.param("auctionId", "1")
-				.content(objectMapper.writeValueAsString(updateAuction)))
+		mockMvc.perform(multipart("/auctions/update")
+				.file(json)
+				.file(image)
+				.with(csrf())
+				.contentType("multipart/mixed")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.param("auctionId", "1"))
 			.andExpect(jsonPath("$.errorCode").value("INTERNAL_SERVER_ERROR"))
 			.andExpect(status().isOk());
 	}
@@ -176,16 +223,27 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.minimumBid(2000)
 			.startingPrice(1000)
+			.description("설명")
 			.build();
 
-		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), anyLong()))
+		String content = objectMapper.writeValueAsString(updateAuction);
+		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
+			StandardCharsets.UTF_8));
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+
+
+		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
 			.willThrow(new AuctionException(ErrorCode.BEFORE_START_TIME));
 		//when
 		//then
-		mockMvc.perform(put("/auctions").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.param("auctionId", "1")
-				.content(objectMapper.writeValueAsString(updateAuction)))
+		mockMvc.perform(multipart("/auctions/update")
+				.file(json)
+				.file(image)
+				.with(csrf())
+				.contentType("multipart/mixed")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.param("auctionId", "1"))
 			.andExpect(jsonPath("$.errorCode").value("BEFORE_START_TIME"))
 			.andExpect(status().isOk());
 	}
@@ -205,16 +263,26 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.minimumBid(2000)
 			.startingPrice(1000)
+			.description("설명")
 			.build();
 
-		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), anyLong()))
+		String content = objectMapper.writeValueAsString(updateAuction);
+		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
+			StandardCharsets.UTF_8));
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+
+		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
 			.willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
 		//when
 		//then
-		mockMvc.perform(put("/auctions").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.param("auctionId", "1")
-				.content(objectMapper.writeValueAsString(updateAuction)))
+		mockMvc.perform(multipart("/auctions/update")
+				.file(json)
+				.file(image)
+				.with(csrf())
+				.contentType("multipart/mixed")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.param("auctionId", "1"))
 			.andExpect(jsonPath("$.errorCode").value("END_TIME_EARLIER_THAN_START_TIME"))
 			.andExpect(status().isOk());
 	}
@@ -356,62 +424,80 @@ class AuctionControllerTest {
 	@DisplayName("경매 상태별 리스트 보기 - 성공")
 	@WithMockUser
 	void getAllAuctionListSuccess() throws Exception {
-	    //given
+		//given
 		List<AuctionDto.Response> list = List.of(
-				AuctionDto.Response.builder()
-						.itemName("item1")
-						.itemStatus(ItemStatus.GOOD)
-						.startingPrice(1000)
-						.minimumBid(100)
-						.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
-						.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-						.build(),
-				AuctionDto.Response.builder()
-						.itemName("item2")
-						.itemStatus(ItemStatus.BAD)
-						.startingPrice(2000)
-						.minimumBid(200)
-						.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
-						.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-						.build()
+			AuctionDto.Response.builder()
+				.itemName("item1")
+				.itemStatus(ItemStatus.GOOD)
+				.startingPrice(1000)
+				.minimumBid(100)
+				.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
+				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+				.build(),
+			AuctionDto.Response.builder()
+				.itemName("item2")
+				.itemStatus(ItemStatus.BAD)
+				.startingPrice(2000)
+				.minimumBid(200)
+				.startDateTime(LocalDateTime.parse("2022-04-15T17:09:42.411"))
+				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+				.build()
 		);
 
 		Page<AuctionDto.Response> page = new PageImpl<>(list);
 
 		given(auctionService.getAllAuctionListByStatus(any(), any())).willReturn(page);
-	    //when
-	    //then
+		//when
+		//then
 		mockMvc.perform(get("/auctions/listAll").with(csrf())
-						.param("status", "PROCEEDING")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(jsonPath("$.numberOfElements").value(2))
-				.andExpect(jsonPath("$.content[0].itemName").value("item1"))
-				.andExpect(jsonPath("$.content[0].itemStatus").value("GOOD"))
-				.andExpect(jsonPath("$.content[0].startingPrice").value(1000))
-				.andExpect(jsonPath("$.content[0].minimumBid").value(100))
-				.andExpect(jsonPath("$.content[1].itemName").value("item2"))
-				.andExpect(jsonPath("$.content[1].itemStatus").value("BAD"))
-				.andExpect(jsonPath("$.content[1].startingPrice").value(2000))
-				.andExpect(jsonPath("$.content[1].minimumBid").value(200))
-				.andExpect(status().isOk());
+				.param("status", "PROCEEDING")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(jsonPath("$.numberOfElements").value(2))
+			.andExpect(jsonPath("$.content[0].itemName").value("item1"))
+			.andExpect(jsonPath("$.content[0].itemStatus").value("GOOD"))
+			.andExpect(jsonPath("$.content[0].startingPrice").value(1000))
+			.andExpect(jsonPath("$.content[0].minimumBid").value(100))
+			.andExpect(jsonPath("$.content[1].itemName").value("item2"))
+			.andExpect(jsonPath("$.content[1].itemStatus").value("BAD"))
+			.andExpect(jsonPath("$.content[1].startingPrice").value(2000))
+			.andExpect(jsonPath("$.content[1].minimumBid").value(200))
+			.andExpect(status().isOk());
 	}
 
 	@Test
 	@DisplayName("경매 상태별 리스트 보기 - 실패")
 	@WithMockUser
 	void getAllAuctionListFail() throws Exception {
-	    //given
+		//given
 		given(auctionService.getAllAuctionListByStatus(any(), any()))
-				.willThrow(new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST));
+			.willThrow(new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST));
 
-	    //when
-	    //then
+		//when
+		//then
 		mockMvc.perform(get("/auctions/listAll").with(csrf())
-						.param("status", "PROCEEDING")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andDo(print())
-				.andExpect(jsonPath("$.errorCode").value("NOT_FOUND_AUCTION_STATUS_LIST"))
-				.andExpect(status().isOk());
+				.param("status", "PROCEEDING")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(jsonPath("$.errorCode").value("NOT_FOUND_AUCTION_STATUS_LIST"))
+			.andExpect(status().isOk());
+	}
+
+	private List<MultipartFile> getFiles() throws IOException {
+		List<MultipartFile> files = new ArrayList<>();
+		MultipartFile file = getMockMultipartFile("test", "image/png",
+			"/Users/ssol/Downloads/test.png");
+
+		files.add(file);
+		files.add(getMockMultipartFile("test2", "image/png",
+			"/Users/ssol/Downloads/test.png"));
+		return files;
+	}
+
+	private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path)
+		throws IOException {
+		FileInputStream fileInputStream = new FileInputStream(new File(path));
+		return new MockMultipartFile(fileName, fileName + "." + contentType, contentType,
+			fileInputStream);
 	}
 }
