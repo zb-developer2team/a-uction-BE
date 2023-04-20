@@ -56,6 +56,8 @@ class AuctionServiceTest {
 	@InjectMocks
 	private AuctionService auctionService;
 
+	private static final String TEST_IMAGE_SRC = "src/test/resources/image/test.png";
+
 	@Test
 	@DisplayName("경매 등록 성공")
 	void addAuction_SUCCESS() throws IOException {
@@ -723,11 +725,11 @@ class AuctionServiceTest {
 	private List<MultipartFile> getFiles() throws IOException {
 		List<MultipartFile> files = new ArrayList<>();
 		MultipartFile file = getMockMultipartFile("test", "image/png",
-			"/Users/ssol/Downloads/test.png");
+			TEST_IMAGE_SRC);
 
 		files.add(file);
 		files.add(getMockMultipartFile("test2", "image/png",
-			"/Users/ssol/Downloads/test.png"));
+			TEST_IMAGE_SRC));
 		return files;
 	}
 

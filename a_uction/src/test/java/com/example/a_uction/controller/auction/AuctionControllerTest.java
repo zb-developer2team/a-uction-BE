@@ -64,6 +64,8 @@ class AuctionControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	private static final String TEST_IMAGE_SRC = "src/test/resources/image/test.png";
+
 	@Test
 	@DisplayName("경매 생성 성공")
 	@WithMockUser
@@ -92,7 +94,7 @@ class AuctionControllerTest {
 			.description("설명")
 			.build());
 
-		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", TEST_IMAGE_SRC);
 		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json",
 			content.getBytes(
 				StandardCharsets.UTF_8));
@@ -130,7 +132,7 @@ class AuctionControllerTest {
 		String content = objectMapper.writeValueAsString(updateAuction);
 		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
 			StandardCharsets.UTF_8));
-		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", TEST_IMAGE_SRC);
 
 		List<FileEntity> files = List.of(FileEntity.builder()
 			.fileName("test")
@@ -189,7 +191,7 @@ class AuctionControllerTest {
 		String content = objectMapper.writeValueAsString(updateAuction);
 		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
 			StandardCharsets.UTF_8));
-		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", TEST_IMAGE_SRC);
 
 
 		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
@@ -229,7 +231,7 @@ class AuctionControllerTest {
 		String content = objectMapper.writeValueAsString(updateAuction);
 		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
 			StandardCharsets.UTF_8));
-		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", TEST_IMAGE_SRC);
 
 
 		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
@@ -269,7 +271,7 @@ class AuctionControllerTest {
 		String content = objectMapper.writeValueAsString(updateAuction);
 		MockMultipartFile json = new MockMultipartFile("auction", "jsonData", "application/json", content.getBytes(
 			StandardCharsets.UTF_8));
-		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", "/Users/ssol/Downloads/test.png");
+		MockMultipartFile image = this.getMockMultipartFile("files", "image/png", TEST_IMAGE_SRC);
 
 		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
 			.willThrow(new AuctionException(ErrorCode.END_TIME_EARLIER_THAN_START_TIME));
@@ -486,11 +488,11 @@ class AuctionControllerTest {
 	private List<MultipartFile> getFiles() throws IOException {
 		List<MultipartFile> files = new ArrayList<>();
 		MultipartFile file = getMockMultipartFile("test", "image/png",
-			"/Users/ssol/Downloads/test.png");
+			TEST_IMAGE_SRC);
 
 		files.add(file);
 		files.add(getMockMultipartFile("test2", "image/png",
-			"/Users/ssol/Downloads/test.png"));
+			TEST_IMAGE_SRC));
 		return files;
 	}
 

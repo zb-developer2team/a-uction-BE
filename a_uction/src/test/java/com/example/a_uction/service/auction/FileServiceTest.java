@@ -59,7 +59,7 @@ class FileServiceTest {
 			.itemName("test item")
 				.build();
 
-		MultipartFile file = this.getMockMultipartFile("test", "image/png", "/Users/ssol/Downloads/test.png" );
+		MultipartFile file = this.getMockMultipartFile("test", "image/png", "src/test/resources/image/test.png" );
 		List<MultipartFile> mockFiles = Arrays.asList(file);
 
 		given(s3Service.uploadFiles(any()))
@@ -103,11 +103,11 @@ class FileServiceTest {
 	private List<MultipartFile> getFiles() throws IOException {
 		List<MultipartFile> files = new ArrayList<>();
 		MultipartFile file = getMockMultipartFile("test", "image/png",
-			"/Users/ssol/Downloads/test.png");
+			"src/test/resources/image/test.png");
 
 		files.add(file);
 		files.add(getMockMultipartFile("test2", "image/png",
-			"/Users/ssol/Downloads/test.png"));
+			"src/test/resources/image/test.png"));
 		return files;
 	}
 
