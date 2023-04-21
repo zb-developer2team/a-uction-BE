@@ -1,10 +1,19 @@
 ###경매 생성
 POST http://localhost:8081/auctions
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4Nzg3MywiZXhwIjoxNjgxOTkxNDczfQ.yRf7eU7kFxCt18jFu729PUDhbARS63eptCn3RTLmQhQ
+Content-Type: multipart/form-data; boundary=--------------------------1234567890
+
+----------------------------1234567890
+Content-Disposition: form-data; name="files"; filename="test.png"
+Content-Type: image/png
+
+< a_uction/src/test/resources/image/test.png
+----------------------------1234567890
+Content-Disposition: form-data; name="auction"
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTcyNTQwNywiZXhwIjoxNjgxNzI5MDA3fQ.FHMlolKsN-9j5uK67dTayj79KAGI2QPjy0mlz_za9ng
 
 {
-  "itemName": "아이폰 14 프로",
+  "itemName": "아이폰 18 프로 신상",
   "itemStatus": "GOOD",
   "startingPrice": 5000,
   "minimumBid": 100,
@@ -13,16 +22,21 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
   "endDateTime": "2024-04-30T13:41:30.416Z",
   "description" : "this is i-phone 이것은 아이폰 프로14 입니다. 애플 애플 애플이다."
 }
+----------------------------1234567890--
 
 ###경매 보기
-GET http://localhost:8081/auctions/detail/1
+GET http://localhost:8081/auctions/detail/13
 Content-Type: application/json
 #Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTAwNiwiZXhwIjoxNjgxMTM0NjA2fQ.1qIxzvIRdxMITQ1TheoADMls9irD44MQudfeaxETkhg
 
 ###경매 수정
-PUT http://localhost:8081/auctions?auctionId=1
+POST http://localhost:8081/auctions/update?auctionId=15
+Content-Type: multipart/form-data; boundary=--------------------------1234567890
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4Nzg3MywiZXhwIjoxNjgxOTkxNDczfQ.yRf7eU7kFxCt18jFu729PUDhbARS63eptCn3RTLmQhQ
+
+----------------------------1234567890
+Content-Disposition: form-data; name="auction"
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MjY0NywiZXhwIjoxNjgxNjQ2MjQ3fQ.IFfbbqL7-puyt7mkjpLPM77DBkMp7mUzqY2TRrdr-a0
 
 {
   "itemName": "i-pad pro 12.9 inch",
@@ -34,16 +48,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
   "endDateTime": "2024-04-30T13:41:30.416Z",
   "description" : "this is i-pad pro 이것은 아이패드 프로 12.9인치 입니다. 애플 애플 애플이다."
 }
+----------------------------1234567890--
 
 ###user의 모든 경매 가져오기
 GET http://localhost:8081/auctions/my-auctions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTEwNywiZXhwIjoxNjgxMTM0NzA3fQ.f2WncSBZuGdcwgdLMtsVePKElVxbMfvZrcKq6194LKM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4MjMwNSwiZXhwIjoxNjgxOTg1OTA1fQ.xK8rt7bXQzVZ7J-YaF3ys3jwDTb1btr6fS4NXbmorks
 
 ###경매 삭제
-DELETE http://localhost:8081/auctions/1
+DELETE http://localhost:8081/auctions/14
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MzMwNiwiZXhwIjoxNjgxNjQ2OTA2fQ.hANtOdzIGD8U6H5iAhc2W9CaRjp5C9rQDwKJiOsavFM
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4MjMwNSwiZXhwIjoxNjgxOTg1OTA1fQ.xK8rt7bXQzVZ7J-YaF3ys3jwDTb1btr6fS4NXbmorks
 
 ###경매 리스트 (상태별) - 완료
 GET http://localhost:8081/auctions/listAll?status=COMPLETED

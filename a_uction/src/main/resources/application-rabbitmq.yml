@@ -1,0 +1,8 @@
+rabbitmq:
+  clientId: guest
+  clientPw: guest
+  virtualHost: /
+  host: 127.0.0.1
+
+websocket:
+  port: 61613
