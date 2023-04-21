@@ -69,10 +69,6 @@ public class AuctionEntity {
     private List<FileEntity> files = new ArrayList<>();
 
     public void addFile(FileEntity file) {
-        if (files == null) {
-            files = new ArrayList<>();
-        }
-
         files.add(file);
         file.setAuction(this);
     }
