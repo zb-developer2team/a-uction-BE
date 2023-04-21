@@ -37,83 +37,85 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 @ExtendWith(MockitoExtension.class)
 class FileServiceTest {
 
-	@Mock
-	private S3Service s3Service;
-	@Mock
-	private FileRepository fileRepository;
-	@InjectMocks
-	private FileService fileService;
+    @Mock
+    private S3Service s3Service;
+    @Mock
+    private FileRepository fileRepository;
+    @InjectMocks
+    private FileService fileService;
 
-	@Test
-	@DisplayName("파일 등록 성공")
-	void add_SUCCESS() throws IOException {
+    @Test
+    @DisplayName("파일 등록 성공")
+    void add_SUCCESS() throws IOException {
 
-		//given
-		List<FileEntity> files = new ArrayList<>();
-		files.add(FileEntity.builder()
-			.fileName("test")
-			.src("test.png")
-			.build());
+        //given
+        List<FileEntity> files = new ArrayList<>();
+        files.add(FileEntity.builder()
+            .fileName("test")
+            .src("test.png")
+            .build());
 
-		AuctionEntity auction = AuctionEntity.builder()
-			.itemName("test item")
-				.build();
+        AuctionEntity auction = AuctionEntity.builder()
+            .itemName("test item")
+            .build();
 
-		MultipartFile file = this.getMockMultipartFile("test", "image/png", "src/test/resources/image/test.png" );
-		List<MultipartFile> mockFiles = Arrays.asList(file);
+        MultipartFile file = this.getMockMultipartFile("test", "image/png",
+            "src/test/resources/image/test.png");
+        List<MultipartFile> mockFiles = Arrays.asList(file);
 
-		given(s3Service.uploadFiles(any()))
-			.willReturn(files);
+        given(s3Service.uploadFiles(any()))
+            .willReturn(files);
 
-		//when
-		AuctionEntity result = fileService.addFiles(mockFiles, auction);
+        //when
+        AuctionEntity result = fileService.addFiles(mockFiles, auction);
 
-		//then
-		assertEquals(result.getFiles().size(), 1);
-		assertEquals(result.getFiles().get(0).getFileName(), "test");
-		assertEquals(result.getFiles().get(0).getSrc(), "test.png");
-	}
+        //then
+        assertEquals(result.getFiles().size(), 1);
+        assertEquals(result.getFiles().get(0).getFileName(), "test");
+        assertEquals(result.getFiles().get(0).getSrc(), "test.png");
+    }
 
-	@Test
-	@DisplayName("파일 수정 성공")
-	void update_SUCCESS() throws IOException {
-		//given
-		AuctionEntity auction = AuctionEntity.builder()
-			.auctionId(1L)
-			.build();
+    @Test
+    @DisplayName("파일 수정 성공")
+    void update_SUCCESS() throws IOException {
+        //given
+        AuctionEntity auction = AuctionEntity.builder()
+            .auctionId(1L)
+            .build();
 
-		List<MultipartFile> files = this.getFiles();
+        List<MultipartFile> files = this.getFiles();
 
-		List<FileEntity> fileEntities = List.of(FileEntity.builder()
-			.src("test.png")
-			.fileName("test")
-			.build());
+        List<FileEntity> fileEntities = List.of(FileEntity.builder()
+            .src("test.png")
+            .fileName("test")
+            .build());
 
-		given(s3Service.uploadFiles(files))
-			.willReturn(fileEntities);
+        given(s3Service.uploadFiles(files))
+            .willReturn(fileEntities);
 
-		//when
-		AuctionEntity result = fileService.updateFiles(files, auction);
+        //when
+        AuctionEntity result = fileService.updateFiles(files, auction);
 
-		//then
-		assertEquals("test", result.getFiles().get(0).getFileName());
-		assertEquals("test.png", result.getFiles().get(0).getSrc());
-	}
+        //then
+        assertEquals("test", result.getFiles().get(0).getFileName());
+        assertEquals("test.png", result.getFiles().get(0).getSrc());
+    }
 
-	private List<MultipartFile> getFiles() throws IOException {
-		List<MultipartFile> files = new ArrayList<>();
-		MultipartFile file = getMockMultipartFile("test", "image/png",
-			"src/test/resources/image/test.png");
+    private List<MultipartFile> getFiles() throws IOException {
+        List<MultipartFile> files = new ArrayList<>();
+        MultipartFile file = getMockMultipartFile("test", "image/png",
+            "src/test/resources/image/test.png");
 
-		files.add(file);
-		files.add(getMockMultipartFile("test2", "image/png",
-			"src/test/resources/image/test.png"));
-		return files;
-	}
+        files.add(file);
+        files.add(getMockMultipartFile("test2", "image/png",
+            "src/test/resources/image/test.png"));
+        return files;
+    }
 
-	private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path)
-		throws IOException {
-		FileInputStream fileInputStream = new FileInputStream(new File(path));
-		return new MockMultipartFile(fileName, fileName + "." + contentType, contentType, fileInputStream);
-	}
+    private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path)
+        throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(new File(path));
+        return new MockMultipartFile(fileName, fileName + "." + contentType, contentType,
+            fileInputStream);
+    }
 }
