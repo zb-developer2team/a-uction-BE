@@ -32,61 +32,61 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class AuctionController {
 
-	private final AuctionService auctionService;
-	private final AuctionSearchService auctionSearchService;
+    private final AuctionService auctionService;
+    private final AuctionSearchService auctionSearchService;
 
-	@PostMapping
-	public ResponseEntity<AuctionDto.Response> addAuction(
-		@Valid @RequestPart("auction") AuctionDto.Request auction,
-		@RequestPart(value = "files", required = false) List<MultipartFile> files,
-		BindingResult bindingResult,
-		Principal principal) {
-		if (bindingResult.hasErrors()) {
-			throw new AuctionException(ErrorCode.INVALID_REQUEST);
-		}
-		AuctionDto.Response response = auctionService.addAuction(auction, files,
-			principal.getName());
-		auctionSearchService.saveAuctionDocuments(response.getAuctionId());
-		return ResponseEntity.ok(response);
-	}
+    @PostMapping
+    public ResponseEntity<AuctionDto.Response> addAuction(
+        @Valid @RequestPart("auction") AuctionDto.Request auction,
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        BindingResult bindingResult,
+        Principal principal) {
+        if (bindingResult.hasErrors()) {
+            throw new AuctionException(ErrorCode.INVALID_REQUEST);
+        }
+        AuctionDto.Response response = auctionService.addAuction(auction, files,
+            principal.getName());
+        auctionSearchService.saveAuctionDocuments(response.getAuctionId());
+        return ResponseEntity.ok(response);
+    }
 
 
-	@DeleteMapping("/{auctionId}")
-	public ResponseEntity<AuctionDto.Response> deleteAuctionByAuctionId(
-		@PathVariable Long auctionId, Principal principal) {
-		AuctionDto.Response response = auctionService.deleteAuction(auctionId, principal.getName());
-		auctionSearchService.deleteAuctionDocuments(auctionId);
-		return ResponseEntity.ok(response);
-	}
+    @DeleteMapping("/{auctionId}")
+    public ResponseEntity<AuctionDto.Response> deleteAuctionByAuctionId(
+        @PathVariable Long auctionId, Principal principal) {
+        AuctionDto.Response response = auctionService.deleteAuction(auctionId, principal.getName());
+        auctionSearchService.deleteAuctionDocuments(auctionId);
+        return ResponseEntity.ok(response);
+    }
 
-	@PostMapping("/update")
-	public ResponseEntity<AuctionDto.Response> updateAction(
-		@Valid @RequestPart("auction") AuctionDto.Request updateAuction,
-		@RequestPart(value = "files", required = false) List<MultipartFile> files,
-		@RequestParam Long auctionId, Principal principal) {
-		AuctionDto.Response response = auctionService.updateAuction(updateAuction, files,
-			principal.getName(), auctionId);
-		auctionSearchService.saveAuctionDocuments(auctionId);
-		return ResponseEntity.ok(response);
-	}
+    @PostMapping("/update")
+    public ResponseEntity<AuctionDto.Response> updateAction(
+        @Valid @RequestPart("auction") AuctionDto.Request updateAuction,
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        @RequestParam Long auctionId, Principal principal) {
+        AuctionDto.Response response = auctionService.updateAuction(updateAuction, files,
+            principal.getName(), auctionId);
+        auctionSearchService.saveAuctionDocuments(auctionId);
+        return ResponseEntity.ok(response);
+    }
 
-	@GetMapping("/my-auctions")
-	public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionListByUserId(Principal principal,
-		Pageable pageable) {
-		return ResponseEntity.ok(
-			auctionService.getAllAuctionListByUserEmail(principal.getName(), pageable));
-	}
+    @GetMapping("/my-auctions")
+    public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionListByUserId(Principal principal,
+        Pageable pageable) {
+        return ResponseEntity.ok(
+            auctionService.getAllAuctionListByUserEmail(principal.getName(), pageable));
+    }
 
-	@GetMapping("/detail/{auctionId}")
-	public ResponseEntity<AuctionDto.Response> getAuctionByAuctionId(@PathVariable Long auctionId) {
-		return ResponseEntity.ok(auctionService.getAuctionByAuctionId(auctionId));
-	}
+    @GetMapping("/detail/{auctionId}")
+    public ResponseEntity<AuctionDto.Response> getAuctionByAuctionId(@PathVariable Long auctionId) {
+        return ResponseEntity.ok(auctionService.getAuctionByAuctionId(auctionId));
+    }
 
-	@GetMapping("/listAll")
-	public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionList(
-		@RequestParam(required = false, value = "status") AuctionStatus status, Pageable pageable) {
-		return ResponseEntity.ok(auctionService.getAllAuctionListByStatus(status, pageable));
-	}
+    @GetMapping("/listAll")
+    public ResponseEntity<Page<AuctionDto.Response>> getAllAuctionList(
+        @RequestParam(required = false, value = "status") AuctionStatus status, Pageable pageable) {
+        return ResponseEntity.ok(auctionService.getAllAuctionListByStatus(status, pageable));
+    }
 
 
 }
