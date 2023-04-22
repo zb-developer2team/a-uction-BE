@@ -11,12 +11,10 @@ import com.example.a_uction.model.auction.repository.AuctionRepository;
 import com.example.a_uction.model.auction.repository.AuctionSearchQueryRepository;
 import com.example.a_uction.model.auction.repository.AuctionSearchRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
 
@@ -30,7 +28,7 @@ public class AuctionSearchService {
     private final AuctionSearchQueryRepository auctionSearchQueryRepository;
 
     @Transactional
-    public void saveAuctionDocuments(Long auctionId) {
+    public void saveAuctionDocument(Long auctionId) {
         AuctionDocument result = auctionRepository.findById(auctionId).map(AuctionDocument::from)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
         auctionSearchRepository.save(result);
@@ -41,60 +39,45 @@ public class AuctionSearchService {
         auctionSearchRepository.deleteById(auctionId);
     }
 
-    public List<AuctionDocumentResponse> findByStartingPrice(int startingPrice, Pageable pageable) {
-        return auctionSearchRepository.findByStartingPrice(startingPrice, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+    public Page<AuctionDocumentResponse> findByStartingPrice(int startingPrice, Pageable pageable) {
+        return auctionSearchRepository.findByStartingPriceOrderByIdAsc(startingPrice, pageable)
+                .map(AuctionDocumentResponse::from);
+
     }
 
-    public List<AuctionDocumentResponse> findByMinimumBid(int minimumBid, Pageable pageable) {
-        return auctionSearchRepository.findByMinimumBid(minimumBid, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+    public Page<AuctionDocumentResponse> findByMinimumBid(int minimumBid, Pageable pageable) {
+        return auctionSearchRepository.findByMinimumBidOrderByIdAsc(minimumBid, pageable)
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> findByItemStatus(ItemStatus itemStatus, Pageable pageable) {
-        return auctionSearchRepository.findByItemStatus(itemStatus, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+    public Page<AuctionDocumentResponse> findByItemStatus(ItemStatus itemStatus, Pageable pageable) {
+        return auctionSearchRepository.findByItemStatusOrderByIdAsc(itemStatus, pageable)
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> findByCategory(Category category, Pageable pageable) {
-        return auctionSearchRepository.findByCategory(category, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+    public Page<AuctionDocumentResponse> findByCategory(Category category, Pageable pageable) {
+        return auctionSearchRepository.findByCategoryOrderByIdAsc(category, pageable)
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> searchByCondition(SearchCondition searchCondition, Pageable pageable) {
+    public Page<AuctionDocumentResponse> searchByCondition(SearchCondition searchCondition, Pageable pageable) {
         return auctionSearchQueryRepository.findByCondition(searchCondition, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> findByStartWithItemName(String itemName, Pageable pageable) {
+    public Page<AuctionDocumentResponse> findByStartWithItemName(String itemName, Pageable pageable) {
         return auctionSearchQueryRepository.findByStartWithItemName(itemName, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> findByMatchesDescription(String description, Pageable pageable) {
+    public Page<AuctionDocumentResponse> findByMatchesDescription(String description, Pageable pageable) {
         return auctionSearchQueryRepository.findByMatchesDescription(description, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+                .map(AuctionDocumentResponse::from);
     }
 
-    public List<AuctionDocumentResponse> findByContainsDescription(String description, Pageable pageable) {
+    public Page<AuctionDocumentResponse> findByContainsDescription(String description, Pageable pageable) {
         return auctionSearchQueryRepository.findByContainsDescription(description, pageable)
-                .stream()
-                .map(AuctionDocumentResponse::from)
-                .collect(Collectors.toList());
+                .map(AuctionDocumentResponse::from);
     }
 
 }

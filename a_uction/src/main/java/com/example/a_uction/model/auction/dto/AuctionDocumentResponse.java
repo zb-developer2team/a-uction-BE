@@ -8,10 +8,12 @@ import com.example.a_uction.model.auction.entity.AuctionDocument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class AuctionDocumentResponse {
     private Long auctionId;
     private String itemName;

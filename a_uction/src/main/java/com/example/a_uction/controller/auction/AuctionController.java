@@ -46,7 +46,7 @@ public class AuctionController {
         }
         AuctionDto.Response response = auctionService.addAuction(auction, files,
             principal.getName());
-        auctionSearchService.saveAuctionDocuments(response.getAuctionId());
+        auctionSearchService.saveAuctionDocument(response.getAuctionId());
         return ResponseEntity.ok(response);
     }
 
@@ -66,7 +66,7 @@ public class AuctionController {
         @RequestParam Long auctionId, Principal principal) {
         AuctionDto.Response response = auctionService.updateAuction(updateAuction, files,
             principal.getName(), auctionId);
-        auctionSearchService.saveAuctionDocuments(auctionId);
+        auctionSearchService.saveAuctionDocument(auctionId);
         return ResponseEntity.ok(response);
     }
 
