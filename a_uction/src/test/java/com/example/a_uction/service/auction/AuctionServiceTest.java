@@ -224,7 +224,6 @@ class AuctionServiceTest {
             .itemName("item")
             .startingPrice(1234)
             .minimumBid(1000)
-            .transactionStatus(TransactionStatus.SALE)
             .itemStatus(ItemStatus.BAD)
             .startDateTime(LocalDateTime.of(2026, 5, 1, 0, 0, 0))
             .endDateTime(LocalDateTime.of(2026, 5, 2, 0, 0, 0))
@@ -277,7 +276,6 @@ class AuctionServiceTest {
             .itemName("item")
             .startingPrice(1234)
             .minimumBid(1000)
-            .transactionStatus(TransactionStatus.SALE)
             .itemStatus(ItemStatus.BAD)
             .startDateTime(LocalDateTime.of(2025, 4, 1, 0, 0, 0))
             .endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
@@ -320,7 +318,6 @@ class AuctionServiceTest {
             .itemName("item")
             .startingPrice(1234)
             .minimumBid(1000)
-            .transactionStatus(TransactionStatus.SALE)
             .itemStatus(ItemStatus.BAD)
             .startDateTime(LocalDateTime.of(2025, 4, 1, 0, 0, 0))
             .endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
@@ -357,7 +354,7 @@ class AuctionServiceTest {
                 .itemName("item1")
                 .startingPrice(1111)
                 .minimumBid(1000)
-                .transactionStatus(TransactionStatus.SALE)
+                .transactionStatus(TransactionStatus.TRANSACTION_COMPLETE)
                 .itemStatus(ItemStatus.BAD)
                 .startDateTime(LocalDateTime.of(2025, 4, 1, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
@@ -369,7 +366,7 @@ class AuctionServiceTest {
                 .itemName("item2")
                 .startingPrice(2222)
                 .minimumBid(2000)
-                .transactionStatus(TransactionStatus.SALE)
+                .transactionStatus(TransactionStatus.TRANSACTION_COMPLETE)
                 .itemStatus(ItemStatus.GOOD)
                 .startDateTime(LocalDateTime.of(2023, 4, 11, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2023, 4, 20, 0, 0, 0))
@@ -437,7 +434,7 @@ class AuctionServiceTest {
             .itemName("item1")
             .startingPrice(1111)
             .minimumBid(1000)
-            .transactionStatus(TransactionStatus.SALE)
+            .transactionStatus(TransactionStatus.TRANSACTION_COMPLETE)
             .itemStatus(ItemStatus.BAD)
             .startDateTime(LocalDateTime.of(2025, 4, 12, 0, 0, 0))
             .endDateTime(LocalDateTime.of(2025, 4, 13, 0, 0, 0))
@@ -454,7 +451,7 @@ class AuctionServiceTest {
         //then
         verify(auctionRepository, times(1)).delete(captor.capture());
         assertEquals("item1", auctionDto.getItemName());
-        assertEquals(TransactionStatus.SALE, captor.getValue().getTransactionStatus());
+        assertEquals(TransactionStatus.TRANSACTION_COMPLETE, captor.getValue().getTransactionStatus());
         assertEquals(1000, captor.getValue().getMinimumBid());
         assertEquals("test.png", captor.getValue().getFiles().get(0).getSrc());
     }
@@ -470,7 +467,6 @@ class AuctionServiceTest {
             .itemName("item1")
             .startingPrice(1111)
             .minimumBid(1000)
-            .transactionStatus(TransactionStatus.SALE)
             .itemStatus(ItemStatus.BAD)
             .startDateTime(LocalDateTime.of(2023, 4, 1, 0, 0, 0))
             .endDateTime(LocalDateTime.of(2023, 4, 13, 0, 0, 0))
@@ -522,7 +518,6 @@ class AuctionServiceTest {
                 .itemName("item1")
                 .startingPrice(1111)
                 .minimumBid(1000)
-                .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
                 .startDateTime(LocalDateTime.of(2022, 4, 1, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
@@ -534,7 +529,6 @@ class AuctionServiceTest {
                 .itemName("item2")
                 .startingPrice(2222)
                 .minimumBid(2000)
-                .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.GOOD)
                 .startDateTime(LocalDateTime.of(2022, 4, 11, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2023, 4, 20, 0, 0, 0))
@@ -553,13 +547,11 @@ class AuctionServiceTest {
         assertEquals("item1", result.toList().get(0).getItemName());
         assertEquals(1111, result.toList().get(0).getStartingPrice());
         assertEquals(1000, result.toList().get(0).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
         assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
         assertEquals("test.png", result.toList().get(0).getFiles().get(0));
         assertEquals("item2", result.toList().get(1).getItemName());
         assertEquals(2222, result.toList().get(1).getStartingPrice());
         assertEquals(2000, result.toList().get(1).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
         assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
         assertEquals("test.png", result.toList().get(1).getFiles().get(0));
     }
@@ -580,7 +572,6 @@ class AuctionServiceTest {
                 .itemName("item1")
                 .startingPrice(1111)
                 .minimumBid(1000)
-                .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.BAD)
                 .startDateTime(LocalDateTime.of(2024, 4, 1, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
@@ -592,7 +583,6 @@ class AuctionServiceTest {
                 .itemName("item2")
                 .startingPrice(2222)
                 .minimumBid(2000)
-                .transactionStatus(TransactionStatus.SALE)
                 .itemStatus(ItemStatus.GOOD)
                 .startDateTime(LocalDateTime.of(2024, 4, 11, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2025, 4, 20, 0, 0, 0))
@@ -610,13 +600,11 @@ class AuctionServiceTest {
         assertEquals("item1", result.toList().get(0).getItemName());
         assertEquals(1111, result.toList().get(0).getStartingPrice());
         assertEquals(1000, result.toList().get(0).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
         assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
         assertEquals("test.png", result.toList().get(0).getFiles().get(0));
         assertEquals("item2", result.toList().get(1).getItemName());
         assertEquals(2222, result.toList().get(1).getStartingPrice());
         assertEquals(2000, result.toList().get(1).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
         assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
         assertEquals("test.png", result.toList().get(1).getFiles().get(0));
     }
@@ -637,7 +625,7 @@ class AuctionServiceTest {
                 .itemName("item1")
                 .startingPrice(1111)
                 .minimumBid(1000)
-                .transactionStatus(TransactionStatus.SALE)
+                .transactionStatus(TransactionStatus.TRANSACTION_COMPLETE)
                 .itemStatus(ItemStatus.BAD)
                 .startDateTime(LocalDateTime.of(2021, 4, 1, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2022, 4, 10, 0, 0, 0))
@@ -649,7 +637,7 @@ class AuctionServiceTest {
                 .itemName("item2")
                 .startingPrice(2222)
                 .minimumBid(2000)
-                .transactionStatus(TransactionStatus.SALE)
+                .transactionStatus(TransactionStatus.TRANSACTION_COMPLETE)
                 .itemStatus(ItemStatus.GOOD)
                 .startDateTime(LocalDateTime.of(2021, 4, 11, 0, 0, 0))
                 .endDateTime(LocalDateTime.of(2022, 4, 20, 0, 0, 0))
@@ -667,13 +655,13 @@ class AuctionServiceTest {
         assertEquals("item1", result.toList().get(0).getItemName());
         assertEquals(1111, result.toList().get(0).getStartingPrice());
         assertEquals(1000, result.toList().get(0).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(0).getTransactionStatus());
+        assertEquals(TransactionStatus.TRANSACTION_COMPLETE, result.toList().get(0).getTransactionStatus());
         assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
         assertEquals("test.png", result.toList().get(0).getFiles().get(0));
         assertEquals("item2", result.toList().get(1).getItemName());
         assertEquals(2222, result.toList().get(1).getStartingPrice());
         assertEquals(2000, result.toList().get(1).getMinimumBid());
-        assertEquals(TransactionStatus.SALE, result.toList().get(1).getTransactionStatus());
+        assertEquals(TransactionStatus.TRANSACTION_COMPLETE, result.toList().get(1).getTransactionStatus());
         assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
         assertEquals("test.png", result.toList().get(1).getFiles().get(0));
     }
