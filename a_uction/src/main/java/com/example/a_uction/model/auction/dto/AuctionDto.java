@@ -5,6 +5,9 @@ import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.*;
 
 import javax.persistence.EnumType;
@@ -12,6 +15,8 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public class AuctionDto {
@@ -21,6 +26,7 @@ public class AuctionDto {
     @Builder //테스트
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class Request {
         @NotNull(message = "상품 이름을 입력하세요")
         private String itemName;
@@ -33,11 +39,17 @@ public class AuctionDto {
         @Enumerated(EnumType.STRING)
         private Category category;
         @NotNull(message = "경매 시작 시간을 입력하세요")
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime startDateTime;
         @NotNull(message = "경매 종료 시간을 입력하세요")
+        @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime endDateTime;
         @NotNull(message = "상품 설명을 입력하세요")
         private String description;
+
+        // 테스트 위해 주석처리
+        // @NotNull(message = "상품 이미지를 등록해주세요")
+        private List<MultipartFile> files;
 
         public AuctionEntity toEntity(UserEntity user){
             return AuctionEntity.builder()
@@ -71,10 +83,16 @@ public class AuctionDto {
         private LocalDateTime startDateTime;
         private LocalDateTime endDateTime;
         private String description;
+        private List<String> files;
         private Long buyerId;
 
 
         public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
+            // 파일 없이 테스트 위해 작성
+            if (auctionEntity.getFiles() == null) {
+                auctionEntity.setFiles(new ArrayList<>());
+            }
+
             return Response.builder()
                     .auctionId(auctionEntity.getAuctionId())
                     .itemName(auctionEntity.getItemName())
@@ -86,9 +104,13 @@ public class AuctionDto {
                     .startDateTime(auctionEntity.getStartDateTime())
                     .endDateTime(auctionEntity.getEndDateTime())
                     .description(auctionEntity.getDescription())
+                    .files(auctionEntity.getFiles().stream()
+                        .map(file -> file.getSrc())
+                        .collect(Collectors.toList()))
                     .buyerId(auctionEntity.getBuyerId())
                     .build();
         }
+
     }
 
 

@@ -40,6 +40,10 @@ public enum ErrorCode {
 	// kakao
 	INVALID_PARSE_ERROR(UNAUTHORIZED, "JSON 파싱에 실패하였습니다."),
 
+	// s3
+	INVALID_FILE_FORM(BAD_REQUEST, "잘못된 파일 형식입니다."),
+	FAILED_FILE_UPLOAD(BAD_REQUEST, "파일 업로드에 실패하였습니다."),
+
 	//auction
 	BEFORE_START_TIME (BAD_REQUEST, "경매 시작 시간이 등록 시간보다 이전입니다."),
 	END_TIME_EARLIER_THAN_START_TIME (BAD_REQUEST, "경매 종료 시간이 경매 시작 시간보다 이전입니다."),

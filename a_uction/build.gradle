@@ -56,8 +56,8 @@ dependencies {
 	//redisson client
 	implementation 'org.redisson:redisson:3.17.1'
 
-	//redisson client
-	implementation 'org.redisson:redisson:3.17.1'
+	// s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	// thread actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'

@@ -13,11 +13,14 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
 import static com.example.a_uction.model.auction.constants.AuctionStatus.*;
@@ -30,18 +33,26 @@ public class AuctionService {
 	private final UserRepository userRepository;
 	private final BiddingHistoryRepository biddingHistoryRepository;
 	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
+	private final FileService fileService;
 
 	private UserEntity getUser(String userEmail) {
 		return userRepository.getByUserEmail(userEmail);
 	}
 
-	public AuctionDto.Response addAuction(AuctionDto.Request auction, String userEmail) {
+	public AuctionDto.Response addAuction(AuctionDto.Request auction, List<MultipartFile> files, String userEmail) {
 
 		timeCheck(auction.getStartDateTime(), auction.getEndDateTime());
 
+		auction.setFiles(files);
+		// 추가 (파일 업로드 및 저장)
+		AuctionEntity auctionEntity =
+			fileService.addFiles(auction.getFiles(), auction.toEntity(getUser(userEmail)));
+
 		return new AuctionDto.Response().fromEntity(
-			auctionRepository.save(auction.toEntity(getUser(userEmail))));
+			auctionRepository.save(auctionEntity));
+
 	}
+
 
 	public AuctionDto.Response deleteAuction(Long auctionId, String userEmail) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
@@ -50,7 +61,10 @@ public class AuctionService {
 
 		validateModify(auction.getStartDateTime(), "delete");
 
+		// 추가
+		fileService.deleteS3Files(auctionId);
 		auctionRepository.delete(auction);
+
 		return new AuctionDto.Response().fromEntity(auction);
 	}
 
@@ -60,7 +74,7 @@ public class AuctionService {
 		return new AuctionDto.Response().fromEntity(auctionEntity);
 	}
 
-	public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, String userEmail,
+	public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, List<MultipartFile> files, String userEmail,
 		Long auctionId) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
 				getUser(userEmail).getId(), auctionId)
@@ -71,6 +85,8 @@ public class AuctionService {
 		timeCheck(updateAuction.getStartDateTime(), updateAuction.getEndDateTime());
 
 		auction.updateEntity(updateAuction);
+		// 추가
+		auction = fileService.updateFiles(files, auction);
 
 		return new AuctionDto.Response().fromEntity(auctionRepository.save(auction));
 	}
@@ -107,21 +123,22 @@ public class AuctionService {
 		}
 	}
 
-	public Page<AuctionDto.Response> getAllAuctionListByStatus (AuctionStatus status, Pageable pageable) {
+	public Page<AuctionDto.Response> getAllAuctionListByStatus(AuctionStatus status,
+		Pageable pageable) {
 		Page<AuctionEntity> auctionEntities = null;
 
-		if(status == null || status.equals(PROCEEDING)){
+		if (status == null || status.equals(PROCEEDING)) {
 			auctionEntities = auctionRepository.findByStartDateTimeBeforeAndEndDateTimeAfter(
-					LocalDateTime.now(), LocalDateTime.now(), pageable);
-		}
-		else if(status.equals(SCHEDULED)){
-			auctionEntities = auctionRepository.findByStartDateTimeAfter(LocalDateTime.now(), pageable);
-		}
-		else if(status.equals(COMPLETED)){
-			auctionEntities = auctionRepository.findByEndDateTimeBefore(LocalDateTime.now(), pageable);
+				LocalDateTime.now(), LocalDateTime.now(), pageable);
+		} else if (status.equals(SCHEDULED)) {
+			auctionEntities = auctionRepository.findByStartDateTimeAfter(LocalDateTime.now(),
+				pageable);
+		} else if (status.equals(COMPLETED)) {
+			auctionEntities = auctionRepository.findByEndDateTimeBefore(LocalDateTime.now(),
+				pageable);
 		}
 
-		if(auctionEntities.isEmpty()){
+		if (auctionEntities.isEmpty()) {
 			throw new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST);
 		}
 		return auctionEntities.map(m -> new AuctionDto.Response().fromEntity(m));
