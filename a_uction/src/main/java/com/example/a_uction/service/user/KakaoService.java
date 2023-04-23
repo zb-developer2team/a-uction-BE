@@ -115,6 +115,7 @@ public class KakaoService {
 
 		userInfo.put("nickname", properties.get("nickname").toString());
 		userInfo.put("email", kakao_account.get("email").toString());
+		userInfo.put("profileImage", properties.get("profile_image").toString());
 
 		return userInfo;
 	}
@@ -127,6 +128,7 @@ public class KakaoService {
 			userRepository.save(UserEntity.builder()
 				.username(userInfo.get("nickname"))
 				.userEmail(email)
+				.profileImageSrc(userInfo.get("profileImage"))
 				.build());
 		}
 

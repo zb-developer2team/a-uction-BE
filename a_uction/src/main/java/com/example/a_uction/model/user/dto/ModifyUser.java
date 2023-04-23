@@ -28,7 +28,7 @@ public class ModifyUser {
 		private String phoneNumber;
 		private String description;
 
-		public ModifyUser.Response fromEntity(UserEntity userEntity){
+		public static ModifyUser.Response fromEntity(UserEntity userEntity){
 			return Response.builder()
 					.phoneNumber(userEntity.getPhoneNumber())
 					.username(userEntity.getUsername())

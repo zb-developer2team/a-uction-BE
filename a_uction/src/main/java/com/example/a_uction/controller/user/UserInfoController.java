@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,4 +28,13 @@ public class UserInfoController {
 		return ResponseEntity.ok(userInfoService.userInfo(principal.getName()));
 	}
 
+	@PostMapping("/modify/profile-image")
+	public ResponseEntity<InfoUser> modifyProfileImage(@RequestPart MultipartFile file, Principal principal) {
+		return ResponseEntity.ok(userInfoService.modifyProfileImage(file, principal.getName()));
+	}
+
+	@PutMapping("/delete/profile-image")
+	public ResponseEntity<InfoUser> deleteProfileImage(Principal principal) {
+		return ResponseEntity.ok(userInfoService.deleteProfileImage(principal.getName()));
+	}
 }
