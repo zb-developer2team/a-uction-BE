@@ -114,7 +114,7 @@ public class ChatMessageService {
 		return true;
 	}
 
-	public void createBiddingHistory(String userEmail, Long auctionId, int price){
+	private void createBiddingHistory(String userEmail, Long auctionId, int price){
 		UserEntity user = getUser(userEmail);
 		if (!biddingPossible(auctionId, user.getId(), price)) {
 			throw  new AuctionException(ErrorCode.UNABLE_CREATE_BID);

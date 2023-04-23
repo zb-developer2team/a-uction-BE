@@ -1,13 +1,17 @@
 package com.example.a_uction.service.auction;
 
 import static com.example.a_uction.exception.constants.ErrorCode.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
@@ -17,6 +21,10 @@ import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransactionHistoryEntity;
+import com.example.a_uction.model.auctionTransactionHistory.repository.AuctionTransactionHistoryRepository;
+import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
+import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.file.entity.FileEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
 import java.io.File;
@@ -38,6 +46,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +58,12 @@ class AuctionServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private BiddingHistoryRepository biddingHistoryRepository;
+
+    @Mock
+    private AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
 
     @Mock
     private FileService fileService;
@@ -706,6 +721,95 @@ class AuctionServiceTest {
                 Pageable.ofSize(10)));
         //then
         assertEquals(NOT_FOUND_AUCTION_STATUS_LIST, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("경매 종료 - 경매 성공")
+    void auctionFinishedComplete(){
+        LocalDateTime now = LocalDateTime.now();
+        AuctionEntity auction = AuctionEntity.builder()
+                .auctionId(1L)
+                .user(UserEntity.builder().id(1L).build())
+                .itemName("item1")
+                .startingPrice(1111)
+                .minimumBid(1000)
+                .itemStatus(ItemStatus.BAD)
+                .startDateTime(LocalDateTime.of(2024, 4, 1, 0, 0, 0))
+                .endDateTime(now)
+                .build();
+        BiddingHistoryEntity biddingHistory = BiddingHistoryEntity.builder()
+                .price(22000)
+                .bidding_result(false)
+                .bidderId(1L)
+                .auctionId(1L)
+                .build();
+        UserEntity user = UserEntity.builder()
+                .id(1L)
+                .userEmail("zerobase@gmail.com")
+                .build();
+
+        AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
+                .price(biddingHistory.getPrice())
+                .itemName(auction.getItemName())
+                .buyerEmail(user.getUserEmail())
+                .sellerEmail(auction.getUser().getUserEmail())
+                .build();
+
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
+        given(biddingHistoryRepository.existsByAuctionId(anyLong())).willReturn(true);
+        given(biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(anyLong())).willReturn(Optional.of(biddingHistory));
+        given(auctionTransactionHistoryRepository.save(any())).willReturn(auctionTransactionHistory);
+        var result = auctionService.auctionFinished(anyLong());
+
+        assertEquals(result.getTransactionStatus(), TransactionStatus.TRANSACTION_COMPLETE);
+        assertEquals(result.getBuyerId(), user.getId());
+    }
+
+    @Test
+    @DisplayName("경매 종료 - 경매 실패")
+    void auctionFinishedFail(){
+        LocalDateTime now = LocalDateTime.now();
+        AuctionEntity auction = AuctionEntity.builder()
+                .auctionId(1L)
+                .user(UserEntity.builder().id(1L).build())
+                .itemName("item1")
+                .startingPrice(1111)
+                .minimumBid(1000)
+                .itemStatus(ItemStatus.BAD)
+                .startDateTime(LocalDateTime.of(2024, 4, 1, 0, 0, 0))
+                .endDateTime(now)
+                .build();
+
+        given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
+        given(biddingHistoryRepository.existsByAuctionId(anyLong())).willReturn(false);
+        var result = auctionService.auctionFinished(anyLong());
+
+        assertEquals(result.getTransactionStatus(), TransactionStatus.TRANSACTION_FAIL);
+        assertNull(result.getBuyerId());
+    }
+
+    @Test
+    @DisplayName("경매 종료 - 경매 실패")
+    void auctionFinished_AUCTION_NOT_FINISHED(){
+        AuctionEntity auction = AuctionEntity.builder()
+                .auctionId(1L)
+                .user(UserEntity.builder().id(1L).build())
+                .itemName("item1")
+                .startingPrice(1111)
+                .minimumBid(1000)
+                .itemStatus(ItemStatus.BAD)
+                .startDateTime(LocalDateTime.of(2025, 3, 1, 0, 0, 0))
+                .endDateTime(LocalDateTime.of(2025, 3, 1, 1, 0, 0))
+                .build();
+
+        given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
+
+        AuctionException exception = assertThrows(AuctionException.class,
+                () -> auctionService.auctionFinished(anyLong()));
+
+        //then
+        assertEquals(AUCTION_NOT_FINISHED, exception.getErrorCode());
     }
 
     // 추가
