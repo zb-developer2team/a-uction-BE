@@ -11,13 +11,15 @@ import lombok.*;
 public class InfoUser {
 
 	private String username;
+	private String profileImageSrc;
 	private String userEmail;
 	private String phoneNumber;
 	private String description;
 
-	public InfoUser fromEntity(UserEntity userEntity){
+	public static InfoUser fromEntity(UserEntity userEntity){
 		return InfoUser.builder()
 				.userEmail(userEntity.getUserEmail())
+				.profileImageSrc(userEntity.getProfileImageSrc())
 				.phoneNumber(userEntity.getPhoneNumber())
 				.username(userEntity.getUsername())
 				.description(userEntity.getDescription())

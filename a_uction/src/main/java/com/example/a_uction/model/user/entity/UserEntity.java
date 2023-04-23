@@ -42,6 +42,7 @@ public class UserEntity {
 	private String password;
 	private String username;
 	private String phoneNumber;
+	private String profileImageSrc;
 
 	@OneToMany(mappedBy = "user")
 	private List<AuctionEntity> auctions = new ArrayList<>();

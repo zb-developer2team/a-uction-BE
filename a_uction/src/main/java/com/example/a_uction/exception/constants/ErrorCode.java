@@ -16,6 +16,7 @@ public enum ErrorCode {
 	AUCTION_NOT_FOUND(BAD_REQUEST, "해당 경매를 찾을 수 없습니다."),
 
 	USER_NOT_FOUND(BAD_REQUEST, "유저를 찾을 수 없습니다."),
+	USER_PROFILE_IMAGE_IS_EMPTY(BAD_REQUEST, "삭제할 프로필사진이 없습니다."),
 	THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION(BAD_REQUEST, "이 번호는 이미 인증이 완료되었습니다."),
 	VERIFICATION_CODE_TIME_OUT(BAD_REQUEST, "인증번호 유효 시간이 만료됐습니다."),
 	WRONG_CODE_INPUT(BAD_REQUEST, "코드를 잘못 입력하셨습니다. 처음부터 다시 시도해주세요."),

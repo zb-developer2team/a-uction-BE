@@ -72,3 +72,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpb
  "from" : "카카오",
  "money" : 100000
 }
+
+### 프로필 사진 등록
+POST http://localhost:8081/users/detail/modify/profile-image
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjIzODUxNSwiZXhwIjoxNjgyMjQyMTE1fQ.__ner9x3-EAts-FwHIFl9cjOBYta7LiBIuTtX39Nr1U
+Content-Type: multipart/form-data; boundary=--------------------------1234567890
+
+----------------------------1234567890
+Content-Disposition: form-data; name="file"; filename="dockerImage.png"
+Content-Type: image/png
+
+< a_uction/src/test/resources/image/dockerImage.png
+----------------------------1234567890--
+
+### 프로필 사진 삭제
+PUT http://localhost:8081/users/detail/delete/profile-image
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjIzODUxNSwiZXhwIjoxNjgyMjQyMTE1fQ.__ner9x3-EAts-FwHIFl9cjOBYta7LiBIuTtX39Nr1U
