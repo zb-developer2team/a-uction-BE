@@ -9,6 +9,7 @@ import com.example.a_uction.service.auction.AuctionSearchService;
 import com.example.a_uction.service.auction.AuctionService;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -48,6 +51,24 @@ public class AuctionController {
             principal.getName());
         auctionSearchService.saveAuctionDocument(response.getAuctionId());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/update/add-image")
+    public ResponseEntity<AuctionDto.Response> addImage(@RequestParam Long auctionId,
+        @RequestPart MultipartFile file, Principal principal) {
+
+        return ResponseEntity.ok(
+            auctionService.addAuctionImage(file, principal.getName(), auctionId)
+        );
+    }
+
+    @PutMapping("/update/delete-image")
+    public ResponseEntity<AuctionDto.Response> deleteImage(@RequestParam Long auctionId,
+        @RequestBody Map<String, String> fileUrl, Principal principal) {
+
+        return ResponseEntity.ok(
+            auctionService.deleteAuctionImage(fileUrl.get("fileUrl"), principal.getName(), auctionId)
+        );
     }
 
 

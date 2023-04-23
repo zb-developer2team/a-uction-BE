@@ -1,6 +1,6 @@
 ###경매 생성
 POST http://localhost:8081/auctions
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4Nzg3MywiZXhwIjoxNjgxOTkxNDczfQ.yRf7eU7kFxCt18jFu729PUDhbARS63eptCn3RTLmQhQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE3MjExNiwiZXhwIjoxNjgyMTc1NzE2fQ.1vna-E6jvLoqFAxX9tkjmPd4Zxj9Pjl8_yrhUuoeY3M
 Content-Type: multipart/form-data; boundary=--------------------------1234567890
 
 ----------------------------1234567890
@@ -25,15 +25,20 @@ Content-Type: application/json
 ----------------------------1234567890--
 
 ###경매 보기
-GET http://localhost:8081/auctions/detail/13
+GET http://localhost:8081/auctions/detail/1
 Content-Type: application/json
 #Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEzMTAwNiwiZXhwIjoxNjgxMTM0NjA2fQ.1qIxzvIRdxMITQ1TheoADMls9irD44MQudfeaxETkhg
 
 ###경매 수정
-POST http://localhost:8081/auctions/update?auctionId=15
+POST http://localhost:8081/auctions/update?auctionId=1
 Content-Type: multipart/form-data; boundary=--------------------------1234567890
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4Nzg3MywiZXhwIjoxNjgxOTkxNDczfQ.yRf7eU7kFxCt18jFu729PUDhbARS63eptCn3RTLmQhQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjA4MjgyNCwiZXhwIjoxNjgyMDg2NDI0fQ.Mqs-yUOWUMPM_lF9Zm-HRkCxPKKOKC8EKL6WZOkBaTI
 
+----------------------------1234567890
+Content-Disposition: form-data; name="files"; filename="test.png"
+Content-Type: image/png
+
+< a_uction/src/test/resources/image/dockerImage.png
 ----------------------------1234567890
 Content-Disposition: form-data; name="auction"
 Content-Type: application/json
@@ -53,7 +58,7 @@ Content-Type: application/json
 ###user의 모든 경매 가져오기
 GET http://localhost:8081/auctions/my-auctions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTk4MjMwNSwiZXhwIjoxNjgxOTg1OTA1fQ.xK8rt7bXQzVZ7J-YaF3ys3jwDTb1btr6fS4NXbmorks
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE1MDkyNCwiZXhwIjoxNjgyMTU0NTI0fQ.yNnFN1EvZEB0Nq_0UO0Puy8PbEe0PTzKF8Kp-pklLoQ
 
 ###경매 삭제
 DELETE http://localhost:8081/auctions/14
@@ -75,3 +80,25 @@ Content-Type: application/json
 ###서버 시간 받아오기
 GET http://localhost:8081/get-time
 Content-Type: application/json
+
+//42465155-3104-44b5-86a0-21a19f7ce45c.png
+### 이미지파일 추가
+POST http://localhost:8081/auctions/update/add-image?auctionId=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE3MjExNiwiZXhwIjoxNjgyMTc1NzE2fQ.1vna-E6jvLoqFAxX9tkjmPd4Zxj9Pjl8_yrhUuoeY3M
+Content-Type: multipart/form-data; boundary=--------------------------1234567890
+
+----------------------------1234567890
+Content-Disposition: form-data; name="file"; filename="dockerImage.png"
+Content-Type: image/png
+
+< a_uction/src/test/resources/image/dockerImage.png
+----------------------------1234567890--
+
+### 이미지 삭제
+PUT http://localhost:8081/auctions/update/delete-image?auctionId=6
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE3MjExNiwiZXhwIjoxNjgyMTc1NzE2fQ.1vna-E6jvLoqFAxX9tkjmPd4Zxj9Pjl8_yrhUuoeY3M
+Content-Type: application/json
+
+{
+  "fileUrl" : "https://auction-image-bucket.s3.ap-northeast-2.amazonaws.com/ebbd47dc-3bad-4700-8a33-fb1ce466e144.png"
+}

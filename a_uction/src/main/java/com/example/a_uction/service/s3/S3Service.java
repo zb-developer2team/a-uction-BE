@@ -8,8 +8,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.a_uction.exception.AuctionException;
-import com.example.a_uction.model.file.entity.FileEntity;
-import com.example.a_uction.model.file.repository.FileRepository;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -27,13 +25,16 @@ public class S3Service {
 	private String bucket;
 
 	private final AmazonS3 amazonS3;
-	private final FileRepository fileRepository;
 
-	public List<FileEntity> uploadFiles(List<MultipartFile> files) {
-		return files.stream().map(file -> upload(file)).collect(Collectors.toList());
+	public List<String> uploadFiles(List<MultipartFile> files) {
+
+		return files.stream()
+				.map(this::upload)
+			.collect(Collectors.toList());
 	}
 
-	private FileEntity upload(MultipartFile file) {
+	public String upload(MultipartFile file) {
+
 		String s3FileName = this.createFileName(file.getOriginalFilename());
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(file.getSize());
@@ -46,15 +47,7 @@ public class S3Service {
 			throw new AuctionException(FAILED_FILE_UPLOAD);
 		}
 
-		return this.saveEntity(s3FileName);
-	}
-
-	private FileEntity saveEntity(String fileName) {
-		String imageUrl = amazonS3.getUrl(bucket, fileName).toString();
-		return fileRepository.save(FileEntity.builder()
-			.src(imageUrl)
-			.fileName(fileName)
-			.build());
+		return amazonS3.getUrl(bucket, s3FileName).toString();
 	}
 
 	private String createFileName(String fileName) {
@@ -70,12 +63,15 @@ public class S3Service {
 	}
 
 	public void deleteFiles(List<String> fileNames) {
-		fileNames.stream().forEach(fileName -> this.delete(fileName));
+		fileNames.forEach(this::delete);
 	}
 
 	public void delete(String fileName) {
 		amazonS3.deleteObject(bucket, fileName);
 	}
 
-
+	public String getFileNameByUrl(String fileUrl) {
+		String[] str = fileUrl.split("/");
+		return str[str.length - 1];
+	}
 }

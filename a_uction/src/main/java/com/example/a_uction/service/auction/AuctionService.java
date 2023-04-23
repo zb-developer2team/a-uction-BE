@@ -1,10 +1,25 @@
 package com.example.a_uction.service.auction;
 
+import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FINISHED;
+import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
+import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
+import static com.example.a_uction.exception.constants.ErrorCode.BIDDING_NOT_FOUND;
+import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
+import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_LIST;
+import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_STATUS_LIST;
+import static com.example.a_uction.exception.constants.ErrorCode.UNABLE_DELETE_AUCTION;
+import static com.example.a_uction.exception.constants.ErrorCode.UNABLE_UPDATE_AUCTION;
+import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;
+import static com.example.a_uction.model.auction.constants.AuctionStatus.COMPLETED;
+import static com.example.a_uction.model.auction.constants.AuctionStatus.PROCEEDING;
+import static com.example.a_uction.model.auction.constants.AuctionStatus.SCHEDULED;
+
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
+import com.example.a_uction.model.auction.dto.AuctionDto.Response;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
 import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransactionHistoryEntity;
@@ -13,17 +28,13 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static com.example.a_uction.exception.constants.ErrorCode.*;
-import static com.example.a_uction.model.auction.constants.AuctionStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +42,9 @@ public class AuctionService {
 
 	private final AuctionRepository auctionRepository;
 	private final UserRepository userRepository;
+	private final AuctionFileService auctionFileService;
 	private final BiddingHistoryRepository biddingHistoryRepository;
 	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
-	private final FileService fileService;
 
 	private UserEntity getUser(String userEmail) {
 		return userRepository.getByUserEmail(userEmail);
@@ -46,13 +57,12 @@ public class AuctionService {
 		auction.setFiles(files);
 		// 추가 (파일 업로드 및 저장)
 		AuctionEntity auctionEntity =
-			fileService.addFiles(auction.getFiles(), auction.toEntity(getUser(userEmail)));
+			auctionFileService.addFiles(auction.getFiles(), auction.toEntity(getUser(userEmail)));
 
-		return new AuctionDto.Response().fromEntity(
+		return AuctionDto.Response.fromEntity(
 			auctionRepository.save(auctionEntity));
 
 	}
-
 
 	public AuctionDto.Response deleteAuction(Long auctionId, String userEmail) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
@@ -62,16 +72,16 @@ public class AuctionService {
 		validateModify(auction.getStartDateTime(), "delete");
 
 		// 추가
-		fileService.deleteS3Files(auctionId);
+		auctionFileService.deleteS3Files(auctionId);
 		auctionRepository.delete(auction);
 
-		return new AuctionDto.Response().fromEntity(auction);
+		return AuctionDto.Response.fromEntity(auction);
 	}
 
 	public AuctionDto.Response getAuctionByAuctionId(Long auctionId) {
 		AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
 			.orElseThrow(() -> new AuctionException(ErrorCode.AUCTION_NOT_FOUND));
-		return new AuctionDto.Response().fromEntity(auctionEntity);
+		return AuctionDto.Response.fromEntity(auctionEntity);
 	}
 
 	public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, List<MultipartFile> files, String userEmail,
@@ -86,9 +96,27 @@ public class AuctionService {
 
 		auction.updateEntity(updateAuction);
 		// 추가
-		auction = fileService.updateFiles(files, auction);
+		auction = auctionFileService.addFiles(files, auction);
 
-		return new AuctionDto.Response().fromEntity(auctionRepository.save(auction));
+		return AuctionDto.Response.fromEntity(auctionRepository.save(auction));
+	}
+	public AuctionDto.Response addAuctionImage(MultipartFile file, String userEmail,
+		Long auctionId) {
+		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
+				getUser(userEmail).getId(), auctionId)
+			.orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+
+		auction = auctionFileService.addImage(file, auction);
+		return AuctionDto.Response.fromEntity(auction);
+	}
+	public AuctionDto.Response deleteAuctionImage(String fileUrl, String userEmail,
+		Long auctionId) {
+		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
+				getUser(userEmail).getId(), auctionId)
+			.orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+
+		auction = auctionFileService.deleteImage(fileUrl, auction);
+		return AuctionDto.Response.fromEntity(auction);
 	}
 
 	public Page<AuctionDto.Response> getAllAuctionListByUserEmail(String userEmail,
@@ -98,7 +126,28 @@ public class AuctionService {
 			throw new AuctionException(NOT_FOUND_AUCTION_LIST);
 		}
 
-		return auctionList.map(m -> new AuctionDto.Response().fromEntity(m));
+		return auctionList.map(Response::fromEntity);
+	}
+
+	public Page<AuctionDto.Response> getAllAuctionListByStatus(AuctionStatus status,
+		Pageable pageable) {
+		Page<AuctionEntity> auctionEntities = null;
+
+		if (status == null || status.equals(PROCEEDING)) {
+			auctionEntities = auctionRepository.findByStartDateTimeBeforeAndEndDateTimeAfter(
+				LocalDateTime.now(), LocalDateTime.now(), pageable);
+		} else if (status.equals(SCHEDULED)) {
+			auctionEntities = auctionRepository.findByStartDateTimeAfter(LocalDateTime.now(),
+				pageable);
+		} else if (status.equals(COMPLETED)) {
+			auctionEntities = auctionRepository.findByEndDateTimeBefore(LocalDateTime.now(),
+				pageable);
+		}
+
+		if (auctionEntities.isEmpty()) {
+			throw new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST);
+		}
+		return auctionEntities.map(Response::fromEntity);
 	}
 
 	private void timeCheck(LocalDateTime startTime, LocalDateTime endTime) {
@@ -121,27 +170,6 @@ public class AuctionService {
 				throw new AuctionException(UNABLE_DELETE_AUCTION);
 			}
 		}
-	}
-
-	public Page<AuctionDto.Response> getAllAuctionListByStatus(AuctionStatus status,
-		Pageable pageable) {
-		Page<AuctionEntity> auctionEntities = null;
-
-		if (status == null || status.equals(PROCEEDING)) {
-			auctionEntities = auctionRepository.findByStartDateTimeBeforeAndEndDateTimeAfter(
-				LocalDateTime.now(), LocalDateTime.now(), pageable);
-		} else if (status.equals(SCHEDULED)) {
-			auctionEntities = auctionRepository.findByStartDateTimeAfter(LocalDateTime.now(),
-				pageable);
-		} else if (status.equals(COMPLETED)) {
-			auctionEntities = auctionRepository.findByEndDateTimeBefore(LocalDateTime.now(),
-				pageable);
-		}
-
-		if (auctionEntities.isEmpty()) {
-			throw new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST);
-		}
-		return auctionEntities.map(m -> new AuctionDto.Response().fromEntity(m));
 	}
 
 	public AuctionDto.Response auctionFinished(Long auctionId){
@@ -170,6 +198,6 @@ public class AuctionService {
 			throw new AuctionException(AUCTION_NOT_FINISHED);
 		}
 
-		return new AuctionDto.Response().fromEntity(auction);
+		return AuctionDto.Response.fromEntity(auction);
 	}
 }

@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
+
+    AuctionEntity getByAuctionId(Long auctionId);
     Optional<AuctionEntity> findByUserIdAndAuctionId(Long userId, Long auctionId);
 
     Page<AuctionEntity> findByUserId(Long userId, Pageable pageable);
