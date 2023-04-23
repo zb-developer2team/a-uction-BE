@@ -27,20 +27,21 @@ public class BiddingHistoryDto {
         }
     }
 
+    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response{
-        private Long auctionId;
+        private String auctionItemName;
         private int price;
-        private Long bidderId;
+        private String bidderEmail;
         private boolean biddingResult;
 
-        public BiddingHistoryDto.Response fromEntity(BiddingHistoryEntity biddingHistoryEntity){
-            return BiddingHistoryDto.Response.builder()
-                    .auctionId(biddingHistoryEntity.getAuctionId())
+        public BiddingHistoryDto.Response fromEntity(BiddingHistoryEntity biddingHistoryEntity, String itemName, String bidderEmail){
+            return Response.builder()
+                    .auctionItemName(itemName)
                     .price(biddingHistoryEntity.getPrice())
-                    .bidderId(biddingHistoryEntity.getBidderId())
+                    .bidderEmail(bidderEmail)
                     .biddingResult(biddingHistoryEntity.isBidding_result())
                     .build();
         }

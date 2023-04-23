@@ -84,6 +84,7 @@ public class AuctionDto {
         private LocalDateTime endDateTime;
         private String description;
         private List<String> files;
+        private Long buyerId;
 
 
         public AuctionDto.Response fromEntity(AuctionEntity auctionEntity){
@@ -106,6 +107,7 @@ public class AuctionDto {
                     .files(auctionEntity.getFiles().stream()
                         .map(file -> file.getSrc())
                         .collect(Collectors.toList()))
+                    .buyerId(auctionEntity.getBuyerId())
                     .build();
         }
 

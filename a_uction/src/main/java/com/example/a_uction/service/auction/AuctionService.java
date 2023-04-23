@@ -3,9 +3,14 @@ package com.example.a_uction.service.auction;
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
+import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransactionHistoryEntity;
+import com.example.a_uction.model.auctionTransactionHistory.repository.AuctionTransactionHistoryRepository;
+import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
+import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +31,8 @@ public class AuctionService {
 
 	private final AuctionRepository auctionRepository;
 	private final UserRepository userRepository;
+	private final BiddingHistoryRepository biddingHistoryRepository;
+	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
 	private final FileService fileService;
 
 	private UserEntity getUser(String userEmail) {
@@ -135,5 +142,34 @@ public class AuctionService {
 			throw new AuctionException(NOT_FOUND_AUCTION_STATUS_LIST);
 		}
 		return auctionEntities.map(m -> new AuctionDto.Response().fromEntity(m));
+	}
+
+	public AuctionDto.Response auctionFinished(Long auctionId){
+		AuctionEntity auction = auctionRepository.findById(auctionId)
+				.orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+		if (LocalDateTime.now().isAfter(auction.getEndDateTime()) || LocalDateTime.now().equals(auction.getEndDateTime())){
+			if (biddingHistoryRepository.existsByAuctionId(auctionId)){
+				auction.setTransactionStatus(TransactionStatus.TRANSACTION_COMPLETE);
+				BiddingHistoryEntity biddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(auctionId)
+						.orElseThrow(() -> new AuctionException(BIDDING_NOT_FOUND));
+				biddingHistory.setBidding_result(true);
+				auction.setBuyerId(biddingHistory.getBidderId());
+				String buyerEmail = userRepository.findById(biddingHistory.getBidderId())
+						.orElseThrow(() -> new AuctionException(USER_NOT_FOUND)).getUserEmail();
+				AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
+						.price(biddingHistory.getPrice())
+						.itemName(auction.getItemName())
+						.buyerEmail(buyerEmail)
+						.sellerEmail(auction.getUser().getUserEmail())
+						.build();
+				auctionTransactionHistoryRepository.save(auctionTransactionHistory);
+			} else {
+				auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);
+			}
+		} else {
+			throw new AuctionException(AUCTION_NOT_FINISHED);
+		}
+
+		return new AuctionDto.Response().fromEntity(auction);
 	}
 }

@@ -59,12 +59,8 @@ public class ChatMessageService {
 			lock.lock(1, TimeUnit.SECONDS);
 
 			int bidPrice = Integer.parseInt(message.getContents());
-			BiddingHistoryDto.Request request = BiddingHistoryDto.Request.builder()
-					.auctionId(auctionId)
-					.price(bidPrice)
-					.build();
 
-			createBiddingHistory(message.getSender(), request);
+			createBiddingHistory(message.getSender(), auctionId, bidPrice);
 
 			simpMessageSendingOperations
 					.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
@@ -118,11 +114,16 @@ public class ChatMessageService {
 		return true;
 	}
 
-	public void createBiddingHistory(String userEmail, BiddingHistoryDto.Request request){
+	private void createBiddingHistory(String userEmail, Long auctionId, int price){
 		UserEntity user = getUser(userEmail);
-		if (!biddingPossible(request.getAuctionId(), user.getId(), request.getPrice())) {
+		if (!biddingPossible(auctionId, user.getId(), price)) {
 			throw  new AuctionException(ErrorCode.UNABLE_CREATE_BID);
 		}
-		biddingHistoryRepository.save(request.toEntity(user));
+		biddingHistoryRepository.save(
+				BiddingHistoryEntity.builder()
+				.bidderId(user.getId())
+				.auctionId(auctionId)
+				.price(price)
+				.build());
 	}
 }

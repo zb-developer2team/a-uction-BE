@@ -57,8 +57,10 @@ public enum ErrorCode {
 	AUCTION_NOT_STARTS(BAD_REQUEST, "아직 경매 시작 시간 전입니다."),
 	AUCTION_FINISHED(BAD_REQUEST, "이미 종료된 경매 입니다."),
 	NOT_BIDDABLE_PRICE(BAD_REQUEST, "입찰 시도가 가능한 금액이 아닙니다."),
-	LAST_BIDDER_SAME(BAD_REQUEST, "마지막 입찰자가 본인입니다."), //? 본인이 이미 마지막 입찰자라 연속 입찰 못함..
-	UNABLE_CREATE_BID(BAD_REQUEST, "입찰에 실패했습니다.")
+	LAST_BIDDER_SAME(BAD_REQUEST, "마지막 입찰자가 본인입니다."),
+	UNABLE_CREATE_BID(BAD_REQUEST, "입찰에 실패했습니다."),
+	BIDDING_NOT_FOUND(BAD_REQUEST, "입찰이 없습니다."),
+	AUCTION_NOT_FINISHED(BAD_REQUEST, "아직 입찰이 진행중입니다.")
 	;
 	private final HttpStatus httpStatus;
 	private final String description;

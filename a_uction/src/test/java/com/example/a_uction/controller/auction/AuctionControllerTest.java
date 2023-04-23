@@ -487,10 +487,42 @@ class AuctionControllerTest {
             .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("옥션 종료")
+    @WithMockUser
+    void auctionEnds() throws Exception{
+        LocalDateTime now = LocalDateTime.now();
+        AuctionDto.Response auctionDto = AuctionDto.Response.builder()
+                .itemName("test item2")
+                .itemStatus(ItemStatus.GOOD)
+                .startingPrice(2000)
+                .minimumBid(200)
+                .startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
+                .endDateTime(now)
+                .buyerId(1L)
+                .build();
+        given(auctionService.auctionFinished(anyLong()))
+                .willReturn(auctionDto);
+        mockMvc.perform(get("/auctions/" + 1L + "/end")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemName").value("test item2"))
+                .andExpect(jsonPath("$.itemStatus").value(ItemStatus.GOOD.name()))
+                .andExpect(jsonPath("$.startingPrice").value(2000))
+                .andExpect(jsonPath("$.minimumBid").value(200))
+                .andExpect(jsonPath("$.buyerId").value(1L))
+                .andExpect(jsonPath("$.startDateTime").value("2023-04-15T17:09:42.411"))
+                .andExpect(jsonPath("$.endDateTime").value(now.toString()));
+
+    }
+
     private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path)
         throws IOException {
         FileInputStream fileInputStream = new FileInputStream(new File(path));
         return new MockMultipartFile(fileName, fileName + "." + contentType, contentType,
             fileInputStream);
     }
+
 }
