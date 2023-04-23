@@ -4,19 +4,29 @@ import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
-import com.example.a_uction.model.file.entity.FileEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -53,14 +63,11 @@ public class AuctionEntity {
     private LocalDateTime updateDateTime;
     private String description;
 
-    @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL)
+    @ElementCollection
     @Builder.Default
-    private List<FileEntity> files = new ArrayList<>();
+    @OrderColumn
+    private List<String> filesSrc = new ArrayList<>();
 
-    public void addFile(FileEntity file) {
-        files.add(file);
-        file.setAuction(this);
-    }
     public void updateEntity(AuctionDto.Request updateAuction) {
         this.setItemName(updateAuction.getItemName());
         this.setItemStatus(updateAuction.getItemStatus());
