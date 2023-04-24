@@ -192,24 +192,25 @@ public class AuctionService {
 					.orElseThrow(() -> new AuctionException(BIDDING_NOT_FOUND));
 				biddingHistory.setBidding_result(true);
 				auction.setBuyerId(
-						userRepository.findByUserEmail(biddingHistory.getBidderEmail())
+					userRepository.findByUserEmail(biddingHistory.getBidderEmail())
 						.orElseThrow(() -> new AuctionException(USER_NOT_FOUND))
 						.getId());
 				String buyerEmail = biddingHistory.getBidderEmail();
-        
-        AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
+
+				AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
 					.price(biddingHistory.getPrice())
 					.itemName(auction.getItemName())
 					.buyerEmail(buyerEmail)
 					.sellerEmail(auction.getUser().getUserEmail())
 					.build();
-        List<String> imagesSrc = auction.getImagesSrc();
-        
+
+				List<String> imagesSrc = auction.getImagesSrc();
+
 				if (imagesSrc != null) {
 					auctionTransactionHistory.setImageSrc(imagesSrc.get(0));
 				}
-        auctionTransactionHistoryRepository.save(auctionTransactionHistory);
 
+				auctionTransactionHistoryRepository.save(auctionTransactionHistory);
 			} else {
 				auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);
 			}
