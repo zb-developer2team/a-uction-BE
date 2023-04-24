@@ -86,7 +86,7 @@ class AuctionServiceTest {
 			.minimumBid(200)
 			.startDateTime(LocalDateTime.parse("2025-04-15T17:09:42.411"))
 			.endDateTime(LocalDateTime.parse("2025-04-15T17:10:42.411"))
-			.filesSrc(files)
+			.imagesSrc(files)
 			.build();
 
 		given(auctionRepository.save(any()))
@@ -119,7 +119,7 @@ class AuctionServiceTest {
 		assertEquals(200, response.getMinimumBid());
 		assertEquals(LocalDateTime.parse("2025-04-15T17:09:42.411"), response.getStartDateTime());
 		assertEquals(LocalDateTime.parse("2025-04-15T17:10:42.411"), response.getEndDateTime());
-		assertEquals("~/test/image.png", response.getFiles().get(0));
+		assertEquals("~/test/image.png", response.getImagesSrc().get(0));
 	}
 
 	@Test
@@ -175,7 +175,7 @@ class AuctionServiceTest {
 				.minimumBid(200)
 				.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
 				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build()));
 		//when
 		AuctionDto.Response response = auctionService.getAuctionByAuctionId(1L);
@@ -232,7 +232,7 @@ class AuctionServiceTest {
 			.itemStatus(ItemStatus.BAD)
 			.startDateTime(LocalDateTime.of(2026, 5, 1, 0, 0, 0))
 			.endDateTime(LocalDateTime.of(2026, 5, 2, 0, 0, 0))
-			.filesSrc(files)
+			.imagesSrc(files)
 			.build();
 
 		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
@@ -253,7 +253,7 @@ class AuctionServiceTest {
 		assertEquals(endTime, result.getEndDateTime());
 		assertEquals(2000, result.getMinimumBid());
 		assertEquals(1000, result.getStartingPrice());
-		assertEquals("~/test/image.png", result.getFiles().get(0));
+		assertEquals("~/test/image.png", result.getImagesSrc().get(0));
 	}
 
 	@Test
@@ -357,7 +357,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.BAD)
 				.startDateTime(LocalDateTime.of(2025, 4, 1, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build(),
 			AuctionEntity.builder()
 				.auctionId(2L)
@@ -369,7 +369,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.GOOD)
 				.startDateTime(LocalDateTime.of(2023, 4, 11, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2023, 4, 20, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build()
 
 		);
@@ -390,12 +390,12 @@ class AuctionServiceTest {
 		assertEquals(1111, result.toList().get(0).getStartingPrice());
 		assertEquals(1000, result.toList().get(0).getMinimumBid());
 		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(0).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(0).getImagesSrc().get(0));
 		assertEquals("item2", result.toList().get(1).getItemName());
 		assertEquals(2222, result.toList().get(1).getStartingPrice());
 		assertEquals(2000, result.toList().get(1).getMinimumBid());
 		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(1).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(1).getImagesSrc().get(0));
 	}
 
 	@Test
@@ -434,7 +434,7 @@ class AuctionServiceTest {
 			.itemStatus(ItemStatus.BAD)
 			.startDateTime(LocalDateTime.of(2025, 4, 12, 0, 0, 0))
 			.endDateTime(LocalDateTime.of(2025, 4, 13, 0, 0, 0))
-			.filesSrc(files)
+			.imagesSrc(files)
 			.build();
 		given(auctionRepository.findByUserIdAndAuctionId(any(), anyLong()))
 			.willReturn(Optional.of(auction));
@@ -450,7 +450,7 @@ class AuctionServiceTest {
 		assertEquals(TransactionStatus.TRANSACTION_COMPLETE,
 			captor.getValue().getTransactionStatus());
 		assertEquals(1000, captor.getValue().getMinimumBid());
-		assertEquals("~/test/image.png", captor.getValue().getFilesSrc().get(0));
+		assertEquals("~/test/image.png", captor.getValue().getImagesSrc().get(0));
 	}
 
 	@Test
@@ -515,7 +515,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.BAD)
 				.startDateTime(LocalDateTime.of(2022, 4, 1, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build(),
 			AuctionEntity.builder()
 				.auctionId(2L)
@@ -526,7 +526,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.GOOD)
 				.startDateTime(LocalDateTime.of(2022, 4, 11, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2023, 4, 20, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build()
 		);
 		Page<AuctionEntity> page = new PageImpl<>(list);
@@ -542,12 +542,12 @@ class AuctionServiceTest {
 		assertEquals(1111, result.toList().get(0).getStartingPrice());
 		assertEquals(1000, result.toList().get(0).getMinimumBid());
 		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(0).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(0).getImagesSrc().get(0));
 		assertEquals("item2", result.toList().get(1).getItemName());
 		assertEquals(2222, result.toList().get(1).getStartingPrice());
 		assertEquals(2000, result.toList().get(1).getMinimumBid());
 		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(1).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(1).getImagesSrc().get(0));
 	}
 
 	@Test
@@ -566,7 +566,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.BAD)
 				.startDateTime(LocalDateTime.of(2024, 4, 1, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2025, 4, 10, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build(),
 			AuctionEntity.builder()
 				.auctionId(2L)
@@ -577,7 +577,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.GOOD)
 				.startDateTime(LocalDateTime.of(2024, 4, 11, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2025, 4, 20, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build()
 		);
 		Page<AuctionEntity> page = new PageImpl<>(list);
@@ -592,12 +592,12 @@ class AuctionServiceTest {
 		assertEquals(1111, result.toList().get(0).getStartingPrice());
 		assertEquals(1000, result.toList().get(0).getMinimumBid());
 		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(0).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(0).getImagesSrc().get(0));
 		assertEquals("item2", result.toList().get(1).getItemName());
 		assertEquals(2222, result.toList().get(1).getStartingPrice());
 		assertEquals(2000, result.toList().get(1).getMinimumBid());
 		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(1).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(1).getImagesSrc().get(0));
 	}
 
 	@Test
@@ -617,7 +617,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.BAD)
 				.startDateTime(LocalDateTime.of(2021, 4, 1, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2022, 4, 10, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build(),
 			AuctionEntity.builder()
 				.auctionId(2L)
@@ -629,7 +629,7 @@ class AuctionServiceTest {
 				.itemStatus(ItemStatus.GOOD)
 				.startDateTime(LocalDateTime.of(2021, 4, 11, 0, 0, 0))
 				.endDateTime(LocalDateTime.of(2022, 4, 20, 0, 0, 0))
-				.filesSrc(files)
+				.imagesSrc(files)
 				.build()
 		);
 		Page<AuctionEntity> page = new PageImpl<>(list);
@@ -646,14 +646,14 @@ class AuctionServiceTest {
 		assertEquals(TransactionStatus.TRANSACTION_COMPLETE,
 			result.toList().get(0).getTransactionStatus());
 		assertEquals(ItemStatus.BAD, result.toList().get(0).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(0).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(0).getImagesSrc().get(0));
 		assertEquals("item2", result.toList().get(1).getItemName());
 		assertEquals(2222, result.toList().get(1).getStartingPrice());
 		assertEquals(2000, result.toList().get(1).getMinimumBid());
 		assertEquals(TransactionStatus.TRANSACTION_COMPLETE,
 			result.toList().get(1).getTransactionStatus());
 		assertEquals(ItemStatus.GOOD, result.toList().get(1).getItemStatus());
-		assertEquals("~/test/image.png", result.toList().get(1).getFiles().get(0));
+		assertEquals("~/test/image.png", result.toList().get(1).getImagesSrc().get(0));
 	}
 
 	@Test
@@ -701,10 +701,14 @@ class AuctionServiceTest {
 	@Test
 	@DisplayName("경매 종료 - 경매 성공")
 	void auctionFinishedComplete() {
+		List<String> imageSrc = new ArrayList<>();
+		imageSrc.add("~/test/test.png");
+
 		LocalDateTime now = LocalDateTime.now();
 		AuctionEntity auction = AuctionEntity.builder()
 			.auctionId(1L)
 			.user(UserEntity.builder().id(1L).build())
+			.imagesSrc(imageSrc)
 			.itemName("item1")
 			.startingPrice(1111)
 			.minimumBid(1000)
@@ -727,6 +731,7 @@ class AuctionServiceTest {
 			.price(biddingHistory.getPrice())
 			.itemName(auction.getItemName())
 			.buyerEmail(user.getUserEmail())
+			.imageSrc(auction.getImagesSrc().get(0))
 			.sellerEmail(auction.getUser().getUserEmail())
 			.build();
 
@@ -741,6 +746,7 @@ class AuctionServiceTest {
 
 		assertEquals(response.getTransactionStatus(), TransactionStatus.TRANSACTION_COMPLETE);
 		assertEquals(response.getBuyerId(), user.getId());
+		assertEquals(response.getImagesSrc().get(0), "~/test/test.png");
 	}
 
 	@Test

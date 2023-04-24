@@ -50,7 +50,8 @@ public class AuctionService {
 		return userRepository.getByUserEmail(userEmail);
 	}
 
-	public AuctionDto.Response addAuction(AuctionDto.Request auction, List<MultipartFile> files, String userEmail) {
+	public AuctionDto.Response addAuction(AuctionDto.Request auction, List<MultipartFile> files,
+		String userEmail) {
 
 		timeCheck(auction.getStartDateTime(), auction.getEndDateTime());
 
@@ -84,7 +85,8 @@ public class AuctionService {
 		return AuctionDto.Response.fromEntity(auctionEntity);
 	}
 
-	public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction, List<MultipartFile> files, String userEmail,
+	public AuctionDto.Response updateAuction(AuctionDto.Request updateAuction,
+		List<MultipartFile> files, String userEmail,
 		Long auctionId) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
 				getUser(userEmail).getId(), auctionId)
@@ -100,6 +102,7 @@ public class AuctionService {
 
 		return AuctionDto.Response.fromEntity(auctionRepository.save(auction));
 	}
+
 	public AuctionDto.Response addAuctionImage(MultipartFile file, String userEmail,
 		Long auctionId) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
@@ -109,6 +112,7 @@ public class AuctionService {
 		auction = auctionFileService.addImage(file, auction);
 		return AuctionDto.Response.fromEntity(auction);
 	}
+
 	public AuctionDto.Response deleteAuctionImage(String fileUrl, String userEmail,
 		Long auctionId) {
 		AuctionEntity auction = auctionRepository.findByUserIdAndAuctionId(
@@ -172,24 +176,38 @@ public class AuctionService {
 		}
 	}
 
-	public AuctionDto.Response auctionFinished(Long auctionId){
+	public AuctionDto.Response auctionFinished(Long auctionId) {
 		AuctionEntity auction = auctionRepository.findById(auctionId)
-				.orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-		if (LocalDateTime.now().isAfter(auction.getEndDateTime()) || LocalDateTime.now().equals(auction.getEndDateTime())){
-			if (biddingHistoryRepository.existsByAuctionId(auctionId)){
+			.orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+
+		if (LocalDateTime.now().isAfter(auction.getEndDateTime()) || LocalDateTime.now()
+			.equals(auction.getEndDateTime())) {
+
+			if (biddingHistoryRepository.existsByAuctionId(auctionId)) {
+
 				auction.setTransactionStatus(TransactionStatus.TRANSACTION_COMPLETE);
-				BiddingHistoryEntity biddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(auctionId)
-						.orElseThrow(() -> new AuctionException(BIDDING_NOT_FOUND));
+
+				BiddingHistoryEntity biddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(
+						auctionId)
+					.orElseThrow(() -> new AuctionException(BIDDING_NOT_FOUND));
 				biddingHistory.setBidding_result(true);
+
 				auction.setBuyerId(biddingHistory.getBidderId());
+
 				String buyerEmail = userRepository.findById(biddingHistory.getBidderId())
-						.orElseThrow(() -> new AuctionException(USER_NOT_FOUND)).getUserEmail();
+					.orElseThrow(() -> new AuctionException(USER_NOT_FOUND)).getUserEmail();
+
 				AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
-						.price(biddingHistory.getPrice())
-						.itemName(auction.getItemName())
-						.buyerEmail(buyerEmail)
-						.sellerEmail(auction.getUser().getUserEmail())
-						.build();
+					.price(biddingHistory.getPrice())
+					.itemName(auction.getItemName())
+					.buyerEmail(buyerEmail)
+					.sellerEmail(auction.getUser().getUserEmail())
+					.build();
+
+				List<String> imagesSrc = auction.getImagesSrc();
+				if (imagesSrc != null) {
+					auctionTransactionHistory.setImageSrc(imagesSrc.get(0));
+				}
 				auctionTransactionHistoryRepository.save(auctionTransactionHistory);
 			} else {
 				auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);

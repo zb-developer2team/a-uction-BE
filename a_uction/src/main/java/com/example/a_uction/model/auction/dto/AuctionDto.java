@@ -87,7 +87,7 @@ public class AuctionDto {
 		private LocalDateTime startDateTime;
 		private LocalDateTime endDateTime;
 		private String description;
-		private List<String> files;
+		private List<String> imagesSrc;
         private Long buyerId;
 
 
@@ -106,7 +106,7 @@ public class AuctionDto {
 				.startDateTime(auctionEntity.getStartDateTime())
 				.endDateTime(auctionEntity.getEndDateTime())
 				.description(auctionEntity.getDescription())
-				.files(auctionEntity.getFilesSrc())
+				.imagesSrc(auctionEntity.getImagesSrc())
 				.build();
 		}
 

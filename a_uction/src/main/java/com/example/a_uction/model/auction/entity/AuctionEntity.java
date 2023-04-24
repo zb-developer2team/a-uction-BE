@@ -66,7 +66,7 @@ public class AuctionEntity {
     @ElementCollection
     @Builder.Default
     @OrderColumn
-    private List<String> filesSrc = new ArrayList<>();
+    private List<String> imagesSrc = new ArrayList<>();
 
     public void updateEntity(AuctionDto.Request updateAuction) {
         this.setItemName(updateAuction.getItemName());

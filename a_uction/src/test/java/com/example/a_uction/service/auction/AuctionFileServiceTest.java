@@ -44,7 +44,7 @@ class AuctionFileServiceTest {
 
 		AuctionEntity auction = AuctionEntity.builder()
             .itemName("test item")
-            .filesSrc(new ArrayList<>())
+            .imagesSrc(new ArrayList<>())
             .build();
 
         List<MultipartFile> mockFiles = getFiles();
@@ -52,7 +52,7 @@ class AuctionFileServiceTest {
         given(s3Service.uploadFiles(any()))
             .willReturn(files);
 
-        auction.setFilesSrc(files);
+        auction.setImagesSrc(files);
         given(auctionRepository.save(any()))
             .willReturn(auction);
 
@@ -60,9 +60,9 @@ class AuctionFileServiceTest {
         AuctionEntity result = auctionFileService.addFiles(mockFiles, auction);
 
         //then
-        assertEquals(result.getFilesSrc().size(), 2);
-        assertEquals(result.getFilesSrc().get(0), "~/test/image.png");
-        assertEquals(result.getFilesSrc().get(1), "~/test/docker.png");
+        assertEquals(result.getImagesSrc().size(), 2);
+        assertEquals(result.getImagesSrc().get(0), "~/test/image.png");
+        assertEquals(result.getImagesSrc().get(1), "~/test/docker.png");
     }
 
     @Test
@@ -71,13 +71,13 @@ class AuctionFileServiceTest {
         //given
         AuctionEntity auction = AuctionEntity.builder()
             .itemName("test item")
-            .filesSrc(new ArrayList<>())
+            .imagesSrc(new ArrayList<>())
             .build();
 
         MultipartFile file = this.getMockMultipartFile("test", "image/png",
             "src/test/resources/image/test.png");
 
-        auction.getFilesSrc().add("~/test/image.png");
+        auction.getImagesSrc().add("~/test/image.png");
 
         given(s3Service.upload(any()))
             .willReturn("~/test/docker.png");
@@ -89,9 +89,9 @@ class AuctionFileServiceTest {
         AuctionEntity auctionEntity = auctionFileService.addImage(file, auction);
 
         //then
-        assertEquals(auctionEntity.getFilesSrc().size(), 2);
-        assertEquals(auctionEntity.getFilesSrc().get(0), "~/test/image.png");
-        assertEquals(auctionEntity.getFilesSrc().get(1), "~/test/docker.png");
+        assertEquals(auctionEntity.getImagesSrc().size(), 2);
+        assertEquals(auctionEntity.getImagesSrc().get(0), "~/test/image.png");
+        assertEquals(auctionEntity.getImagesSrc().get(1), "~/test/docker.png");
     }
 
     @Test
@@ -99,16 +99,16 @@ class AuctionFileServiceTest {
         //given
         AuctionEntity auction = AuctionEntity.builder()
             .itemName("test item")
-            .filesSrc(new ArrayList<>())
+            .imagesSrc(new ArrayList<>())
             .build();
-        auction.getFilesSrc().add("~/test/docker.png");
-        auction.getFilesSrc().add("~/test/image.png");
+        auction.getImagesSrc().add("~/test/docker.png");
+        auction.getImagesSrc().add("~/test/image.png");
         String fileUrl = "~/test/docker.png";
 
         given(auctionRepository.save(any()))
             .willReturn(AuctionEntity.builder()
                 .itemName("test item")
-                .filesSrc(
+                .imagesSrc(
                     List.of("~/test/docker.png", "~/test/image.png"))
                 .build()
             );
@@ -119,11 +119,11 @@ class AuctionFileServiceTest {
         ArgumentCaptor<AuctionEntity> captor = ArgumentCaptor.forClass(AuctionEntity.class);
         verify(auctionRepository, times(1)).save(captor.capture());
 
-        assertEquals(captor.getValue().getFilesSrc().size(), 1);
-        assertEquals(captor.getValue().getFilesSrc().get(0), "~/test/image.png");
-        assertEquals(auctionEntity.getFilesSrc().size(), 2);
-        assertEquals(auctionEntity.getFilesSrc().get(0), "~/test/docker.png");
-        assertEquals(auctionEntity.getFilesSrc().get(1), "~/test/image.png");
+        assertEquals(captor.getValue().getImagesSrc().size(), 1);
+        assertEquals(captor.getValue().getImagesSrc().get(0), "~/test/image.png");
+        assertEquals(auctionEntity.getImagesSrc().size(), 2);
+        assertEquals(auctionEntity.getImagesSrc().get(0), "~/test/docker.png");
+        assertEquals(auctionEntity.getImagesSrc().get(1), "~/test/image.png");
     }
 
     private List<MultipartFile> getFiles() throws IOException {

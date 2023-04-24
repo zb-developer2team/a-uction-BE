@@ -147,7 +147,7 @@ class AuctionControllerTest {
 			.itemStatus(ItemStatus.GOOD)
 			.startDateTime(startTime)
 			.endDateTime(endTime)
-			.filesSrc(files)
+			.imagesSrc(files)
 			.build();
 
 		given(auctionService.updateAuction(any(AuctionDto.Request.class), any(), any(), anyLong()))
