@@ -18,7 +18,7 @@ public class AuctionFileService {
 
 	public AuctionEntity addFiles(List<MultipartFile> files, AuctionEntity auction) {
 		if (files != null) {
-			auction.setFilesSrc(s3Service.uploadFiles(files));
+			auction.setImagesSrc(s3Service.uploadFiles(files));
 			return auctionRepository.save(auction);
 		}
 		return auction;
@@ -27,7 +27,7 @@ public class AuctionFileService {
 	@Transactional
 	public AuctionEntity addImage(MultipartFile file, AuctionEntity auction) {
 		// 원래 매핑되어있던 파일 db, s3 삭제
-		auction.getFilesSrc().add(s3Service.upload(file));
+		auction.getImagesSrc().add(s3Service.upload(file));
 
 		return auctionRepository.save(auction);
 	}
@@ -37,7 +37,7 @@ public class AuctionFileService {
 		// 원래 매핑되어있던 파일 db, s3 삭제
 		s3Service.delete(s3Service.getFileNameByUrl(fileUrl));
 
-		auction.getFilesSrc().remove(fileUrl);
+		auction.getImagesSrc().remove(fileUrl);
 
 		return auctionRepository.save(auction);
 	}
@@ -48,7 +48,7 @@ public class AuctionFileService {
 
 	private List<String> getFileNamesByAuctionId(Long auctionId) {
 		return auctionRepository.getByAuctionId(auctionId)
-			.getFilesSrc();
+			.getImagesSrc();
 	}
 
 
