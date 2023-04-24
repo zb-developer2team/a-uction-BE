@@ -24,7 +24,7 @@ public class BiddingHistoryEntity {
 
     private int price;
 
-    private Long bidderId;
+    private String bidderEmail;
 
     private boolean bidding_result;
 

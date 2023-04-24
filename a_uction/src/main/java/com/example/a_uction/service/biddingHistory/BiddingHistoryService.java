@@ -28,13 +28,12 @@ public class BiddingHistoryService {
 
 
     public ArrayList<AuctionDto.Response> getAllAuctions(String userEmail){
-        Long userId = getUser(userEmail).getId();
         Set<Long> auctionIdSet = new HashSet<>();
-        List<BiddingHistoryEntity> biddingHistoryList = biddingHistoryRepository.getAllByBidderId(userId);
+        List<BiddingHistoryEntity> biddingHistoryList = biddingHistoryRepository.getAllByBidderEmail(userEmail);
         if (biddingHistoryList.size() == 0){
             return new ArrayList<>();
         }
-        biddingHistoryList.stream().filter(x -> Objects.equals(x.getBidderId(), userId)).collect(Collectors.toList());
+        biddingHistoryList.stream().filter(x -> Objects.equals(x.getBidderEmail(), userEmail)).collect(Collectors.toList());
         for (BiddingHistoryEntity biddingHistory : biddingHistoryList){
             auctionIdSet.add(biddingHistory.getAuctionId());
         }
@@ -54,8 +53,7 @@ public class BiddingHistoryService {
         List<BiddingHistoryEntity> biddingHistoryEntityList =  biddingHistoryRepository.findAllByAuctionIdOrderByCreatedDateDesc(auctionId);
         for (BiddingHistoryEntity biddingHistory: biddingHistoryEntityList){
             biddingHistories.add(new BiddingHistoryDto.Response().fromEntity(biddingHistory,
-                    auctionRepository.findById(biddingHistory.getAuctionId()).get().getItemName(),
-                    userRepository.findById(biddingHistory.getBidderId()).get().getUserEmail()));
+                    auctionRepository.findById(biddingHistory.getAuctionId()).get().getItemName(), biddingHistory.getBidderEmail()));
         }
         return biddingHistories;
     }
