@@ -4,7 +4,6 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
-import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
 import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.chat.constants.MessageType;
@@ -92,12 +91,13 @@ public class ChatMessageService {
 		AuctionEntity auction = auctionRepository.findById(auctionId)
 				.orElseThrow(() -> new AuctionException(ErrorCode.AUCTION_NOT_FOUND));
 		Optional<BiddingHistoryEntity> optionalBiddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(auctionId);
-
+		UserEntity user = userRepository.findById(bidderId)
+				.orElseThrow(() -> new AuctionException(ErrorCode.USER_NOT_FOUND));
 		//경매 등록자 본인이 입찰 시도 - 테스트시 주석처리
 		if (Objects.equals(auction.getUser().getId(), bidderId))
 			throw new AuctionException(ErrorCode.REGISTER_CANNOT_BID);
 		if (optionalBiddingHistory.isPresent()){
-			if (Objects.equals(optionalBiddingHistory.get().getBidderId(), bidderId)){
+			if (Objects.equals(optionalBiddingHistory.get().getBidderEmail(), user.getUserEmail())){
 				throw new AuctionException(ErrorCode.LAST_BIDDER_SAME);
 			}
 		}
@@ -121,7 +121,7 @@ public class ChatMessageService {
 		}
 		biddingHistoryRepository.save(
 				BiddingHistoryEntity.builder()
-				.bidderId(user.getId())
+				.bidderEmail(user.getUserEmail())
 				.auctionId(auctionId)
 				.price(price)
 				.build());

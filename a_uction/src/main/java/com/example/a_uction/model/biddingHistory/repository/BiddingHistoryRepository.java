@@ -12,5 +12,5 @@ public interface BiddingHistoryRepository extends JpaRepository<BiddingHistoryEn
     Optional<BiddingHistoryEntity> findFirstByAuctionIdOrderByCreatedDateDesc(Long auctionId);
     List<BiddingHistoryEntity> findAllByAuctionIdOrderByCreatedDateDesc(Long auctionId);
     Boolean existsByAuctionId(Long auctionId);
-    List<BiddingHistoryEntity> getAllByBidderId(Long bidderId);
+    List<BiddingHistoryEntity> getAllByBidderEmail(String bidderEmail);
 }

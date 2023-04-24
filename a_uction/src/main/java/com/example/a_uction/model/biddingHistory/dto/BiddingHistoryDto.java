@@ -22,7 +22,7 @@ public class BiddingHistoryDto {
             return BiddingHistoryEntity.builder()
                     .auctionId(this.auctionId)
                     .price(this.price)
-                    .bidderId(user.getId())
+                    .bidderEmail(user.getUserEmail())
                     .build();
         }
     }

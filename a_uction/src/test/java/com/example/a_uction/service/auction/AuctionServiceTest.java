@@ -719,7 +719,7 @@ class AuctionServiceTest {
 		BiddingHistoryEntity biddingHistory = BiddingHistoryEntity.builder()
 			.price(22000)
 			.bidding_result(false)
-			.bidderId(1L)
+			.bidderEmail("zerobase@gmail.com")
 			.auctionId(1L)
 			.build();
 		UserEntity user = UserEntity.builder()
@@ -735,7 +735,7 @@ class AuctionServiceTest {
 			.sellerEmail(auction.getUser().getUserEmail())
 			.build();
 
-		given(userRepository.findById(1L)).willReturn(Optional.of(user));
+		given(userRepository.findByUserEmail(any())).willReturn(Optional.of(user));
 		given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
 		given(biddingHistoryRepository.existsByAuctionId(anyLong())).willReturn(true);
 		given(biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(
