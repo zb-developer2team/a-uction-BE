@@ -32,7 +32,9 @@ public class SecurityConfig {
 						"/ws",
 						"/auctions/detail",
 						"/auctions/list",
-						"/get-time")
+						"/get-time",
+						"/swagger-ui/**",
+						"/v3/api-docs")
 						.permitAll()
 			.and()
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

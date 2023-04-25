@@ -88,6 +88,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				path.contains("auctions/detail") ||
 				path.contains("auctions/list") ||
 				path.contains("get-time") ||
+				path.contains("swagger") ||
+				path.contains("api-docs") ||
 				path.isEmpty() ||
 				path.equals("/auth/refresh") ||
 				path.contains("search") ||
