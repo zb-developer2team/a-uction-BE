@@ -1,8 +1,8 @@
-package com.example.a_uction.model.auction.repository;
+package com.example.a_uction.model.auctionSearch.repository;
 
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
-import com.example.a_uction.model.auction.entity.AuctionDocument;
+import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

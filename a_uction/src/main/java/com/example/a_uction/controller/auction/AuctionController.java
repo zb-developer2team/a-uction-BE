@@ -5,7 +5,7 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
-import com.example.a_uction.service.auction.AuctionSearchService;
+import com.example.a_uction.service.search.AuctionSearchService;
 import com.example.a_uction.service.auction.AuctionService;
 import java.security.Principal;
 import java.util.List;
