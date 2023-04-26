@@ -16,10 +16,13 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
     @Value("${es.host}")
     private String host;
 
+    @Value("${es.port}")
+    private String port;
+
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .connectedTo(host)
+                .connectedTo(host + ":" + port)
                 .build();
         return RestClients.create(clientConfiguration).rest();
     }
