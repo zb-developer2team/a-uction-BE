@@ -1,7 +1,8 @@
 package com.example.a_uction.model.auctionSearch.repository;
 
 
-import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auction.constants.Category;
+import com.example.a_uction.model.auctionSearch.dto.SortingCondition;
 import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
 import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import lombok.RequiredArgsConstructor;
@@ -71,8 +72,17 @@ public class AuctionSearchQueryRepository {
         return query;
     }
 
-    public Page<AuctionDocument> findByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable) {
-        Criteria criteria = Criteria.where("itemName").startsWith(condition.getItemName());
+    public Page<AuctionDocument> findByStartWithItemName(String itemName, SortingCondition condition, Pageable pageable) {
+        Criteria criteria = Criteria.where("itemName").startsWith(itemName);
+        return makeQueryWithSort(criteria, condition, pageable);
+    }
+
+    public Page<AuctionDocument> findByCategory(Category category, SortingCondition condition, Pageable pageable){
+        Criteria criteria = Criteria.where("category").is(category);
+        return makeQueryWithSort(criteria, condition, pageable);
+    }
+
+    public Page<AuctionDocument> makeQueryWithSort(Criteria criteria, SortingCondition condition, Pageable pageable){
         String properties = ID.getProperty();
         Sort.Direction direction = ASC;
 

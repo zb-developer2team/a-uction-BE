@@ -7,9 +7,7 @@ import org.springframework.data.domain.Sort;
 
 @Getter
 @Setter
-public class ItemNameSearchCondition {
-
-    private String itemName;
+public class SortingCondition {
     private SortProperties sortProperties;
     private Sort.Direction direction;
 

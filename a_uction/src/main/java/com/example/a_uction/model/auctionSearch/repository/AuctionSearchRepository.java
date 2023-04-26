@@ -1,6 +1,5 @@
 package com.example.a_uction.model.auctionSearch.repository;
 
-import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import org.springframework.data.domain.Page;
@@ -13,5 +12,4 @@ public interface AuctionSearchRepository extends ElasticsearchRepository<Auction
     Page<AuctionDocument> findByStartingPriceOrderByIdAsc(int startingPrice, Pageable pageable);
     Page<AuctionDocument> findByMinimumBidOrderByIdAsc(int minimumBid, Pageable pageable);
     Page<AuctionDocument> findByItemStatusOrderByIdAsc(ItemStatus itemStatus, Pageable pageable);
-    Page<AuctionDocument> findByCategoryOrderByIdAsc(Category category, Pageable pageable);
 }

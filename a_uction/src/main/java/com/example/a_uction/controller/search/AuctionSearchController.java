@@ -4,7 +4,7 @@ package com.example.a_uction.controller.search;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auctionSearch.dto.AuctionDocumentResponse;
-import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auctionSearch.dto.SortingCondition;
 import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
 import com.example.a_uction.service.search.AuctionSearchService;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +49,9 @@ public class AuctionSearchController {
 
     //category
     @GetMapping("/auctions/category")
-    public ResponseEntity<Page<AuctionDocumentResponse>> searchByCategory(@RequestParam Category category, Pageable pageable){
-        return ResponseEntity.ok(auctionSearchService.findByCategory(category,pageable));
+    public ResponseEntity<Page<AuctionDocumentResponse>> searchByCategory(@RequestParam Category category,
+                                                                          SortingCondition condition, Pageable pageable){
+        return ResponseEntity.ok(auctionSearchService.findByCategory(category,condition, pageable));
     }
 
     //검색어 상태별 //종합검색
@@ -61,8 +62,9 @@ public class AuctionSearchController {
 
     //item
     @GetMapping("/auctions/itemName/startWith")
-    public ResponseEntity<Page<AuctionDocumentResponse>> searchByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable){
-        return ResponseEntity.ok(auctionSearchService.findByStartWithItemName(condition, pageable));
+    public ResponseEntity<Page<AuctionDocumentResponse>> searchByStartWithItemName(@RequestParam String itemName,
+                                                                                   SortingCondition condition, Pageable pageable){
+        return ResponseEntity.ok(auctionSearchService.findByStartWithItemName(itemName, condition, pageable));
     }
 
     //description match
