@@ -102,3 +102,12 @@ Content-Type: application/json
 {
   "fileUrl" : "https://auction-image-bucket.s3.ap-northeast-2.amazonaws.com/ebbd47dc-3bad-4700-8a33-fb1ce466e144.png"
 }
+
+
+### 경매 히스토리 보기
+GET http://localhost:8081/biddingHistories/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE3MjExNiwiZXhwIjoxNjgyMTc1NzE2fQ.1vna-E6jvLoqFAxX9tkjmPd4Zxj9Pjl8_yrhUuoeY3M
+
+### 경매 종료
+GET http://localhost:8081/auctions/1/end
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjE3MjExNiwiZXhwIjoxNjgyMTc1NzE2fQ.1vna-E6jvLoqFAxX9tkjmPd4Zxj9Pjl8_yrhUuoeY3M

@@ -88,3 +88,11 @@ Content-Type: image/png
 ### 프로필 사진 삭제
 PUT http://localhost:8081/users/detail/delete/profile-image
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjIzODUxNSwiZXhwIjoxNjgyMjQyMTE1fQ.__ner9x3-EAts-FwHIFl9cjOBYta7LiBIuTtX39Nr1U
+
+### 내가 구매한 상품 리스트
+GET http://localhost:8081/mypage/transaction-history
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjIzODUxNSwiZXhwIjoxNjgyMjQyMTE1fQ.__ner9x3-EAts-FwHIFl9cjOBYta7LiBIuTtX39Nr1U
+
+### 내가 입찰에 참여한 모든 경매 리스트
+GET http://localhost:8081/mypage/joined_auctions
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MjIzODUxNSwiZXhwIjoxNjgyMjQyMTE1fQ.__ner9x3-EAts-FwHIFl9cjOBYta7LiBIuTtX39Nr1U
