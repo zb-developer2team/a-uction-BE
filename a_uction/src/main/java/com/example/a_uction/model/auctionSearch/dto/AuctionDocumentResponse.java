@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -23,6 +25,8 @@ public class AuctionDocumentResponse {
     private int minimumBid;
     private Category category;
     private String description;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
     public static AuctionDocumentResponse from(AuctionDocument auctionDocument){
         return AuctionDocumentResponse.builder()
@@ -34,6 +38,8 @@ public class AuctionDocumentResponse {
                 .minimumBid(auctionDocument.getMinimumBid())
                 .category(auctionDocument.getCategory())
                 .description(auctionDocument.getDescription())
+                .startDateTime(auctionDocument.getStartDateTime())
+                .endDateTime(auctionDocument.getEndDateTime())
                 .build();
     }
 }
