@@ -5,11 +5,13 @@ import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import lombok.*;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Mapping;
-import org.springframework.data.elasticsearch.annotations.Setting;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_hour_minute_second_millis;
+import static org.springframework.data.elasticsearch.annotations.DateFormat.epoch_millis;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -35,6 +37,11 @@ public class AuctionDocument {
 
     private String description;
 
+    @Field(type = FieldType.Date, format = {date_hour_minute_second_millis, epoch_millis})
+    private LocalDateTime startDateTime;
+    @Field(type = FieldType.Date, format = {date_hour_minute_second_millis, epoch_millis})
+    private LocalDateTime endDateTime;
+
     public static AuctionDocument from(AuctionEntity auctionEntity){
         return AuctionDocument.builder()
                 .id(auctionEntity.getAuctionId())
@@ -46,6 +53,8 @@ public class AuctionDocument {
                 .minimumBid(auctionEntity.getMinimumBid())
                 .category(auctionEntity.getCategory())
                 .description(auctionEntity.getDescription())
+                .startDateTime(auctionEntity.getStartDateTime())
+                .endDateTime(auctionEntity.getEndDateTime())
                 .build();
     }
 

@@ -1,7 +1,8 @@
 package com.example.a_uction.model.auctionSearch.repository;
 
 
-import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auction.constants.Category;
+import com.example.a_uction.model.auctionSearch.dto.SortingCondition;
 import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
 import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.stream.Collectors;
 
+import static com.example.a_uction.model.auctionSearch.constants.SortProperties.ID;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class AuctionSearchQueryRepository {
     public Page<AuctionDocument> findByCondition(SearchCondition searchCondition, Pageable pageable) {
 
         CriteriaQuery query = createConditionCriteriaQuery(searchCondition);
-        Query q = query.addSort(Sort.by(Sort.Direction.ASC, "id")).setPageable(pageable);
+        Query q = query.addSort(Sort.by(ASC, ID.getProperty())).setPageable(pageable);
 
         SearchHits<AuctionDocument> search = operations.search(q, AuctionDocument.class);
         return new PageImpl<>(search.stream().map(SearchHit::getContent).collect(Collectors.toList()));
@@ -69,13 +72,22 @@ public class AuctionSearchQueryRepository {
         return query;
     }
 
-    public Page<AuctionDocument> findByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable) {
-        Criteria criteria = Criteria.where("itemName").startsWith(condition.getItemName());
-        String properties = "id";
-        Sort.Direction direction = Sort.Direction.ASC;
+    public Page<AuctionDocument> findByStartWithItemName(String itemName, SortingCondition condition, Pageable pageable) {
+        Criteria criteria = Criteria.where("itemName").startsWith(itemName);
+        return makeQueryWithSort(criteria, condition, pageable);
+    }
 
-        if (StringUtils.hasText(condition.getSortProperties())){
-            properties = condition.getSortProperties();
+    public Page<AuctionDocument> findByCategory(Category category, SortingCondition condition, Pageable pageable){
+        Criteria criteria = Criteria.where("category").is(category);
+        return makeQueryWithSort(criteria, condition, pageable);
+    }
+
+    public Page<AuctionDocument> makeQueryWithSort(Criteria criteria, SortingCondition condition, Pageable pageable){
+        String properties = ID.getProperty();
+        Sort.Direction direction = ASC;
+
+        if (condition.getSortProperties() != null){
+            properties = condition.getSortProperties().getProperty();
         }
         if(condition.getDirection() != null){
             direction = condition.getDirection();
@@ -91,7 +103,7 @@ public class AuctionSearchQueryRepository {
     public Page<AuctionDocument> findByMatchesDescription(String description, Pageable pageable) {
         Criteria criteria = Criteria.where("description").matches(description);
         Query query = new CriteriaQuery(criteria)
-                .addSort(Sort.by(Sort.Direction.ASC, "id")).setPageable(pageable);
+                .addSort(Sort.by(ASC, ID.getProperty())).setPageable(pageable);
         SearchHits<AuctionDocument> search = operations.search(query, AuctionDocument.class);
         return new PageImpl<>(search.stream().map(SearchHit::getContent).collect(Collectors.toList()));
     }
@@ -99,7 +111,7 @@ public class AuctionSearchQueryRepository {
     public Page<AuctionDocument> findByContainsDescription(String description, Pageable pageable) {
         Criteria criteria = Criteria.where("description").contains(description);
         Query query = new CriteriaQuery(criteria)
-                .addSort(Sort.by(Sort.Direction.ASC, "id")).setPageable(pageable);
+                .addSort(Sort.by(ASC, ID.getProperty())).setPageable(pageable);
         SearchHits<AuctionDocument> search = operations.search(query, AuctionDocument.class);
         return new PageImpl<>(search.stream().map(SearchHit::getContent).collect(Collectors.toList()));
     }

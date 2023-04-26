@@ -5,7 +5,7 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auctionSearch.dto.AuctionDocumentResponse;
-import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auctionSearch.dto.SortingCondition;
 import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
 import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
@@ -56,8 +56,8 @@ public class AuctionSearchService {
                 .map(AuctionDocumentResponse::from);
     }
 
-    public Page<AuctionDocumentResponse> findByCategory(Category category, Pageable pageable) {
-        return auctionSearchRepository.findByCategoryOrderByIdAsc(category, pageable)
+    public Page<AuctionDocumentResponse> findByCategory(Category category, SortingCondition condition, Pageable pageable) {
+        return auctionSearchQueryRepository.findByCategory(category, condition, pageable)
                 .map(AuctionDocumentResponse::from);
     }
 
@@ -66,8 +66,8 @@ public class AuctionSearchService {
                 .map(AuctionDocumentResponse::from);
     }
 
-    public Page<AuctionDocumentResponse> findByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable) {
-        return auctionSearchQueryRepository.findByStartWithItemName(condition, pageable)
+    public Page<AuctionDocumentResponse> findByStartWithItemName(String itemName, SortingCondition condition, Pageable pageable) {
+        return auctionSearchQueryRepository.findByStartWithItemName(itemName, condition, pageable)
                 .map(AuctionDocumentResponse::from);
     }
 
