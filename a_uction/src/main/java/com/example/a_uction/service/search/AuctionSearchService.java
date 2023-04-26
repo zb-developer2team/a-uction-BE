@@ -1,15 +1,16 @@
-package com.example.a_uction.service.auction;
+package com.example.a_uction.service.search;
 
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
-import com.example.a_uction.model.auction.dto.AuctionDocumentResponse;
-import com.example.a_uction.model.auction.dto.SearchCondition;
-import com.example.a_uction.model.auction.entity.AuctionDocument;
+import com.example.a_uction.model.auctionSearch.dto.AuctionDocumentResponse;
+import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
+import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
-import com.example.a_uction.model.auction.repository.AuctionSearchQueryRepository;
-import com.example.a_uction.model.auction.repository.AuctionSearchRepository;
+import com.example.a_uction.model.auctionSearch.repository.AuctionSearchQueryRepository;
+import com.example.a_uction.model.auctionSearch.repository.AuctionSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,8 +66,8 @@ public class AuctionSearchService {
                 .map(AuctionDocumentResponse::from);
     }
 
-    public Page<AuctionDocumentResponse> findByStartWithItemName(String itemName, Pageable pageable) {
-        return auctionSearchQueryRepository.findByStartWithItemName(itemName, pageable)
+    public Page<AuctionDocumentResponse> findByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable) {
+        return auctionSearchQueryRepository.findByStartWithItemName(condition, pageable)
                 .map(AuctionDocumentResponse::from);
     }
 

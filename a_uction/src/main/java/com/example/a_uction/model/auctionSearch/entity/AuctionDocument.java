@@ -1,8 +1,9 @@
-package com.example.a_uction.model.auction.entity;
+package com.example.a_uction.model.auctionSearch.entity;
 
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
+import com.example.a_uction.model.auction.entity.AuctionEntity;
 import lombok.*;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Mapping;

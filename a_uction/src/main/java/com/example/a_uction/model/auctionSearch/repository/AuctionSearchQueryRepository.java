@@ -1,8 +1,9 @@
-package com.example.a_uction.model.auction.repository;
+package com.example.a_uction.model.auctionSearch.repository;
 
 
-import com.example.a_uction.model.auction.dto.SearchCondition;
-import com.example.a_uction.model.auction.entity.AuctionDocument;
+import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
+import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -68,10 +69,20 @@ public class AuctionSearchQueryRepository {
         return query;
     }
 
-    public Page<AuctionDocument> findByStartWithItemName(String itemName, Pageable pageable) {
-        Criteria criteria = Criteria.where("itemName").startsWith(itemName);
+    public Page<AuctionDocument> findByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable) {
+        Criteria criteria = Criteria.where("itemName").startsWith(condition.getItemName());
+        String properties = "id";
+        Sort.Direction direction = Sort.Direction.ASC;
+
+        if (StringUtils.hasText(condition.getSortProperties())){
+            properties = condition.getSortProperties();
+        }
+        if(condition.getDirection() != null){
+            direction = condition.getDirection();
+        }
+
         Query query = new CriteriaQuery(criteria)
-                .addSort(Sort.by(Sort.Direction.ASC, "id")).setPageable(pageable);
+                .addSort(Sort.by(direction, properties)).setPageable(pageable);
         SearchHits<AuctionDocument> search = operations.search(query, AuctionDocument.class);
         return new PageImpl<>(search.stream().map(SearchHit::getContent).collect(Collectors.toList()));
     }

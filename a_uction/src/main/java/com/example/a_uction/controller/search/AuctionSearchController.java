@@ -1,11 +1,12 @@
-package com.example.a_uction.controller.auction;
+package com.example.a_uction.controller.search;
 
 
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
-import com.example.a_uction.model.auction.dto.AuctionDocumentResponse;
-import com.example.a_uction.model.auction.dto.SearchCondition;
-import com.example.a_uction.service.auction.AuctionSearchService;
+import com.example.a_uction.model.auctionSearch.dto.AuctionDocumentResponse;
+import com.example.a_uction.model.auctionSearch.dto.ItemNameSearchCondition;
+import com.example.a_uction.model.auctionSearch.dto.SearchCondition;
+import com.example.a_uction.service.search.AuctionSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -60,8 +61,8 @@ public class AuctionSearchController {
 
     //item
     @GetMapping("/auctions/itemName/startWith")
-    public ResponseEntity<Page<AuctionDocumentResponse>> searchByStartWithItemName(@RequestParam String itemName, Pageable pageable){
-        return ResponseEntity.ok(auctionSearchService.findByStartWithItemName(itemName,pageable));
+    public ResponseEntity<Page<AuctionDocumentResponse>> searchByStartWithItemName(ItemNameSearchCondition condition, Pageable pageable){
+        return ResponseEntity.ok(auctionSearchService.findByStartWithItemName(condition, pageable));
     }
 
     //description match

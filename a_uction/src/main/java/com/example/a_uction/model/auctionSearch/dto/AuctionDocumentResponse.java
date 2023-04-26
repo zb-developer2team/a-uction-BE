@@ -1,10 +1,10 @@
-package com.example.a_uction.model.auction.dto;
+package com.example.a_uction.model.auctionSearch.dto;
 
 
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
 import com.example.a_uction.model.auction.constants.TransactionStatus;
-import com.example.a_uction.model.auction.entity.AuctionDocument;
+import com.example.a_uction.model.auctionSearch.entity.AuctionDocument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

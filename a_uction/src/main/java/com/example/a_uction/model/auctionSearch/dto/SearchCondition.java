@@ -1,4 +1,4 @@
-package com.example.a_uction.model.auction.dto;
+package com.example.a_uction.model.auctionSearch.dto;
 
 import com.example.a_uction.model.auction.constants.Category;
 import com.example.a_uction.model.auction.constants.ItemStatus;
