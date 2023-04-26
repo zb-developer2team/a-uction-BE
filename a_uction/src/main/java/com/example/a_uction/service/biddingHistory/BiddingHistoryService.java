@@ -4,6 +4,7 @@ import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.auctionTransactionHistory.dto.AuctionTransactionHistoryDto;
 import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
 import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
@@ -20,12 +21,6 @@ import java.util.stream.Collectors;
 public class BiddingHistoryService {
     private final BiddingHistoryRepository biddingHistoryRepository;
     private final AuctionRepository auctionRepository;
-    private final UserRepository userRepository;
-
-    private UserEntity getUser(String userEmail) {
-        return userRepository.getByUserEmail(userEmail);
-    }
-
 
     public ArrayList<AuctionDto.Response> getAllAuctions(String userEmail){
         Set<Long> auctionIdSet = new HashSet<>();
@@ -40,7 +35,7 @@ public class BiddingHistoryService {
         ArrayList<AuctionDto.Response> auctionList = new ArrayList<>();
         for (Long auctionId : auctionIdSet){
             auctionList.add(
-                    new AuctionDto.Response().fromEntity(auctionRepository.findById(auctionId)
+                    AuctionDto.Response.fromEntity(auctionRepository.findById(auctionId)
                     .orElseThrow(() -> new AuctionException(ErrorCode.AUCTION_NOT_FOUND))
             ));
         }

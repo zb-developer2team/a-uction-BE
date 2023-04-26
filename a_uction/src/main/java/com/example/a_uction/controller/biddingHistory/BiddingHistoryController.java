@@ -1,6 +1,7 @@
 package com.example.a_uction.controller.biddingHistory;
 
 import com.example.a_uction.model.auction.dto.AuctionDto;
+import com.example.a_uction.model.auctionTransactionHistory.dto.AuctionTransactionHistoryDto;
 import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
 import com.example.a_uction.service.biddingHistory.BiddingHistoryService;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,8 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class BiddingHistoryController {
-    private final BiddingHistoryService biddingHistoryService;
 
+    private final BiddingHistoryService biddingHistoryService;
 
     @GetMapping("/mypage/joined_auctions")
     public ResponseEntity<List<AuctionDto.Response>> getAllJoinedAuctions(Principal principal){

@@ -1,12 +1,18 @@
 package com.example.a_uction.model.auctionTransactionHistory.dto;
 
 import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransactionHistoryEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class AuctionTransactionHistoryDto {
 
+	@Getter
 	@Builder
-	static class Response {
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class Response {
 
 		private String sellerEmail;
 		private String itemName;
