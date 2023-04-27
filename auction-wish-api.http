@@ -1,0 +1,15 @@
+###wish
+POST http://localhost:8081/wish/13
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjYzMTYsImV4cCI6MTY4MjU2OTkxNn0.pEeHJtKbKukWIbVKyxdWor_zpBk_iZvqC6JiaZNjZZA
+
+### getwish
+GET http://localhost:8081/wish/myList?page=2&size=2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjYzMTYsImV4cCI6MTY4MjU2OTkxNn0.pEeHJtKbKukWIbVKyxdWor_zpBk_iZvqC6JiaZNjZZA
+
+### getwishAuction
+GET http://localhost:8081/wish/auction/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjU1NjksImV4cCI6MTY4MjU2OTE2OX0.Bd5FdNPq_YBIVUZfrMnYR6O96uoUBKNbCHwbhtw-Tl4
+
+### delete wishAuction
+DELETE http://localhost:8081/wish/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjQ3NDEsImV4cCI6MTY4MjU2ODM0MX0.2xVPYckWsJNeTBn148qK3aFZKUBiciTlcgQD0a8vr0E

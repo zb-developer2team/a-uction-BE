@@ -4,16 +4,11 @@ import com.example.a_uction.model.auction.entity.AuctionEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import com.example.a_uction.model.user.dto.ModifyUser;
+import com.example.a_uction.model.wishList.entity.WishListEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +51,9 @@ public class UserEntity {
 	private LocalDateTime updateDateTime;
 
 	private String description;
+
+	@OneToMany(mappedBy = "wishUser")
+	private List<WishListEntity> wishList = new ArrayList<>();
 
 	public void updateUserEntity(ModifyUser.Request updateRequest){
 		this.setUsername(updateRequest.getUsername());

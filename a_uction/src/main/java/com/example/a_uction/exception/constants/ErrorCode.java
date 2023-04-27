@@ -61,7 +61,13 @@ public enum ErrorCode {
 	LAST_BIDDER_SAME(BAD_REQUEST, "마지막 입찰자가 본인입니다."),
 	UNABLE_CREATE_BID(BAD_REQUEST, "입찰에 실패했습니다."),
 	BIDDING_NOT_FOUND(BAD_REQUEST, "입찰이 없습니다."),
-	AUCTION_NOT_FINISHED(BAD_REQUEST, "아직 입찰이 진행중입니다.")
+	AUCTION_NOT_FINISHED(BAD_REQUEST, "아직 입찰이 진행중입니다."),
+
+
+	//wish
+	WISH_LIST_IS_EMPTY(BAD_REQUEST, "관심 등록한 경매 리스트가 없습니다."),
+	ALREADY_EXIST_WISH_ITEM(BAD_REQUEST, "해당 물품을 이미 관심 등록하였습니다."),
+	UNABLE_DELETE_WISH_LIST(BAD_REQUEST, "해당 물품을 삭제할 수 없습니다."),
 	;
 	private final HttpStatus httpStatus;
 	private final String description;
