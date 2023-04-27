@@ -3,7 +3,7 @@ POST http://localhost:8081/wish/13
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjYzMTYsImV4cCI6MTY4MjU2OTkxNn0.pEeHJtKbKukWIbVKyxdWor_zpBk_iZvqC6JiaZNjZZA
 
 ### getwish
-GET http://localhost:8081/wish/myList?page=2&size=2
+GET http://localhost:8081/wish/my-list?page=2&size=2
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZTNAZ21haWwuY29tIiwic3ViIjoiQWNjZXNzVG9rZW4iLCJpYXQiOjE2ODI1NjYzMTYsImV4cCI6MTY4MjU2OTkxNn0.pEeHJtKbKukWIbVKyxdWor_zpBk_iZvqC6JiaZNjZZA
 
 ### getwishAuction
