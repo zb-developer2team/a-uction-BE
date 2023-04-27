@@ -66,8 +66,8 @@ public class AuctionSearchService {
                 .map(AuctionDocumentResponse::from);
     }
 
-    public Page<AuctionDocumentResponse> findByStartWithItemName(String itemName, SortingCondition condition, Pageable pageable) {
-        return auctionSearchQueryRepository.findByStartWithItemName(itemName, condition, pageable)
+    public Page<AuctionDocumentResponse> findByContainItemName(String itemName, SortingCondition condition, Pageable pageable) {
+        return auctionSearchQueryRepository.findByContainItemName(itemName, condition, pageable)
                 .map(AuctionDocumentResponse::from);
     }
 

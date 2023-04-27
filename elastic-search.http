@@ -23,5 +23,5 @@ GET http://localhost:8081/search/auctions/description/matches?description=애플
 GET http://localhost:8081/search/auctions/description/contains?description=iphone&page=0&size=20
 
 ###item name
-GET localhost:8081/search/auctions/itemName/startWith?itemName=아이폰&sortProperties=STARTING_PRICE&direction=DESC&page=0&size=20
+GET localhost:8081/search/auctions/itemName/contain?itemName=프로&sortProperties=STARTING_PRICE&direction=DESC&page=0&size=20
 

@@ -61,10 +61,10 @@ public class AuctionSearchController {
     }
 
     //item
-    @GetMapping("/auctions/itemName/startWith")
-    public ResponseEntity<Page<AuctionDocumentResponse>> searchByStartWithItemName(@RequestParam String itemName,
+    @GetMapping("/auctions/itemName/contain")
+    public ResponseEntity<Page<AuctionDocumentResponse>> searchByContainItemName(@RequestParam String itemName,
                                                                                    SortingCondition condition, Pageable pageable){
-        return ResponseEntity.ok(auctionSearchService.findByStartWithItemName(itemName, condition, pageable));
+        return ResponseEntity.ok(auctionSearchService.findByContainItemName(itemName, condition, pageable));
     }
 
     //description match

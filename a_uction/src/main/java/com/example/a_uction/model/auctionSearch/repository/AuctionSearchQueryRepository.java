@@ -72,8 +72,8 @@ public class AuctionSearchQueryRepository {
         return query;
     }
 
-    public Page<AuctionDocument> findByStartWithItemName(String itemName, SortingCondition condition, Pageable pageable) {
-        Criteria criteria = Criteria.where("itemName").startsWith(itemName);
+    public Page<AuctionDocument> findByContainItemName(String itemName, SortingCondition condition, Pageable pageable) {
+        Criteria criteria = Criteria.where("itemName").contains(itemName);
         return makeQueryWithSort(criteria, condition, pageable);
     }
 
