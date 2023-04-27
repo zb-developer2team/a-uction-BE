@@ -499,9 +499,9 @@ class AuctionControllerTest {
 			.endDateTime(now)
 			.buyerId(1L)
 			.build();
-		given(auctionService.auctionFinished(anyLong()))
+		given(auctionService.getAuctionByAuctionId(any()))
 			.willReturn(auctionDto);
-		mockMvc.perform(get("/auctions/" + 1L + "/end")
+		mockMvc.perform(get("/auctions/detail/" + 1L)
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
