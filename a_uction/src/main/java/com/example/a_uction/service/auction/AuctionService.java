@@ -14,6 +14,7 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.service.search.AuctionSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,8 @@ public class AuctionService {
 	private final AuctionFileService auctionFileService;
 	private final BiddingHistoryRepository biddingHistoryRepository;
 	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
+
+	private final AuctionSearchService auctionSearchService;
 
 	private UserEntity getUser(String userEmail) {
 		return userRepository.getByUserEmail(userEmail);
@@ -212,6 +215,8 @@ public class AuctionService {
 		} else {
 			auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);
 		}
+
+		auctionSearchService.deleteAuctionDocuments(auctionId);
 		return AuctionDto.Response.fromEntity(auctionRepository.save(auction));
 	}
 }
