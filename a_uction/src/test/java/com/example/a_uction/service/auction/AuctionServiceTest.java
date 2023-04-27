@@ -1,6 +1,5 @@
 package com.example.a_uction.service.auction;
 
-import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FINISHED;
 import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
 import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
 import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
@@ -167,16 +166,18 @@ class AuctionServiceTest {
 		//given
 		List<String> files = List.of("~/test/image.png");
 
+		AuctionEntity auction = AuctionEntity.builder()
+			.itemName("test item")
+			.itemStatus(ItemStatus.BAD)
+			.startingPrice(2000)
+			.minimumBid(200)
+			.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
+			.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
+			.imagesSrc(files)
+			.build();
 		given(auctionRepository.findById(anyLong()))
-			.willReturn(Optional.of(AuctionEntity.builder()
-				.itemName("test item")
-				.itemStatus(ItemStatus.BAD)
-				.startingPrice(2000)
-				.minimumBid(200)
-				.startDateTime(LocalDateTime.parse("2023-04-15T17:09:42.411"))
-				.endDateTime(LocalDateTime.parse("2023-04-15T17:10:42.411"))
-				.imagesSrc(files)
-				.build()));
+			.willReturn(Optional.of(auction));
+		given(auctionRepository.save(any())).willReturn(auction);
 		//when
 		AuctionDto.Response response = auctionService.getAuctionByAuctionId(1L);
 		//then
@@ -187,6 +188,7 @@ class AuctionServiceTest {
 		assertEquals(200, response.getMinimumBid());
 		assertEquals(LocalDateTime.parse("2023-04-15T17:09:42.411"), response.getStartDateTime());
 		assertEquals(LocalDateTime.parse("2023-04-15T17:10:42.411"), response.getEndDateTime());
+		assertNull(response.getBuyerId());
 	}
 
 	@Test
@@ -735,14 +737,17 @@ class AuctionServiceTest {
 			.sellerEmail(auction.getUser().getUserEmail())
 			.build();
 
-		given(userRepository.findByUserEmail(any())).willReturn(Optional.of(user));
 		given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
+		given(userRepository.findByUserEmail(any())).willReturn(Optional.of(user));
 		given(biddingHistoryRepository.existsByAuctionId(anyLong())).willReturn(true);
 		given(biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(
 			anyLong())).willReturn(Optional.of(biddingHistory));
 		given(auctionTransactionHistoryRepository.save(any())).willReturn(
 			auctionTransactionHistory);
-		AuctionDto.Response response = auctionService.auctionFinished(anyLong());
+		given(auctionRepository.save(any()))
+			.willReturn(auction);
+
+		AuctionDto.Response response = auctionService.getAuctionByAuctionId(anyLong());
 
 		assertEquals(response.getTransactionStatus(), TransactionStatus.TRANSACTION_COMPLETE);
 		assertEquals(response.getBuyerId(), user.getId());
@@ -750,7 +755,7 @@ class AuctionServiceTest {
 	}
 
 	@Test
-	@DisplayName("경매 종료 - 경매 실패")
+	@DisplayName("경매 종료 - 거래 실패")
 	void auctionFinishedFail() {
 		LocalDateTime now = LocalDateTime.now();
 		AuctionEntity auction = AuctionEntity.builder()
@@ -766,35 +771,12 @@ class AuctionServiceTest {
 
 		given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
 		given(biddingHistoryRepository.existsByAuctionId(anyLong())).willReturn(false);
-		var result = auctionService.auctionFinished(anyLong());
+		given(auctionRepository.save(any())).willReturn(auction);
+		AuctionDto.Response response = auctionService.getAuctionByAuctionId(anyLong());
 
-		assertEquals(result.getTransactionStatus(), TransactionStatus.TRANSACTION_FAIL);
-		assertNull(result.getBuyerId());
+		assertEquals(response.getTransactionStatus(), TransactionStatus.TRANSACTION_FAIL);
+		assertNull(response.getBuyerId());
 	}
-
-	@Test
-	@DisplayName("경매 종료 - 경매 실패")
-	void auctionFinished_AUCTION_NOT_FINISHED() {
-		AuctionEntity auction = AuctionEntity.builder()
-			.auctionId(1L)
-			.user(UserEntity.builder().id(1L).build())
-			.itemName("item1")
-			.startingPrice(1111)
-			.minimumBid(1000)
-			.itemStatus(ItemStatus.BAD)
-			.startDateTime(LocalDateTime.of(2025, 3, 1, 0, 0, 0))
-			.endDateTime(LocalDateTime.of(2025, 3, 1, 1, 0, 0))
-			.build();
-
-		given(auctionRepository.findById(anyLong())).willReturn(Optional.of(auction));
-
-		AuctionException exception = assertThrows(AuctionException.class,
-			() -> auctionService.auctionFinished(anyLong()));
-
-		//then
-		assertEquals(AUCTION_NOT_FINISHED, exception.getErrorCode());
-	}
-
 	// 추가
 	private List<MultipartFile> getFiles() throws IOException {
 		List<MultipartFile> files = new ArrayList<>();
