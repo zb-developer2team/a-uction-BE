@@ -25,7 +25,7 @@ public class WishController {
         return ResponseEntity.ok(wishService.addWishAuction(auctionId, principal.getName()));
     }
 
-    @GetMapping("/myList")
+    @GetMapping("/my-list")
     public ResponseEntity<Page<AuctionDto.Response>> getUserWishList(Principal principal, Pageable pageable){
         return ResponseEntity.ok(wishService.getUserWishList(principal.getName(), pageable));
     }
