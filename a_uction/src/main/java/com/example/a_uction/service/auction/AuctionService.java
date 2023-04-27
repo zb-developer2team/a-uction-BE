@@ -1,18 +1,5 @@
 package com.example.a_uction.service.auction;
 
-import static com.example.a_uction.exception.constants.ErrorCode.AUCTION_NOT_FOUND;
-import static com.example.a_uction.exception.constants.ErrorCode.BEFORE_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.BIDDING_NOT_FOUND;
-import static com.example.a_uction.exception.constants.ErrorCode.END_TIME_EARLIER_THAN_START_TIME;
-import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_LIST;
-import static com.example.a_uction.exception.constants.ErrorCode.NOT_FOUND_AUCTION_STATUS_LIST;
-import static com.example.a_uction.exception.constants.ErrorCode.UNABLE_DELETE_AUCTION;
-import static com.example.a_uction.exception.constants.ErrorCode.UNABLE_UPDATE_AUCTION;
-import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;
-import static com.example.a_uction.model.auction.constants.AuctionStatus.COMPLETED;
-import static com.example.a_uction.model.auction.constants.AuctionStatus.PROCEEDING;
-import static com.example.a_uction.model.auction.constants.AuctionStatus.SCHEDULED;
-
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.constants.AuctionStatus;
@@ -27,13 +14,17 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static com.example.a_uction.exception.constants.ErrorCode.*;
+import static com.example.a_uction.model.auction.constants.AuctionStatus.*;
 
 @Service
 @RequiredArgsConstructor
