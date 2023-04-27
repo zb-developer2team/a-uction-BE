@@ -23,26 +23,26 @@ public class AuctionSearchController {
     private final AuctionSearchService auctionSearchService;
 
     //es 등록
-    @PostMapping("/auctionDocument/{auctionId}")
+    @PostMapping("/auction-document/{auctionId}")
     public ResponseEntity<Void> saveAuctionDocuments(@PathVariable Long auctionId){
         auctionSearchService.saveAuctionDocument(auctionId);
         return ResponseEntity.ok().build();
     }
 
     //시작금액
-    @GetMapping("/auctions/startingPrice")
+    @GetMapping("/auctions/starting-price")
     public ResponseEntity<Page<AuctionDocumentResponse>> searchByNickname(@RequestParam int startingPrice, Pageable pageable){
         return ResponseEntity.ok(auctionSearchService.findByStartingPrice(startingPrice,pageable));
     }
 
     //minimumBid
-    @GetMapping("/auctions/minimumBid")
+    @GetMapping("/auctions/minimum-bid")
     public ResponseEntity<Page<AuctionDocumentResponse>> searchByMinimumBid(@RequestParam int minimumBid, Pageable pageable){
         return ResponseEntity.ok(auctionSearchService.findByMinimumBid(minimumBid,pageable));
     }
 
     //itemStatus
-    @GetMapping("/auctions/itemStatus")
+    @GetMapping("/auctions/item-status")
     public ResponseEntity<Page<AuctionDocumentResponse>> searchByItemStatus(@RequestParam ItemStatus itemStatus, Pageable pageable){
         return ResponseEntity.ok(auctionSearchService.findByItemStatus(itemStatus,pageable));
     }
@@ -61,7 +61,7 @@ public class AuctionSearchController {
     }
 
     //item
-    @GetMapping("/auctions/itemName/contain")
+    @GetMapping("/auctions/item-name/contain")
     public ResponseEntity<Page<AuctionDocumentResponse>> searchByContainItemName(@RequestParam String itemName,
                                                                                    SortingCondition condition, Pageable pageable){
         return ResponseEntity.ok(auctionSearchService.findByContainItemName(itemName, condition, pageable));
@@ -80,7 +80,7 @@ public class AuctionSearchController {
     }
 
     //delete
-    @DeleteMapping("/auctionDocument/{auctionId}")
+    @DeleteMapping("/auction-document/{auctionId}")
     public ResponseEntity<Void> deleteAuctionDocuments(@PathVariable Long auctionId){
         auctionSearchService.deleteAuctionDocuments(auctionId);
         return ResponseEntity.ok().build();
