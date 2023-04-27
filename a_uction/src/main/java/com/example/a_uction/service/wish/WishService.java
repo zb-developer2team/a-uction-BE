@@ -77,9 +77,13 @@ public class WishService {
     }
 
     public Page<String> getWishUserListAboutAuction(Long auctionId, String userEmail, Pageable pageable){
-        AuctionEntity result = auctionRepository.getByAuctionId(auctionId);
-        if(result.getUser().getUserEmail().equals(userEmail)){
-            List<String> userList = result.getWishListForUser().stream()
+        AuctionEntity auction = auctionRepository.getByAuctionId(auctionId);
+        if(auction.getWishListForUser().size() == 0){
+            throw new AuctionException(NOT_EXIST_WISH_LIST_BY_USER);
+        }
+
+        if(auction.getUser().getUserEmail().equals(userEmail)){
+            List<String> userList = auction.getWishListForUser().stream()
                     .map(m -> m.getWishUser().getUserEmail())
                     .collect(Collectors.toList());
 
@@ -88,7 +92,7 @@ public class WishService {
 
             return new PageImpl<>(userList.subList(start, end), pageable, userList.size());
         }
-        return new PageImpl<>(List.of(String.valueOf(result.getWishListForUser().size())));
+        return new PageImpl<>(List.of(String.valueOf(auction.getWishListForUser().size())));
     }
 
     public WishListResponse deleteWishAuction(Long auctionId, String userEmail) {

@@ -66,8 +66,9 @@ public enum ErrorCode {
 
 	//wish
 	WISH_LIST_IS_EMPTY(BAD_REQUEST, "관심 등록한 경매 리스트가 없습니다."),
-	ALREADY_EXIST_WISH_ITEM(BAD_REQUEST, "해당 물품을 이미 관심 등록하였습니다."),
-	UNABLE_DELETE_WISH_LIST(BAD_REQUEST, "해당 물품을 삭제할 수 없습니다."),
+	NOT_EXIST_WISH_LIST_BY_USER(BAD_REQUEST, "해당 경매를 관심 등록한 유저가 없습니다."),
+	ALREADY_EXIST_WISH_ITEM(BAD_REQUEST, "해당 경매를 이미 관심 등록하였습니다."),
+	UNABLE_DELETE_WISH_LIST(BAD_REQUEST, "관심 리스트에서 삭제할 수 없습니다."),
 	;
 	private final HttpStatus httpStatus;
 	private final String description;
