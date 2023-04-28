@@ -23,6 +23,8 @@ import com.example.a_uction.model.auction.constants.TransactionStatus;
 import com.example.a_uction.model.auction.dto.AuctionDto;
 import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
+import com.example.a_uction.model.auctionSearch.repository.AuctionSearchQueryRepository;
+import com.example.a_uction.model.auctionSearch.repository.AuctionSearchRepository;
 import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransactionHistoryEntity;
 import com.example.a_uction.model.auctionTransactionHistory.repository.AuctionTransactionHistoryRepository;
 import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
@@ -35,6 +37,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.a_uction.service.search.AuctionSearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,6 +72,12 @@ class AuctionServiceTest {
 
 	@InjectMocks
 	private AuctionService auctionService;
+	@Mock
+	private AuctionSearchService auctionSearchService;
+	@Mock
+	private AuctionSearchRepository auctionSearchRepository;
+	@Mock
+	private AuctionSearchQueryRepository auctionSearchQueryRepository;
 
 	private static final String TEST_IMAGE_SRC = "src/test/resources/image/test.png";
 
