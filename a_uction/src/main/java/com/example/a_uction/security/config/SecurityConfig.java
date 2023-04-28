@@ -23,6 +23,7 @@ public class SecurityConfig {
 		return http
 			.httpBasic().disable()
 			.csrf().disable()
+			.cors().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.authorizeRequests()
@@ -32,6 +33,7 @@ public class SecurityConfig {
 						"/ws",
 						"/auctions/detail",
 						"/auctions/list",
+						"/favicon.ico",
 						"/get-time",
 						"/swagger-ui/**",
 						"/v3/api-docs")
