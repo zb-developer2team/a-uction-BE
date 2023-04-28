@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.a_uction.model.wishList.repository.WishRepository;
 import com.example.a_uction.service.search.AuctionSearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,8 @@ class AuctionServiceTest {
 	private AuctionSearchRepository auctionSearchRepository;
 	@Mock
 	private AuctionSearchQueryRepository auctionSearchQueryRepository;
+	@Mock
+	private WishRepository wishRepository;
 
 	private static final String TEST_IMAGE_SRC = "src/test/resources/image/test.png";
 
@@ -762,6 +765,8 @@ class AuctionServiceTest {
 		assertEquals(response.getTransactionStatus(), TransactionStatus.TRANSACTION_COMPLETE);
 		assertEquals(response.getBuyerId(), user.getId());
 		assertEquals(response.getImagesSrc().get(0), "~/test/test.png");
+
+		verify(wishRepository, times(1)).deleteByWishAuctionAuctionId(anyLong());
 	}
 
 	@Test
