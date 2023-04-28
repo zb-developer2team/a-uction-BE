@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface WishRepository extends JpaRepository<WishListEntity, Long> {
     Optional<WishListEntity> findByWishUserIdAndWishAuctionAuctionId(Long userId, Long auctionId);
+    void deleteByWishAuctionAuctionId(Long auctionId);
 }

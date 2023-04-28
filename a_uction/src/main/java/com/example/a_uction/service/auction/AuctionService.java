@@ -14,6 +14,7 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.model.wishList.repository.WishRepository;
 import com.example.a_uction.service.search.AuctionSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class AuctionService {
 	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
 
 	private final AuctionSearchService auctionSearchService;
+	private final WishRepository wishRepository;
 
 	private UserEntity getUser(String userEmail) {
 		return userRepository.getByUserEmail(userEmail);
@@ -215,8 +218,13 @@ public class AuctionService {
 		} else {
 			auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);
 		}
-
-		auctionSearchService.deleteAuctionDocuments(auctionId);
+		deleteDataAboutAuction(auctionId);
 		return AuctionDto.Response.fromEntity(auctionRepository.save(auction));
+	}
+
+	@Transactional
+	public void deleteDataAboutAuction(Long auctionId){
+		auctionSearchService.deleteAuctionDocuments(auctionId);
+		wishRepository.deleteByWishAuctionAuctionId(auctionId);
 	}
 }
