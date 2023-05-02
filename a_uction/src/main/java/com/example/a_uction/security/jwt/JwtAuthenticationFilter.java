@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String path = request.getServletPath();
 		log.info("REQUEST [ SERVLET_PATH : {} ]", path);
-		if (isPass(path)) {
+		if (isPass(path) || request.getMethod().equals("OPTIONS")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -88,6 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				path.contains("auctions/detail") ||
 				path.contains("auctions/list") ||
 				path.contains("get-time") ||
+				path.contains("/favicon.ico") ||
 				path.contains("swagger") ||
 				path.contains("api-docs") ||
 				path.isEmpty() ||

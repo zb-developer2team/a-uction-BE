@@ -40,6 +40,7 @@ public class UserEntity {
 	private String profileImageSrc;
 
 	@OneToMany(mappedBy = "user")
+	@Builder.Default
 	private List<AuctionEntity> auctions = new ArrayList<>();
 
 	@Column(columnDefinition = "int default 0")

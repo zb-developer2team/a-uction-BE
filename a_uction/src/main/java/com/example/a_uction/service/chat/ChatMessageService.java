@@ -41,12 +41,10 @@ public class ChatMessageService {
 
 		if (message.getMessageType().equals(MessageType.ENTER)) {
 			message.setContents(message.getSender() + ENTER_MESSAGE);
-			simpMessageSendingOperations
-				.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
-		} else {
-			simpMessageSendingOperations
-				.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
 		}
+
+		simpMessageSendingOperations
+			.convertAndSend(DESTINATION_PREFIX + message.getChatRoomId(), message);
 	}
 
 	@Transactional
