@@ -29,4 +29,8 @@ public class BiddingHistoryController {
         return ResponseEntity.ok(biddingHistoryService.getAllBiddingHistoryByAuctionId(auctionId));
     }
 
+    @GetMapping("/auctions/getCurrentPrice/{auctionId}")
+    public ResponseEntity<Integer> getCurrentPrice(@PathVariable Long auctionId){
+        return ResponseEntity.ok(biddingHistoryService.getCurrentPrice(auctionId));
+    }
 }
