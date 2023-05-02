@@ -33,6 +33,7 @@ public class UserRegisterService {
 	}
 
 	public boolean emailCheck(String email) {
+		log.info("email:{} 중복체크 시도!!", email);
 		if (userRepository.findByUserEmail(email).isPresent()) {
 			log.error("중복된 이메일 가입 시도");
 			throw new AuctionException(THIS_EMAIL_ALREADY_EXIST);

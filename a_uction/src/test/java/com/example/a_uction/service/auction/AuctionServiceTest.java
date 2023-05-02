@@ -31,14 +31,14 @@ import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
+import com.example.a_uction.model.wishList.repository.WishRepository;
+import com.example.a_uction.service.search.AuctionSearchService;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import com.example.a_uction.service.search.AuctionSearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,6 +63,9 @@ class AuctionServiceTest {
 
 	@Mock
 	private BiddingHistoryRepository biddingHistoryRepository;
+
+	@Mock
+	private WishRepository wishRepository;
 
 	@Mock
 	private AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
@@ -188,6 +191,7 @@ class AuctionServiceTest {
 		given(auctionRepository.findById(anyLong()))
 			.willReturn(Optional.of(auction));
 		given(auctionRepository.save(any())).willReturn(auction);
+
 		//when
 		AuctionDto.Response response = auctionService.getAuctionByAuctionId(1L);
 		//then

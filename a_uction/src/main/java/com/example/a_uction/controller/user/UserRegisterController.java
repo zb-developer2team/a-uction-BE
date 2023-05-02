@@ -1,5 +1,7 @@
 package com.example.a_uction.controller.user;
 
+import com.example.a_uction.model.user.dto.EmailForm;
+import com.example.a_uction.model.user.dto.PhoneNumberForm;
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.dto.Verify;
 import com.example.a_uction.service.user.UserRegisterService;
@@ -10,7 +12,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,18 +31,18 @@ public class UserRegisterController {
 		return ResponseEntity.ok(userRegisterService.register(request));
 	}
 
-	@GetMapping("/emailCheck")
-	public ResponseEntity<Boolean> emailCheck(@RequestBody String email) {
+	@PostMapping("/emailCheck")
+	public ResponseEntity<Boolean> emailCheck(@RequestBody EmailForm form) {
 
-		return ResponseEntity.ok(userRegisterService.emailCheck(email));
+		return ResponseEntity.ok(userRegisterService.emailCheck(form.getEmail()));
 	}
 
 	@PostMapping("/verify/sms")
 	public ResponseEntity<Verify.Response> sendVerifyMessage(
-		@RequestBody String phoneNumber)
+		@RequestBody PhoneNumberForm form)
 		throws NoSuchAlgorithmException, InvalidKeyException, URISyntaxException, JsonProcessingException {
 
-		return ResponseEntity.ok(verifyService.sendVerificationCode(phoneNumber));
+		return ResponseEntity.ok(verifyService.sendVerificationCode(form.getPhoneNumber()));
 	}
 
 	@PostMapping("/verify/sms/codeCheck")

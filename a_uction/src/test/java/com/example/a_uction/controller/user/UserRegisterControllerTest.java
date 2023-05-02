@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
+import com.example.a_uction.model.user.dto.EmailForm;
 import com.example.a_uction.model.user.dto.RegisterUser;
 import com.example.a_uction.model.user.dto.Verify;
 import com.example.a_uction.security.jwt.JwtProvider;
@@ -83,9 +83,11 @@ class UserRegisterControllerTest {
 			.willReturn(true);
 		//when
 		//then
-		mockMvc.perform(get("/register/emailCheck")
+		mockMvc.perform(post("/register/emailCheck")
 				.with(csrf())
-				.content("zerobase@gmail.com"))
+				.content(objectMapper.writeValueAsString(
+					new EmailForm("zerobase@email.com")
+				)))
 			.andDo(print())
 			.andExpect(status().isOk());
 	}
@@ -98,10 +100,11 @@ class UserRegisterControllerTest {
 			.willThrow(new AuctionException(ErrorCode.THIS_EMAIL_ALREADY_EXIST));
 	    //when
 		//then
-		mockMvc.perform(get("/register/emailCheck")
+		mockMvc.perform(post("/register/emailCheck")
 				.with(csrf())
-				.content("zerobase@gmail.com"))
-			.andDo(print())
+				.content(objectMapper.writeValueAsString(
+					new EmailForm("zerobase@email.com")
+				)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.errorCode").value("THIS_EMAIL_ALREADY_EXIST"))
 			.andExpect(jsonPath("$.message").value("해당 이메일은 이미 존재합니다."));
