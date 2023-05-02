@@ -3,6 +3,7 @@ package com.example.a_uction.service.biddingHistory;
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.exception.constants.ErrorCode;
 import com.example.a_uction.model.auction.dto.AuctionDto;
+import com.example.a_uction.model.auction.entity.AuctionEntity;
 import com.example.a_uction.model.auction.repository.AuctionRepository;
 import com.example.a_uction.model.auctionTransactionHistory.dto.AuctionTransactionHistoryDto;
 import com.example.a_uction.model.biddingHistory.dto.BiddingHistoryDto;
@@ -51,5 +52,15 @@ public class BiddingHistoryService {
                     auctionRepository.findById(biddingHistory.getAuctionId()).get().getItemName(), biddingHistory.getBidderEmail()));
         }
         return biddingHistories;
+    }
+
+    public int getCurrentPrice(Long auctionId){
+        AuctionEntity auction = auctionRepository.getByAuctionId(auctionId);
+        if (auction != null){
+            Optional<BiddingHistoryEntity> biddingHistory = biddingHistoryRepository.findFirstByAuctionIdOrderByCreatedDateDesc(auctionId);
+            return biddingHistory.map(BiddingHistoryEntity::getPrice).orElseGet(auction::getStartingPrice);
+        } else {
+            throw new AuctionException(ErrorCode.AUCTION_NOT_FOUND);
+        }
     }
 }
