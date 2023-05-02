@@ -44,6 +44,7 @@ public class AuctionController {
         @RequestPart(value = "files", required = false) List<MultipartFile> files,
         BindingResult bindingResult,
         Principal principal) {
+        log.info("auction:{}, files{}", auction, files);
         if (bindingResult.hasErrors()) {
             throw new AuctionException(ErrorCode.INVALID_REQUEST);
         }
