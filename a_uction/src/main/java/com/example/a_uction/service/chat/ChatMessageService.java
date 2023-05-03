@@ -108,6 +108,9 @@ public class ChatMessageService {
 		//입찰 시도 금액이 현재 입찰 금액보다 작거나, 경매 시작 금액보다 작음
 		if (price < getMaxBiddablePrice(auctionId))
 			throw new AuctionException(ErrorCode.NOT_BIDDABLE_PRICE);
+		// 입찰 금액보다 소유한 예치금이 작음
+		if (price > user.getBalance())
+			throw new AuctionException(ErrorCode.NOT_ENOUGH_USER_BALANCE);
 
 		return true;
 	}

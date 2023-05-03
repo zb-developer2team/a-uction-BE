@@ -12,10 +12,12 @@ import com.example.a_uction.model.auctionTransactionHistory.entity.AuctionTransa
 import com.example.a_uction.model.auctionTransactionHistory.repository.AuctionTransactionHistoryRepository;
 import com.example.a_uction.model.biddingHistory.entity.BiddingHistoryEntity;
 import com.example.a_uction.model.biddingHistory.repository.BiddingHistoryRepository;
+import com.example.a_uction.model.user.dto.Balance;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.UserRepository;
 import com.example.a_uction.model.wishList.repository.WishRepository;
 import com.example.a_uction.service.search.AuctionSearchService;
+import com.example.a_uction.service.user.UserBalanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +42,7 @@ public class AuctionService {
 	private final AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
 
 	private final AuctionSearchService auctionSearchService;
+	private final UserBalanceService userBalanceService;
 	private final WishRepository wishRepository;
 
 	private UserEntity getUser(String userEmail) {
@@ -200,6 +203,11 @@ public class AuctionService {
 					.getId());
 
 			String buyerEmail = biddingHistory.getBidderEmail();
+
+			userBalanceService.withdraw(buyerEmail, Balance.Request.builder()
+				.from("Auction success : " + auction.getItemName())
+				.money(biddingHistory.getPrice())
+				.build());
 
 			AuctionTransactionHistoryEntity auctionTransactionHistory = AuctionTransactionHistoryEntity.builder()
 				.price(biddingHistory.getPrice())
