@@ -5,6 +5,7 @@ import static com.example.a_uction.exception.constants.ErrorCode.USER_NOT_FOUND;
 
 import com.example.a_uction.exception.AuctionException;
 import com.example.a_uction.model.user.dto.Balance;
+import com.example.a_uction.model.user.dto.Balance.Request;
 import com.example.a_uction.model.user.entity.BalanceHistoryEntity;
 import com.example.a_uction.model.user.entity.UserEntity;
 import com.example.a_uction.model.user.repository.BalanceHistoryRepository;
@@ -27,16 +28,17 @@ public class UserBalanceService {
 
 	}
 
-	public Balance.Response withdraw(String userEmail, Balance.Request withdrawBalance) {
+	public void withdraw(String userEmail, Request withdrawBalance) {
 
 		BalanceHistoryEntity balanceHistory = this.getByUserEmail(userEmail);
 		withdrawBalance.setMoney(-withdrawBalance.getMoney());
-		return this.change(balanceHistory, withdrawBalance);
+		this.change(balanceHistory, withdrawBalance);
 	}
 
 	@Transactional
 	public Balance.Response change(BalanceHistoryEntity balanceHistory,
 		Balance.Request changeBalance) {
+
 
 		Integer currentMoney = balanceHistory.getCurrentMoney() + changeBalance.getMoney();
 		if (currentMoney < 0) {

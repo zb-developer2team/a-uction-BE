@@ -183,7 +183,7 @@ public class AuctionService {
 		}
 	}
 
-	public AuctionDto.Response auctionFinished(AuctionEntity auction) {
+	public void auctionFinished(AuctionEntity auction) {
 
 		Long auctionId = auction.getAuctionId();
 
@@ -227,7 +227,7 @@ public class AuctionService {
 			auction.setTransactionStatus(TransactionStatus.TRANSACTION_FAIL);
 		}
 		deleteDataAboutAuction(auctionId);
-		return AuctionDto.Response.fromEntity(auctionRepository.save(auction));
+		Response.fromEntity(auctionRepository.save(auction));
 	}
 
 	@Transactional
