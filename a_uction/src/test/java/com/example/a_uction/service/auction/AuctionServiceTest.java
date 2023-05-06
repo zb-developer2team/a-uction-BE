@@ -64,8 +64,12 @@ class AuctionServiceTest {
 
 	@Mock
 	private BiddingHistoryRepository biddingHistoryRepository;
+
 	@Mock
 	private AuctionTransactionHistoryRepository auctionTransactionHistoryRepository;
+
+	@Mock
+	private WishRepository wishRepository;
 
 	@Mock
 	private AuctionFileService auctionFileService;
@@ -80,8 +84,6 @@ class AuctionServiceTest {
 	private AuctionSearchRepository auctionSearchRepository;
 	@Mock
 	private AuctionSearchQueryRepository auctionSearchQueryRepository;
-	@Mock
-	private WishRepository wishRepository;
 
 	private static final String TEST_IMAGE_SRC = "src/test/resources/image/test.png";
 
