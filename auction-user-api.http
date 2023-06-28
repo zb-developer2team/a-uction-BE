@@ -42,7 +42,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTEwNzQxNSwiZXhwIjoxNjgxMTExMDE1fQ.EKGivco-1MeXF806zdZaOwNVmoxDKUjF6n0LLJukWJ0
 
 ###회원정보 수정
-PUT localhost:8081/users/detail/modify
+PUT http://localhost:8081/users/detail/modify
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyRW1haWwiOiJ6ZXJvYmFzZUBnbWFpbC5jb20iLCJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY4MTY0MDMwOSwiZXhwIjoxNjgxNjQzOTA5fQ.I3fxg2usj5_BiDVis_mTLUQt3LUlmJmzSPS1YYZGI64
 
