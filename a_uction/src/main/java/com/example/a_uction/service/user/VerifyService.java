@@ -90,10 +90,10 @@ public class VerifyService {
 
 		String jsonBody = objectMapper.writeValueAsString(request);
 
+		String signature = makeSignature(time);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.set("x-ncp-apigw-timestamp", time.toString());
 		headers.set("x-ncp-iam-access-key", accessKey);
-		String signature = makeSignature(time);
 		headers.set("x-ncp-apigw-signature-v2", signature);
 
 		HttpEntity<String> body = new HttpEntity<>(jsonBody, headers);
@@ -106,21 +106,23 @@ public class VerifyService {
 		);
 	}
 	public boolean verifyCode(Verify.Form form) {
-		String code = (String) redisTemplate.opsForValue().get(REDIS_PACKAGE + form.getPhoneNumber());
-
-		if (code == null) {
-			throw new AuctionException(VERIFICATION_CODE_TIME_OUT);
-		}
-		if (!code.equals(form.getCode())) {
-			throw new AuctionException(WRONG_CODE_INPUT);
-		}
-		deleteVerification(form.getPhoneNumber());
+		String verificationCode = (String) redisTemplate.opsForValue().get(REDIS_PACKAGE + form.getPhoneNumber());
+		validateCodeForm(verificationCode, form);
 		return true;
 	}
 	private void validatePhoneNumber(String phoneNumber) {
 		if (userRepository.findByPhoneNumber(phoneNumber).isPresent()){
 			throw new AuctionException(THIS_PHONE_NUMBER_ALREADY_AUTHENTICATION);
 		}
+	}
+	private void validateCodeForm(String verificationCode, Verify.Form form) {
+		if (verificationCode == null) {
+			throw new AuctionException(VERIFICATION_CODE_TIME_OUT);
+		}
+		if (!verificationCode.equals(form.getCode())) {
+			throw new AuctionException(WRONG_CODE_INPUT);
+		}
+		deleteVerificationCode(form.getPhoneNumber());
 	}
 
 	private String generateVerificationCode(String phoneNumber) {
@@ -132,7 +134,7 @@ public class VerifyService {
 		return verifyCode;
 	}
 
-	private void deleteVerification(String phoneNumber) {
+	private void deleteVerificationCode(String phoneNumber) {
 		redisTemplate.delete(REDIS_PACKAGE + phoneNumber);
 	}
 
