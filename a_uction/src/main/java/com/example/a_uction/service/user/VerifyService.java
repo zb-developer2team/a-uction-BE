@@ -96,13 +96,13 @@ public class VerifyService {
 		headers.set("x-ncp-iam-access-key", accessKey);
 		headers.set("x-ncp-apigw-signature-v2", signature);
 
-		HttpEntity<String> body = new HttpEntity<>(jsonBody, headers);
+		HttpEntity<String> contents = new HttpEntity<>(jsonBody, headers);
 
 		restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 		restTemplate.setErrorHandler(new DefaultResponseErrorHandler());
 
 		return restTemplate.postForObject(
-			new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + this.serviceId + "/messages"), body, Verify.Response.class
+			new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + this.serviceId + "/messages"), contents, Verify.Response.class
 		);
 	}
 	public boolean verifyCode(Verify.Form form) {
